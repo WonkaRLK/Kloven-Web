@@ -15,19 +15,19 @@ const MANIFESTO = [
   "SIN REGLAS.\nSIN LIMITES.\nSIN COMPROMISOS.",
 ];
 
-// Each letter floats in from a random-ish position
 const LETTER_ORIGINS = [
-  { x: -60, y: -80 },
-  { x: 40, y: 90 },
-  { x: -30, y: 70 },
-  { x: 70, y: -60 },
-  { x: -50, y: -40 },
-  { x: 60, y: 50 },
+  { x: -40, y: -50 },
+  { x: 30, y: 60 },
+  { x: -20, y: 50 },
+  { x: 50, y: -40 },
+  { x: -35, y: -30 },
+  { x: 45, y: 35 },
 ];
 
 export default function Hero() {
   const [showTitle, setShowTitle] = useState(true);
   const [formed, setFormed] = useState(false);
+  const [lightning, setLightning] = useState(false);
   const [manifestoIndex, setManifestoIndex] = useState(0);
   const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
 
@@ -50,24 +50,58 @@ export default function Hero() {
     return () => clearInterval(interval);
   }, [showTitle]);
 
-  // Letters finish arriving ~1.8s, hold formed for 1.5s, then exit
+  // Lightning flashes during letter assembly
   useEffect(() => {
-    const formTimer = setTimeout(() => setFormed(true), 1800);
-    const exitTimer = setTimeout(() => setShowTitle(false), 3300);
+    const flashes = [300, 600, 750, 1000];
+    const timers = flashes.map((t) =>
+      setTimeout(() => {
+        setLightning(true);
+        setTimeout(() => setLightning(false), 60);
+      }, t)
+    );
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  // Letters arrive by ~0.8s, hold glow for 0.7s, exit at 1.5s
+  useEffect(() => {
+    const formTimer = setTimeout(() => setFormed(true), 800);
+    const exitTimer = setTimeout(() => setShowTitle(false), 1500);
     return () => {
       clearTimeout(formTimer);
       clearTimeout(exitTimer);
     };
   }, []);
 
+  const redGlow =
+    "0 0 10px rgba(217,4,41,0.9), 0 0 40px rgba(217,4,41,0.6), 0 0 80px rgba(217,4,41,0.4), 0 0 120px rgba(217,4,41,0.2)";
+  const redGlowIntense =
+    "0 0 15px rgba(217,4,41,1), 0 0 50px rgba(217,4,41,0.8), 0 0 100px rgba(217,4,41,0.5), 0 0 150px rgba(217,4,41,0.3), 0 0 200px rgba(217,4,41,0.1)";
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-kloven-black">
-      {/* Phase 1: Stranger Things style letter reveal */}
+      {/* Lightning flash overlay */}
+      <AnimatePresence>
+        {lightning && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.06 }}
+            className="absolute inset-0 z-30 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse at center, rgba(217,4,41,0.15) 0%, rgba(255,255,255,0.05) 40%, transparent 70%)",
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Phase 1: Stranger Things letter reveal */}
       <AnimatePresence>
         {showTitle && (
           <motion.div
-            exit={{ opacity: 0, scale: 1.1, filter: "blur(24px)" }}
-            transition={{ duration: 1.4, ease: "easeOut" }}
+            exit={{ opacity: 0, scale: 1.08, filter: "blur(20px)" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
             className="absolute inset-0 z-20 flex items-center justify-center"
           >
             <div className="flex items-center">
@@ -78,40 +112,68 @@ export default function Hero() {
                     opacity: 0,
                     x: LETTER_ORIGINS[i].x,
                     y: LETTER_ORIGINS[i].y,
-                    scale: 0.3,
-                    filter: "blur(12px)",
+                    scale: 0.2,
+                    filter: "blur(8px)",
                   }}
                   animate={{
-                    opacity: 1,
+                    opacity: [0, 0.4, 1, 0.7, 1],
                     x: 0,
                     y: 0,
                     scale: 1,
                     filter: "blur(0px)",
                     textShadow: formed
-                      ? [
-                          "0 0 20px rgba(217,4,41,0.8), 0 0 60px rgba(217,4,41,0.4), 0 0 100px rgba(217,4,41,0.2)",
-                          "0 0 30px rgba(217,4,41,1), 0 0 80px rgba(217,4,41,0.6), 0 0 120px rgba(217,4,41,0.3)",
-                          "0 0 20px rgba(217,4,41,0.8), 0 0 60px rgba(217,4,41,0.4), 0 0 100px rgba(217,4,41,0.2)",
-                        ]
-                      : "0 0 40px rgba(217,4,41,0.6), 0 0 80px rgba(217,4,41,0.3)",
+                      ? [redGlow, redGlowIntense, redGlow]
+                      : redGlow,
                   }}
                   transition={{
-                    opacity: { duration: 0.6, delay: i * 0.2 },
-                    x: { duration: 0.8, delay: i * 0.2, ease: "easeOut" },
-                    y: { duration: 0.8, delay: i * 0.2, ease: "easeOut" },
-                    scale: { duration: 0.8, delay: i * 0.2, ease: "easeOut" },
-                    filter: { duration: 0.8, delay: i * 0.2 },
+                    opacity: {
+                      duration: 0.4,
+                      delay: i * 0.1,
+                      times: [0, 0.2, 0.5, 0.7, 1],
+                    },
+                    x: { duration: 0.5, delay: i * 0.1, ease: "easeOut" },
+                    y: { duration: 0.5, delay: i * 0.1, ease: "easeOut" },
+                    scale: { duration: 0.5, delay: i * 0.1, ease: "easeOut" },
+                    filter: { duration: 0.4, delay: i * 0.1 },
                     textShadow: formed
-                      ? { duration: 2, repeat: Infinity, ease: "easeInOut" }
-                      : { duration: 0.6, delay: i * 0.2 },
+                      ? {
+                          duration: 1.5,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        }
+                      : { duration: 0.3, delay: i * 0.1 },
                   }}
-                  className="font-heading text-[16vw] sm:text-[12vw] leading-[0.85] tracking-wider text-kloven-white select-none inline-block"
-                  style={{ color: formed ? "#F5F5F5" : "rgba(245,245,245,0.9)" }}
+                  className="font-heading text-[16vw] sm:text-[12vw] leading-[0.85] tracking-wider select-none inline-block"
+                  style={{ color: "#F5F5F5" }}
                 >
                   {letter}
                 </motion.span>
               ))}
             </div>
+
+            {/* Horizontal red light lines — electrical feel */}
+            <motion.div
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: [0, 0.6, 0.3, 0.5, 0] }}
+              transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
+              className="absolute left-[10%] right-[10%] h-[1px] top-1/2 -translate-y-8"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent 0%, rgba(217,4,41,0.8) 30%, rgba(217,4,41,0.9) 50%, rgba(217,4,41,0.8) 70%, transparent 100%)",
+                boxShadow: "0 0 15px rgba(217,4,41,0.5), 0 0 30px rgba(217,4,41,0.3)",
+              }}
+            />
+            <motion.div
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: [0, 0.4, 0.2, 0.4, 0] }}
+              transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
+              className="absolute left-[15%] right-[15%] h-[1px] top-1/2 translate-y-8"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent 0%, rgba(217,4,41,0.6) 20%, rgba(217,4,41,0.7) 50%, rgba(217,4,41,0.6) 80%, transparent 100%)",
+                boxShadow: "0 0 10px rgba(217,4,41,0.4), 0 0 20px rgba(217,4,41,0.2)",
+              }}
+            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -123,7 +185,7 @@ export default function Hero() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
               className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center w-full"
             >
               {/* Left: Manifesto */}
@@ -190,7 +252,7 @@ export default function Hero() {
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-kloven-ash"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 4, duration: 0.6 }}
+        transition={{ delay: 2.5, duration: 0.6 }}
       >
         <span className="text-[10px] uppercase tracking-widest">Scroll</span>
         <motion.div
