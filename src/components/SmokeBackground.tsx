@@ -4,7 +4,6 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 export default function SmokeBackground() {
   const [visible, setVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const videoA = useRef<HTMLVideoElement>(null);
   const videoB = useRef<HTMLVideoElement>(null);
   const [opacityA, setOpacityA] = useState(1);
@@ -12,14 +11,9 @@ export default function SmokeBackground() {
   const activeRef = useRef<"A" | "B">("A");
 
   useEffect(() => {
-    setIsMobile(window.innerWidth < 768 || "ontouchstart" in window);
-  }, []);
-
-  useEffect(() => {
-    if (isMobile) return;
     const timer = setTimeout(() => setVisible(true), 2200);
     return () => clearTimeout(timer);
-  }, [isMobile]);
+  }, []);
 
   const crossfade = useCallback(() => {
     if (activeRef.current === "A") {
@@ -74,9 +68,6 @@ export default function SmokeBackground() {
       vB.removeEventListener("timeupdate", handleTimeUpdate);
     };
   }, [visible, crossfade]);
-
-  // Don't render videos on mobile — saves bandwidth + GPU
-  if (isMobile) return null;
 
   return (
     <div
