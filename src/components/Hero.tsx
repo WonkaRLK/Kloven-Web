@@ -27,6 +27,7 @@ const LETTER_ORIGINS = [
 export default function Hero() {
   const [showTitle, setShowTitle] = useState(true);
   const [formed, setFormed] = useState(false);
+  const [melting, setMelting] = useState(false);
   const [lightning, setLightning] = useState(false);
   const [manifestoIndex, setManifestoIndex] = useState(0);
   const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
@@ -50,7 +51,7 @@ export default function Hero() {
     return () => clearInterval(interval);
   }, [showTitle]);
 
-  // Lightning flashes during letter assembly
+  // Lightning flashes
   useEffect(() => {
     const flashes = [300, 600, 750, 1000];
     const timers = flashes.map((t) =>
@@ -62,12 +63,14 @@ export default function Hero() {
     return () => timers.forEach(clearTimeout);
   }, []);
 
-  // Letters arrive by ~0.8s, hold glow for 0.7s, exit at 1.5s
+  // Timeline: letters arrive 0.8s, formed glow, melt at 1.1s, exit at 1.5s
   useEffect(() => {
     const formTimer = setTimeout(() => setFormed(true), 800);
+    const meltTimer = setTimeout(() => setMelting(true), 1100);
     const exitTimer = setTimeout(() => setShowTitle(false), 1500);
     return () => {
       clearTimeout(formTimer);
+      clearTimeout(meltTimer);
       clearTimeout(exitTimer);
     };
   }, []);
@@ -79,6 +82,65 @@ export default function Hero() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-kloven-black">
+      {/* SVG Filters */}
+      <svg className="absolute w-0 h-0">
+        <defs>
+          {/* Erosion/holes filter — rough distressed look */}
+          <filter id="erode">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.04"
+              numOctaves="4"
+              seed="2"
+              result="noise"
+            />
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="noise"
+              scale="6"
+              xChannelSelector="R"
+              yChannelSelector="G"
+            />
+          </filter>
+
+          {/* Melting filter — warps downward with turbulence */}
+          <filter id="melt">
+            <feTurbulence
+              type="turbulence"
+              baseFrequency="0.015 0.04"
+              numOctaves="3"
+              seed="5"
+              result="turbulence"
+            />
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="turbulence"
+              scale="18"
+              xChannelSelector="R"
+              yChannelSelector="G"
+            />
+          </filter>
+
+          {/* Heavy melt — more distortion */}
+          <filter id="meltHeavy">
+            <feTurbulence
+              type="turbulence"
+              baseFrequency="0.02 0.06"
+              numOctaves="4"
+              seed="8"
+              result="turbulence"
+            />
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="turbulence"
+              scale="35"
+              xChannelSelector="R"
+              yChannelSelector="G"
+            />
+          </filter>
+        </defs>
+      </svg>
+
       {/* Lightning flash overlay */}
       <AnimatePresence>
         {lightning && (
@@ -96,7 +158,7 @@ export default function Hero() {
         )}
       </AnimatePresence>
 
-      {/* Phase 1: Stranger Things letter reveal */}
+      {/* Phase 1: Stranger Things letter reveal with melt */}
       <AnimatePresence>
         {showTitle && (
           <motion.div
@@ -104,7 +166,17 @@ export default function Hero() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="absolute inset-0 z-20 flex items-center justify-center"
           >
-            <div className="flex items-center">
+            <div
+              className="flex items-center"
+              style={{
+                filter: melting
+                  ? "url(#meltHeavy)"
+                  : formed
+                  ? "url(#melt)"
+                  : "url(#erode)",
+                transition: "filter 0.3s",
+              }}
+            >
               {LETTERS.map((letter, i) => (
                 <motion.span
                   key={i}
@@ -118,8 +190,8 @@ export default function Hero() {
                   animate={{
                     opacity: [0, 0.4, 1, 0.7, 1],
                     x: 0,
-                    y: 0,
-                    scale: 1,
+                    y: melting ? 4 + i * 2 : 0,
+                    scale: melting ? 1.02 : 1,
                     filter: "blur(0px)",
                     textShadow: formed
                       ? [redGlow, redGlowIntense, redGlow]
@@ -132,8 +204,12 @@ export default function Hero() {
                       times: [0, 0.2, 0.5, 0.7, 1],
                     },
                     x: { duration: 0.5, delay: i * 0.1, ease: "easeOut" },
-                    y: { duration: 0.5, delay: i * 0.1, ease: "easeOut" },
-                    scale: { duration: 0.5, delay: i * 0.1, ease: "easeOut" },
+                    y: { duration: 0.4, ease: "easeIn" },
+                    scale: {
+                      duration: 0.5,
+                      delay: melting ? 0 : i * 0.1,
+                      ease: "easeOut",
+                    },
                     filter: { duration: 0.4, delay: i * 0.1 },
                     textShadow: formed
                       ? {
@@ -151,7 +227,7 @@ export default function Hero() {
               ))}
             </div>
 
-            {/* Horizontal red light lines — electrical feel */}
+            {/* Red light lines */}
             <motion.div
               initial={{ scaleX: 0, opacity: 0 }}
               animate={{ scaleX: 1, opacity: [0, 0.6, 0.3, 0.5, 0] }}
@@ -160,7 +236,8 @@ export default function Hero() {
               style={{
                 background:
                   "linear-gradient(90deg, transparent 0%, rgba(217,4,41,0.8) 30%, rgba(217,4,41,0.9) 50%, rgba(217,4,41,0.8) 70%, transparent 100%)",
-                boxShadow: "0 0 15px rgba(217,4,41,0.5), 0 0 30px rgba(217,4,41,0.3)",
+                boxShadow:
+                  "0 0 15px rgba(217,4,41,0.5), 0 0 30px rgba(217,4,41,0.3)",
               }}
             />
             <motion.div
@@ -171,7 +248,8 @@ export default function Hero() {
               style={{
                 background:
                   "linear-gradient(90deg, transparent 0%, rgba(217,4,41,0.6) 20%, rgba(217,4,41,0.7) 50%, rgba(217,4,41,0.6) 80%, transparent 100%)",
-                boxShadow: "0 0 10px rgba(217,4,41,0.4), 0 0 20px rgba(217,4,41,0.2)",
+                boxShadow:
+                  "0 0 10px rgba(217,4,41,0.4), 0 0 20px rgba(217,4,41,0.2)",
               }}
             />
           </motion.div>
