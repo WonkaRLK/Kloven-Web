@@ -92,7 +92,7 @@ export default function Hero() {
 
   // Hide title after 3s with smoke effect
   useEffect(() => {
-    const timer = setTimeout(() => setShowTitle(false), 2000);
+    const timer = setTimeout(() => setShowTitle(false), 1000);
     return () => clearTimeout(timer);
   }, []);
 
