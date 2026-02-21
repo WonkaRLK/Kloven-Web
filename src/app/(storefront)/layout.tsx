@@ -3,7 +3,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 import CartDrawer from "@/components/CartDrawer";
 import Footer from "@/components/Footer";
-
+import SmokeBackground from "@/components/SmokeBackground";
 
 export default function StorefrontLayout({
   children,
@@ -14,6 +14,7 @@ export default function StorefrontLayout({
     <AuthProvider>
       <CartProvider>
         <div className="min-h-screen flex flex-col bg-kloven-black text-kloven-white">
+          <SmokeBackground />
           <Navbar />
           <CartDrawer />
           <main className="flex-grow">{children}</main>
