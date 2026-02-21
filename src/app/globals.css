@@ -40,11 +40,38 @@
   --animate-grain: grain 8s steps(10) infinite;
   --animate-glitch: glitch 3s infinite;
   --animate-card-shake: cardShake 0.3s steps(4) infinite;
+  --animate-kloven-reveal: klovenReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-kloven-exit: klovenExit 0.4s ease-in forwards;
 }
 
 @keyframes fadeIn {
   0% { opacity: 0; }
   100% { opacity: 1; }
+}
+
+@keyframes klovenReveal {
+  0% {
+    opacity: 0;
+    letter-spacing: 0.6em;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    letter-spacing: 0.15em;
+  }
+}
+
+@keyframes klovenExit {
+  0% {
+    opacity: 1;
+    letter-spacing: 0.15em;
+  }
+  100% {
+    opacity: 0;
+    letter-spacing: 0.4em;
+  }
 }
 
 @keyframes slideUp {

@@ -34,6 +34,7 @@ export default function Hero() {
   const titleRef = useRef<HTMLDivElement>(null);
   const [exitTarget, setExitTarget] = useState({ x: 0, y: "-45vh" as string | number, scale: 0.06 });
   const [isMobile, setIsMobile] = useState(false);
+  const [titleExiting, setTitleExiting] = useState(false);
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768 || "ontouchstart" in window);
@@ -92,13 +93,18 @@ export default function Hero() {
   useEffect(() => {
     const formTimer = setTimeout(() => setFormed(true), 800);
     const meltTimer = setTimeout(() => setMelting(true), 1100);
-    const exitTimer = setTimeout(() => setShowTitle(false), 1500);
+    // Mobile: trigger CSS exit class first, then remove after animation
+    const exitStartTimer = isMobile
+      ? setTimeout(() => setTitleExiting(true), 1200)
+      : undefined;
+    const exitTimer = setTimeout(() => setShowTitle(false), isMobile ? 1600 : 1500);
     return () => {
       clearTimeout(formTimer);
       clearTimeout(meltTimer);
+      if (exitStartTimer) clearTimeout(exitStartTimer);
       clearTimeout(exitTimer);
     };
-  }, []);
+  }, [isMobile]);
 
   const redGlow = isMobile
     ? "0 0 4px rgba(217,4,41,0.6)"
@@ -186,89 +192,98 @@ export default function Hero() {
       </AnimatePresence>
 
       {/* Phase 1: Title reveal */}
+      {/* Mobile: fully CSS-driven, no Framer Motion on text */}
+      {isMobile && showTitle && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center">
+          <h1
+            className={`font-heading text-[16vw] leading-[0.85] select-none text-kloven-white ${
+              titleExiting ? "animate-kloven-exit" : "animate-kloven-reveal"
+            }`}
+            style={{ textShadow: "0 0 6px rgba(217,4,41,0.5)" }}
+          >
+            KLOVEN
+          </h1>
+          {/* Red line */}
+          <div
+            className={`absolute left-[10%] right-[10%] h-[1px] top-1/2 -translate-y-6 ${
+              titleExiting ? "opacity-0" : "animate-fade-in"
+            }`}
+            style={{
+              background: "linear-gradient(90deg, transparent 0%, rgba(217,4,41,0.8) 30%, rgba(217,4,41,0.9) 50%, rgba(217,4,41,0.8) 70%, transparent 100%)",
+              animationDelay: "0.3s",
+              animationFillMode: "backwards",
+              transition: "opacity 0.3s",
+            }}
+          />
+        </div>
+      )}
+
+      {/* Desktop: Framer Motion letter-by-letter */}
       <AnimatePresence>
-        {showTitle && (
+        {!isMobile && showTitle && (
           <motion.div
             ref={titleRef}
-            exit={
-              isMobile
-                ? { opacity: 0 }
-                : {
-                    x: exitTarget.x,
-                    y: exitTarget.y,
-                    scale: exitTarget.scale,
-                    opacity: 0,
-                  }
-            }
-            transition={
-              isMobile
-                ? { duration: 0.3 }
-                : {
-                    duration: 0.7,
-                    ease: [0.76, 0, 0.24, 1],
-                    opacity: { delay: 0.5, duration: 0.2 },
-                  }
-            }
+            exit={{
+              x: exitTarget.x,
+              y: exitTarget.y,
+              scale: exitTarget.scale,
+              opacity: 0,
+            }}
+            transition={{
+              duration: 0.7,
+              ease: [0.76, 0, 0.24, 1],
+              opacity: { delay: 0.5, duration: 0.2 },
+            }}
             className="absolute inset-0 z-20 flex items-center justify-center"
           >
-            {isMobile ? (
-              /* Mobile: single element, CSS-only animation, no transforms */
-              <h1
-                className="font-heading text-[16vw] leading-[0.85] tracking-[0.15em] select-none text-kloven-white animate-[fadeIn_0.5s_ease-out]"
-              >
-                KLOVEN
-              </h1>
-            ) : (
-              /* Desktop: Stranger Things letter-by-letter with SVG filters */
-              <div
-                className="flex items-center"
-                style={{
-                  filter: melting
-                    ? "url(#meltHeavy)"
-                    : formed
-                    ? "url(#melt)"
-                    : "url(#erode)",
-                  transition: "filter 0.3s",
-                }}
-              >
-                {LETTERS.map((letter, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{
-                      opacity: 0,
-                      x: LETTER_ORIGINS[i].x,
-                      y: LETTER_ORIGINS[i].y,
-                      scale: 0.3,
-                      filter: "blur(8px)",
-                    }}
-                    animate={{
-                      opacity: [0, 0.4, 1, 0.7, 1],
-                      x: 0,
-                      y: melting ? 4 + i * 2 : 0,
-                      scale: melting ? 1.02 : 1,
-                      filter: "blur(0px)",
-                      textShadow: formed
-                        ? [redGlow, redGlowIntense, redGlow]
-                        : redGlow,
-                    }}
-                    transition={{
-                      opacity: { duration: 0.4, delay: i * 0.1, times: [0, 0.2, 0.5, 0.7, 1] },
-                      x: { duration: 0.5, delay: i * 0.1, ease: "easeOut" },
-                      y: { duration: 0.4, ease: "easeIn" },
-                      scale: { duration: 0.5, delay: melting ? 0 : i * 0.1, ease: "easeOut" },
-                      filter: { duration: 0.4, delay: i * 0.1 },
-                      textShadow: formed
-                        ? { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
-                        : { duration: 0.3, delay: i * 0.1 },
-                    }}
-                    className="font-heading text-[12vw] leading-[0.85] tracking-wider select-none inline-block"
-                    style={{ color: "#F5F5F5" }}
-                  >
-                    {letter}
-                  </motion.span>
-                ))}
-              </div>
-            )}
+            <div
+              className="flex items-center"
+              style={{
+                filter: melting
+                  ? "url(#meltHeavy)"
+                  : formed
+                  ? "url(#melt)"
+                  : "url(#erode)",
+                transition: "filter 0.3s",
+              }}
+            >
+              {LETTERS.map((letter, i) => (
+                <motion.span
+                  key={i}
+                  initial={{
+                    opacity: 0,
+                    x: LETTER_ORIGINS[i].x,
+                    y: LETTER_ORIGINS[i].y,
+                    scale: 0.3,
+                    filter: "blur(8px)",
+                  }}
+                  animate={{
+                    opacity: [0, 0.4, 1, 0.7, 1],
+                    x: 0,
+                    y: melting ? 4 + i * 2 : 0,
+                    scale: melting ? 1.02 : 1,
+                    filter: "blur(0px)",
+                    textShadow: formed
+                      ? [redGlow, redGlowIntense, redGlow]
+                      : redGlow,
+                  }}
+                  transition={{
+                    opacity: { duration: 0.4, delay: i * 0.1, times: [0, 0.2, 0.5, 0.7, 1] },
+                    x: { duration: 0.5, delay: i * 0.1, ease: "easeOut" },
+                    y: { duration: 0.4, ease: "easeIn" },
+                    scale: { duration: 0.5, delay: melting ? 0 : i * 0.1, ease: "easeOut" },
+                    filter: { duration: 0.4, delay: i * 0.1 },
+                    textShadow: formed
+                      ? { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                      : { duration: 0.3, delay: i * 0.1 },
+                  }}
+                  className="font-heading text-[12vw] leading-[0.85] tracking-wider select-none inline-block"
+                  style={{ color: "#F5F5F5" }}
+                >
+                  {letter}
+                </motion.span>
+              ))}
+            </div>
 
             {/* Red light lines */}
             <motion.div
