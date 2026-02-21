@@ -242,12 +242,14 @@ export default function Hero() {
                     x: 0,
                     y: melting ? 4 + i * 2 : 0,
                     scale: melting ? 1.02 : 1,
-                    ...(isMobile ? {} : { filter: "blur(0px)" }),
-                    textShadow: isMobile
-                      ? redGlow
-                      : formed
-                      ? [redGlow, redGlowIntense, redGlow]
-                      : redGlow,
+                    ...(isMobile
+                      ? {}
+                      : {
+                          filter: "blur(0px)",
+                          textShadow: formed
+                            ? [redGlow, redGlowIntense, redGlow]
+                            : redGlow,
+                        }),
                   }}
                   transition={{
                     opacity: {
@@ -263,7 +265,7 @@ export default function Hero() {
                       ease: "easeOut",
                     },
                     ...(isMobile
-                      ? { textShadow: { duration: 0.3, delay: i * 0.08 } }
+                      ? {}
                       : {
                           filter: { duration: 0.4, delay: i * 0.1 },
                           textShadow: formed
@@ -272,7 +274,7 @@ export default function Hero() {
                         }),
                   }}
                   className="font-heading text-[16vw] sm:text-[12vw] leading-[0.85] tracking-wider select-none inline-block"
-                  style={{ color: "#F5F5F5", willChange: "transform, opacity" }}
+                  style={{ color: "#F5F5F5", ...(isMobile ? {} : { willChange: "transform, opacity" }) }}
                 >
                   {letter}
                 </motion.span>
