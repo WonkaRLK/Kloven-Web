@@ -181,7 +181,7 @@ export default function CartDrawer() {
               <label className="text-xs font-bold uppercase text-gray-500 mb-2 block">
                 Codigo de Descuento
               </label>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
                   value={promoCode}

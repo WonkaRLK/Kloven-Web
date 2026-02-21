@@ -25,7 +25,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         />
 
         {/* Hover overlay */}
-        <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex flex-col gap-2 bg-gradient-to-t from-black/80 to-transparent pt-12">
+        <div className="absolute inset-x-0 bottom-0 p-4 translate-y-0 md:translate-y-full md:group-hover:translate-y-0 transition-transform duration-300 flex flex-col gap-2 bg-gradient-to-t from-black/80 to-transparent pt-12">
           <span className="w-full bg-white text-black py-3 text-sm font-bold uppercase tracking-widest text-center flex items-center justify-center gap-2">
             Ver Producto
             <ShoppingBag className="w-4 h-4" />

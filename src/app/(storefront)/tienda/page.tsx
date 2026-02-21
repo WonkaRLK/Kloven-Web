@@ -44,12 +44,12 @@ function TiendaContent() {
     <div className="pt-24">
       {/* Category filters */}
       <div className="container mx-auto px-4 mb-8">
-        <div className="flex items-center gap-4 flex-wrap">
+        <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.id}
               href={cat.id === "all" ? "/tienda" : `/tienda?cat=${cat.id}`}
-              className={`text-sm font-bold uppercase tracking-widest px-4 py-2 transition-all ${
+              className={`text-xs sm:text-sm font-bold uppercase tracking-widest px-3 sm:px-4 py-2 transition-all ${
                 activeCategory === cat.id
                   ? "text-black border-b-2 border-black"
                   : "text-gray-400 hover:text-black"
@@ -62,7 +62,7 @@ function TiendaContent() {
       </div>
 
       <section className="container mx-auto px-4 pb-20">
-        <div className="flex items-end justify-between mb-12">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-2 sm:gap-0 mb-8 sm:mb-12">
           <div>
             <span className="text-kloven-red font-bold uppercase tracking-widest text-sm mb-2 block">
               Catalogo
@@ -79,7 +79,7 @@ function TiendaContent() {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-10 gap-y-10 sm:gap-y-16">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="animate-pulse">
                 <div className="aspect-[3/4] bg-gray-200 rounded-sm mb-6" />
@@ -90,7 +90,7 @@ function TiendaContent() {
             ))}
           </div>
         ) : products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-10 gap-y-10 sm:gap-y-16">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

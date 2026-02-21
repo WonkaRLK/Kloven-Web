@@ -7,16 +7,16 @@ import { ArrowRight, Star } from "lucide-react";
 export default function Hero() {
   return (
     <div className="relative pt-24 pb-16 md:pt-40 md:pb-28 bg-gray-50 overflow-hidden">
-      <div className="absolute top-0 right-0 w-2/3 h-full bg-gray-100 transform skew-x-12 translate-x-1/4" />
+      <div className="absolute top-0 right-0 w-2/3 h-full bg-gray-100 transform skew-x-6 sm:skew-x-12 translate-x-1/4" />
       <div className="container mx-auto px-4 flex flex-col md:flex-row items-center relative z-10">
         <div className="w-full md:w-1/2 mb-10 md:mb-0 pr-0 md:pr-12 animate-slide-up">
           <div className="inline-flex items-center gap-2 py-1 px-3 bg-black text-white text-xs font-bold uppercase tracking-widest mb-6 rounded-full">
             <Star className="w-3 h-3 text-yellow-400" fill="currentColor" />
             Nueva Coleccion 2026
           </div>
-          <h1 className="text-5xl md:text-8xl font-black leading-[0.9] mb-8 tracking-tighter">
-            REDEFINI <br />
-            TU ESTILO <br />
+          <h1 className="text-4xl sm:text-5xl md:text-8xl font-black leading-[0.9] mb-8 tracking-tighter">
+            REDEFINI <br className="hidden md:inline" />
+            TU ESTILO <br className="hidden md:inline" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-600 to-black">
               OVERSIZE & STREETWEAR
             </span>
@@ -27,7 +27,7 @@ export default function Hero() {
           </p>
           <Link
             href="/tienda"
-            className="group inline-flex bg-black text-white px-10 py-5 font-bold uppercase tracking-widest hover:bg-kloven-red transition-colors duration-300 items-center gap-3 shadow-xl shadow-black/20"
+            className="group inline-flex bg-black text-white px-6 py-4 sm:px-10 sm:py-5 font-bold uppercase tracking-widest hover:bg-kloven-red transition-colors duration-300 items-center gap-3 shadow-xl shadow-black/20"
           >
             Ver Catalogo
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

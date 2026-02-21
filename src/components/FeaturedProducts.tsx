@@ -19,8 +19,8 @@ export default function FeaturedProducts() {
   }, []);
 
   return (
-    <section className="container mx-auto px-4 py-20 bg-white relative z-20">
-      <div className="flex items-end justify-between mb-16">
+    <section className="container mx-auto px-4 py-12 sm:py-20 bg-white relative z-20">
+      <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-2 sm:gap-0 mb-10 sm:mb-16">
         <div>
           <span className="text-kloven-red font-bold uppercase tracking-widest text-sm mb-2 block">
             Coleccion
@@ -35,7 +35,7 @@ export default function FeaturedProducts() {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-10 gap-y-10 sm:gap-y-16">
           {[1, 2, 3].map((i) => (
             <div key={i} className="animate-pulse">
               <div className="aspect-[3/4] bg-gray-200 rounded-sm mb-6" />
@@ -46,7 +46,7 @@ export default function FeaturedProducts() {
           ))}
         </div>
       ) : products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-10 gap-y-10 sm:gap-y-16">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

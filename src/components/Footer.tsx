@@ -3,13 +3,13 @@ import { Crown, Instagram } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-white pt-20 pb-10 border-t border-gray-900">
+    <footer className="bg-black text-white pt-12 sm:pt-20 pb-10 border-t border-gray-900">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 sm:gap-16 mb-16">
           <div className="col-span-1">
             <div className="flex items-center gap-2 mb-6">
               <Crown className="w-8 h-8 text-white" />
-              <h3 className="text-3xl font-black tracking-tighter">
+              <h3 className="text-2xl sm:text-3xl font-black tracking-tighter">
                 KLOVEN<span className="text-kloven-red">.</span>
               </h3>
             </div>

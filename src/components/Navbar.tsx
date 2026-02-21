@@ -49,7 +49,7 @@ export default function Navbar() {
           className="flex items-center gap-2 cursor-pointer select-none"
         >
           <Crown className="w-8 h-8 text-black" strokeWidth={2.5} />
-          <div className="text-3xl font-black tracking-tighter uppercase">
+          <div className="text-2xl sm:text-3xl font-black tracking-tighter uppercase">
             Kloven<span className="text-kloven-red">.</span>
           </div>
         </Link>

@@ -138,7 +138,7 @@ export default function ProductoPage() {
           Volver al catalogo
         </Link>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-12">
           {/* Image */}
           <div className="aspect-[3/4] bg-gray-100 overflow-hidden relative rounded-sm shadow-lg">
             <Image
@@ -217,7 +217,7 @@ export default function ProductoPage() {
               <span className="font-bold uppercase tracking-widest text-xs text-gray-500 block mb-3">
                 Talle
               </span>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 {SIZES.map((size) => {
                   const isAvailable = availableSizes.includes(size);
                   const stock =
@@ -231,7 +231,7 @@ export default function ProductoPage() {
                       key={size}
                       onClick={() => hasStock && setSelectedSize(size)}
                       disabled={!hasStock}
-                      className={`w-14 h-14 text-sm font-bold border transition-all ${
+                      className={`w-11 h-11 sm:w-14 sm:h-14 text-sm font-bold border transition-all ${
                         selectedSize === size
                           ? "border-black bg-black text-white"
                           : hasStock
@@ -300,7 +300,7 @@ export default function ProductoPage() {
             <h2 className="text-2xl font-black uppercase tracking-tighter mb-10">
               Tambien te puede gustar
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-10 gap-y-10 sm:gap-y-16">
               {related.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}
