@@ -315,10 +315,10 @@ export default function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] items-center w-full"
+              className="flex flex-col md:flex-row items-center w-full min-h-screen"
             >
-              {/* Left: Manifesto */}
-              <div className="flex flex-col justify-center px-4 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-12">
+              {/* Left: Manifesto — fixed width */}
+              <div className="flex flex-col justify-center px-4 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-12 md:w-[40%] md:shrink-0">
                 <AnimatePresence mode="wait">
                   <motion.p
                     key={manifestoIndex}
@@ -347,7 +347,7 @@ export default function Hero() {
               {featuredProduct && (
                 <Link
                   href={`/producto/${featuredProduct.slug}`}
-                  className="group relative w-full h-[80vh] overflow-hidden block"
+                  className="group relative w-full h-[70vh] overflow-hidden block"
                 >
                   <Image
                     src={featuredProduct.image_url}
