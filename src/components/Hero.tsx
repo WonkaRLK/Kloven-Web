@@ -69,31 +69,30 @@ export default function Hero() {
     }, 80);
   }, []);
 
-  // Auto-glitch at random intervals between 1.5-4s
+  // Auto-glitch at random intervals between 0.5-1.5s (fast, 3s window)
   useEffect(() => {
     if (!showTitle) return;
 
     let timeout: ReturnType<typeof setTimeout>;
     const scheduleNext = () => {
-      const delay = 1500 + Math.random() * 2500;
+      const delay = 500 + Math.random() * 1000;
       timeout = setTimeout(() => {
         if (!glitching) triggerGlitch();
         scheduleNext();
       }, delay);
     };
 
-    // First glitch after 1s
     timeout = setTimeout(() => {
       triggerGlitch();
       scheduleNext();
-    }, 1000);
+    }, 400);
 
     return () => clearTimeout(timeout);
   }, [showTitle, glitching, triggerGlitch]);
 
-  // Hide title after 10s
+  // Hide title after 3s with smoke effect
   useEffect(() => {
-    const timer = setTimeout(() => setShowTitle(false), 10000);
+    const timer = setTimeout(() => setShowTitle(false), 3000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -105,10 +104,15 @@ export default function Hero() {
         <AnimatePresence>
           {showTitle && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, y: -80 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
+              initial={{ opacity: 0, scale: 0.95, filter: "blur(0px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              exit={{
+                opacity: 0,
+                scale: 1.15,
+                y: -40,
+                filter: "blur(20px)",
+              }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
               className="relative"
             >
               <h1 className="font-heading text-[20vw] sm:text-[15vw] leading-[0.85] tracking-wider text-kloven-white select-none">
