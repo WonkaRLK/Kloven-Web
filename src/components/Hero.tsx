@@ -93,11 +93,10 @@ export default function Hero() {
   useEffect(() => {
     const formTimer = setTimeout(() => setFormed(true), 800);
     const meltTimer = setTimeout(() => setMelting(true), 1100);
-    // Mobile: trigger CSS exit class first, then remove after animation
     const exitStartTimer = isMobile
-      ? setTimeout(() => setTitleExiting(true), 1200)
+      ? setTimeout(() => setTitleExiting(true), 500)
       : undefined;
-    const exitTimer = setTimeout(() => setShowTitle(false), isMobile ? 1600 : 1500);
+    const exitTimer = setTimeout(() => setShowTitle(false), isMobile ? 800 : 1500);
     return () => {
       clearTimeout(formTimer);
       clearTimeout(meltTimer);
@@ -191,30 +190,21 @@ export default function Hero() {
         )}
       </AnimatePresence>
 
-      {/* Phase 1: Title reveal */}
-      {/* Mobile: fully CSS-driven, no Framer Motion on text */}
+      {/* Phase 1: Mobile — pure CSS fade in/out */}
       {isMobile && showTitle && (
         <div className="absolute inset-0 z-20 flex items-center justify-center">
           <h1
-            className={`font-heading text-[16vw] leading-[0.85] select-none text-kloven-white ${
-              titleExiting ? "animate-kloven-exit" : "animate-kloven-reveal"
-            }`}
-            style={{ textShadow: "0 0 6px rgba(217,4,41,0.5)" }}
+            className="font-heading text-[16vw] leading-[0.85] tracking-[0.12em] select-none text-kloven-white"
+            style={{
+              opacity: titleExiting ? 0 : 1,
+              transition: "opacity 0.3s ease",
+              animationName: titleExiting ? "none" : "fadeIn",
+              animationDuration: "0.4s",
+              animationFillMode: "backwards",
+            }}
           >
             KLOVEN
           </h1>
-          {/* Red line */}
-          <div
-            className={`absolute left-[10%] right-[10%] h-[1px] top-1/2 -translate-y-6 ${
-              titleExiting ? "opacity-0" : "animate-fade-in"
-            }`}
-            style={{
-              background: "linear-gradient(90deg, transparent 0%, rgba(217,4,41,0.8) 30%, rgba(217,4,41,0.9) 50%, rgba(217,4,41,0.8) 70%, transparent 100%)",
-              animationDelay: "0.3s",
-              animationFillMode: "backwards",
-              transition: "opacity 0.3s",
-            }}
-          />
         </div>
       )}
 
