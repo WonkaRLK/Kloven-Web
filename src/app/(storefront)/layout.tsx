@@ -16,6 +16,7 @@ export default function StorefrontLayout({
         <div className="min-h-screen flex flex-col bg-kloven-black text-kloven-white">
           <CustomCursor />
           <div className="noise-overlay" />
+          <div className="scanlines-overlay" />
           <Navbar />
           <CartDrawer />
           <main className="flex-grow">{children}</main>

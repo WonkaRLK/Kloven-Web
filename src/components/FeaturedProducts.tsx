@@ -25,15 +25,15 @@ export default function FeaturedProducts() {
       <ScrollReveal>
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-2 sm:gap-0 mb-10 sm:mb-16">
           <div>
-            <span className="text-kloven-red font-bold uppercase tracking-widest text-sm mb-2 block">
-              Coleccion
-            </span>
-            <h2 className="font-heading text-5xl md:text-6xl uppercase tracking-wider">
+            <h2
+              className="glitch-text font-heading text-5xl md:text-6xl uppercase tracking-wider"
+              data-text="Ultimos Drops"
+            >
               Ultimos Drops
             </h2>
           </div>
-          <span className="text-sm font-bold text-kloven-ash border-b border-kloven-smoke pb-1">
-            {products.length} productos
+          <span className="text-sm font-bold text-kloven-ash font-mono tabular-nums">
+            [{String(products.length).padStart(2, "0")}] items
           </span>
         </div>
       </ScrollReveal>
@@ -42,10 +42,10 @@ export default function FeaturedProducts() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-10 gap-y-10 sm:gap-y-16">
           {[1, 2, 3].map((i) => (
             <div key={i} className="animate-pulse">
-              <div className="aspect-[3/4] bg-kloven-dark rounded-sm mb-6" />
-              <div className="h-4 bg-kloven-dark rounded w-1/3 mx-auto mb-2" />
-              <div className="h-5 bg-kloven-dark rounded w-2/3 mx-auto mb-2" />
-              <div className="h-6 bg-kloven-dark rounded w-1/4 mx-auto" />
+              <div className="aspect-[3/4] bg-kloven-dark mb-6" />
+              <div className="h-4 bg-kloven-dark w-1/3 mx-auto mb-2" />
+              <div className="h-5 bg-kloven-dark w-2/3 mx-auto mb-2" />
+              <div className="h-6 bg-kloven-dark w-1/4 mx-auto" />
             </div>
           ))}
         </div>
@@ -58,7 +58,7 @@ export default function FeaturedProducts() {
           ))}
         </StaggerContainer>
       ) : (
-        <div className="text-center py-32 bg-kloven-dark rounded-lg border border-dashed border-kloven-smoke">
+        <div className="text-center py-32 bg-kloven-dark border border-dashed border-kloven-smoke">
           <p className="text-kloven-ash text-lg font-medium">
             Proximamente nuevos productos.
           </p>

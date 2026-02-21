@@ -97,12 +97,12 @@ export default function ProductoPage() {
     return (
       <div className="pt-28 container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 animate-pulse">
-          <div className="aspect-[3/4] bg-kloven-dark rounded-sm" />
+          <div className="aspect-[3/4] bg-kloven-dark" />
           <div className="space-y-4 py-8">
-            <div className="h-4 bg-kloven-dark rounded w-1/4" />
-            <div className="h-8 bg-kloven-dark rounded w-3/4" />
-            <div className="h-6 bg-kloven-dark rounded w-1/4" />
-            <div className="h-20 bg-kloven-dark rounded w-full mt-8" />
+            <div className="h-4 bg-kloven-dark w-1/4" />
+            <div className="h-8 bg-kloven-dark w-3/4" />
+            <div className="h-6 bg-kloven-dark w-1/4" />
+            <div className="h-20 bg-kloven-dark w-full mt-8" />
           </div>
         </div>
       </div>
@@ -128,7 +128,7 @@ export default function ProductoPage() {
       <div className="container mx-auto px-4">
         <Link
           href="/tienda"
-          className="inline-flex items-center gap-2 text-sm text-kloven-ash hover:text-kloven-white mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-kloven-ash hover:text-kloven-red mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver al catalogo
@@ -137,7 +137,7 @@ export default function ProductoPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-12">
           {/* Image */}
           <ScrollReveal direction="left">
-            <div className="aspect-[3/4] bg-kloven-dark overflow-hidden relative rounded-sm border border-kloven-smoke">
+            <div className="aspect-[3/4] bg-kloven-dark overflow-hidden relative border border-kloven-smoke">
               <Image
                 src={product.image_url}
                 alt={product.name}
@@ -189,7 +189,7 @@ export default function ProductoPage() {
                 </div>
               )}
 
-              {/* Color selector */}
+              {/* Color selector — thicker borders */}
               {availableColors.length > 0 && (
                 <div className="mb-6">
                   <span className="font-bold uppercase tracking-widest text-xs text-kloven-ash block mb-3">
@@ -200,7 +200,7 @@ export default function ProductoPage() {
                       <button
                         key={color}
                         onClick={() => setSelectedColor(color)}
-                        className={`px-4 py-2 text-sm font-medium border transition-all ${
+                        className={`px-4 py-2 text-sm font-bold border-2 ${
                           selectedColor === color
                             ? "border-kloven-red bg-kloven-red text-white"
                             : "border-kloven-smoke text-kloven-white hover:border-kloven-red"
@@ -213,7 +213,7 @@ export default function ProductoPage() {
                 </div>
               )}
 
-              {/* Size selector */}
+              {/* Size selector — thicker borders */}
               <div className="mb-8">
                 <span className="font-bold uppercase tracking-widest text-xs text-kloven-ash block mb-3">
                   Talle
@@ -231,7 +231,7 @@ export default function ProductoPage() {
                         key={size}
                         onClick={() => hasStock && setSelectedSize(size)}
                         disabled={!hasStock}
-                        className={`w-11 h-11 sm:w-14 sm:h-14 text-sm font-bold border transition-all ${
+                        className={`w-11 h-11 sm:w-14 sm:h-14 text-sm font-bold border-2 ${
                           selectedSize === size
                             ? "border-kloven-red bg-kloven-red text-white"
                             : hasStock
@@ -265,15 +265,15 @@ export default function ProductoPage() {
                 </div>
               )}
 
-              {/* Add to cart */}
+              {/* Add to cart — hover shake instead of glow */}
               <button
                 onClick={handleAddToCart}
                 disabled={!selectedVariant || selectedVariant.stock <= 0}
-                className={`w-full py-4 font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
+                className={`w-full py-4 font-bold uppercase tracking-widest flex items-center justify-center gap-2 ${
                   added
                     ? "bg-green-600 text-white"
                     : selectedVariant && selectedVariant.stock > 0
-                    ? "bg-kloven-red text-white hover:bg-kloven-red-dark glow-red"
+                    ? "bg-kloven-red text-white hover:bg-kloven-red-dark hover:animate-[cardShake_0.3s_steps(4)_infinite]"
                     : "bg-kloven-smoke text-kloven-ash cursor-not-allowed"
                 }`}
               >

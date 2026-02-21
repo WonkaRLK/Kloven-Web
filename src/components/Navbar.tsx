@@ -43,7 +43,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-40 ${
         scrolled
           ? "bg-kloven-black/90 backdrop-blur-md border-b border-kloven-smoke shadow-lg shadow-black/20"
           : "bg-transparent"
@@ -62,26 +62,25 @@ export default function Navbar() {
           )}
         </button>
 
-        {/* Logo */}
+        {/* Logo — bigger, bolder */}
         <Link
           href="/"
           className="flex items-center cursor-pointer select-none"
         >
-          <span className="font-heading text-3xl sm:text-4xl tracking-wider text-kloven-white">
+          <span className="font-heading text-4xl sm:text-5xl tracking-wider text-kloven-white">
             KLOVEN<span className="text-kloven-red">.</span>
           </span>
         </Link>
 
-        {/* Desktop Links */}
+        {/* Desktop Links — instant color change on hover, no underline animation */}
         <div className="hidden md:flex items-center space-x-8">
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.id}
               href={cat.id === "all" ? "/tienda" : `/tienda?cat=${cat.id}`}
-              className="relative text-sm font-bold uppercase tracking-widest transition-colors text-kloven-ash hover:text-kloven-white group"
+              className="text-sm font-bold uppercase tracking-widest text-kloven-ash hover:text-kloven-red"
             >
               {cat.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-kloven-red transition-all duration-300 group-hover:w-full" />
             </Link>
           ))}
         </div>
@@ -95,7 +94,7 @@ export default function Navbar() {
                 <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-2 text-kloven-ash hover:text-kloven-white transition-colors"
+                    className="flex items-center gap-2 text-kloven-ash hover:text-kloven-white"
                   >
                     {user.user_metadata?.avatar_url ? (
                       <Image
@@ -103,7 +102,7 @@ export default function Navbar() {
                         alt="Avatar"
                         width={28}
                         height={28}
-                        className="rounded-full border border-kloven-smoke"
+                        className="border border-kloven-smoke"
                       />
                     ) : (
                       <User className="w-5 h-5" />
@@ -122,7 +121,7 @@ export default function Navbar() {
                         initial={{ opacity: 0, y: -5, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -5, scale: 0.95 }}
-                        className="absolute right-0 top-full mt-2 w-48 bg-kloven-dark border border-kloven-smoke rounded-sm shadow-xl overflow-hidden"
+                        className="absolute right-0 top-full mt-2 w-48 bg-kloven-dark border border-kloven-smoke shadow-xl overflow-hidden"
                       >
                         <div className="px-4 py-3 border-b border-kloven-smoke">
                           <p className="text-sm font-bold text-kloven-white truncate">
@@ -138,7 +137,7 @@ export default function Navbar() {
                         <Link
                           href="/perfil"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-3 text-sm text-kloven-ash hover:text-kloven-white hover:bg-kloven-carbon transition-colors"
+                          className="flex items-center gap-2 px-4 py-3 text-sm text-kloven-ash hover:text-kloven-white hover:bg-kloven-carbon"
                         >
                           <User className="w-4 h-4" />
                           Mi Perfil
@@ -148,7 +147,7 @@ export default function Navbar() {
                             setUserMenuOpen(false);
                             signOut();
                           }}
-                          className="flex items-center gap-2 px-4 py-3 text-sm text-kloven-ash hover:text-kloven-red hover:bg-kloven-carbon transition-colors w-full"
+                          className="flex items-center gap-2 px-4 py-3 text-sm text-kloven-ash hover:text-kloven-red hover:bg-kloven-carbon w-full"
                         >
                           <LogOut className="w-4 h-4" />
                           Cerrar sesion
@@ -160,7 +159,7 @@ export default function Navbar() {
               ) : (
                 <button
                   onClick={signInWithGoogle}
-                  className="hidden sm:flex items-center gap-2 text-kloven-ash hover:text-kloven-white transition-colors text-sm font-medium"
+                  className="hidden sm:flex items-center gap-2 text-kloven-ash hover:text-kloven-white text-sm font-medium"
                 >
                   <User className="w-5 h-5" />
                 </button>
@@ -170,7 +169,7 @@ export default function Navbar() {
 
           {/* Cart */}
           <button
-            className="relative text-kloven-white hover:text-kloven-red transition-colors"
+            className="relative text-kloven-white hover:text-kloven-red"
             onClick={() => setIsOpen(true)}
           >
             <ShoppingBag className="w-6 h-6" />
@@ -180,7 +179,7 @@ export default function Navbar() {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
-                  className="absolute -top-1 -right-1 bg-kloven-red text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center"
+                  className="absolute -top-1 -right-1 bg-kloven-red text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center"
                 >
                   {totalItems}
                 </motion.span>
@@ -190,7 +189,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay — square corners, no rounded */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -204,7 +203,7 @@ export default function Navbar() {
                 key={cat.id}
                 href={cat.id === "all" ? "/tienda" : `/tienda?cat=${cat.id}`}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-white hover:bg-kloven-carbon transition-all"
+                className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-red hover:bg-kloven-carbon"
               >
                 {cat.label}
               </Link>
@@ -216,7 +215,7 @@ export default function Navbar() {
                     <Link
                       href="/perfil"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-white hover:bg-kloven-carbon transition-all flex items-center gap-2"
+                      className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-white hover:bg-kloven-carbon flex items-center gap-2"
                     >
                       <User className="w-4 h-4" />
                       Mi Perfil
@@ -232,7 +231,7 @@ export default function Navbar() {
                         setIsMobileMenuOpen(false);
                         signOut();
                       }}
-                      className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-red hover:bg-kloven-carbon transition-all flex items-center gap-2"
+                      className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-red hover:bg-kloven-carbon flex items-center gap-2"
                     >
                       <LogOut className="w-4 h-4" />
                       Cerrar sesion
@@ -244,7 +243,7 @@ export default function Navbar() {
                       setIsMobileMenuOpen(false);
                       signInWithGoogle();
                     }}
-                    className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-white hover:bg-kloven-carbon transition-all flex items-center gap-2"
+                    className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-white hover:bg-kloven-carbon flex items-center gap-2"
                   >
                     <User className="w-4 h-4" />
                     Iniciar sesion

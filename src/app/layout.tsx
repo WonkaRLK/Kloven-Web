@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Space_Grotesk } from "next/font/google";
+import { Archivo_Black, Familjen_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const bebas = Bebas_Neue({
-  variable: "--font-bebas",
+const archivo = Archivo_Black({
+  variable: "--font-heading",
   subsets: ["latin"],
   weight: "400",
 });
 
-const space = Space_Grotesk({
-  variable: "--font-space",
+const familjen = Familjen_Grotesk({
+  variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${bebas.variable} ${space.variable} antialiased`}>
+      <body className={`${archivo.variable} ${familjen.variable} antialiased`}>
         {children}
       </body>
     </html>

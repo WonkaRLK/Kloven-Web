@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 sm:gap-16 mb-16">
           <div className="col-span-1">
             <div className="mb-6">
-              <h3 className="font-heading text-3xl sm:text-4xl tracking-wider">
+              <h3 className="font-heading text-4xl sm:text-5xl tracking-wider">
                 KLOVEN<span className="text-kloven-red">.</span>
               </h3>
             </div>
@@ -25,7 +25,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/"
-                  className="hover:text-kloven-white hover:translate-x-1 inline-block transition-all"
+                  className="hover:text-kloven-red inline-block"
                 >
                   Inicio
                 </Link>
@@ -33,7 +33,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/tienda"
-                  className="hover:text-kloven-white hover:translate-x-1 inline-block transition-all"
+                  className="hover:text-kloven-red inline-block"
                 >
                   Catalogo
                 </Link>
@@ -46,17 +46,17 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3 text-sm text-kloven-ash font-medium">
               <li>
-                <span className="hover:text-kloven-white hover:translate-x-1 inline-block transition-all cursor-pointer">
+                <span className="hover:text-kloven-red inline-block cursor-pointer">
                   Tabla de Talles
                 </span>
               </li>
               <li>
-                <span className="hover:text-kloven-white hover:translate-x-1 inline-block transition-all cursor-pointer">
+                <span className="hover:text-kloven-red inline-block cursor-pointer">
                   Envios y Devoluciones
                 </span>
               </li>
               <li>
-                <span className="hover:text-kloven-white hover:translate-x-1 inline-block transition-all cursor-pointer">
+                <span className="hover:text-kloven-red inline-block cursor-pointer">
                   Preguntas Frecuentes
                 </span>
               </li>
@@ -69,9 +69,9 @@ export default function Footer() {
             <div className="flex space-x-4">
               <a
                 href="#"
-                className="w-12 h-12 border border-kloven-smoke flex items-center justify-center hover:bg-kloven-red hover:border-kloven-red transition-all rounded-full group"
+                className="w-12 h-12 border border-kloven-smoke flex items-center justify-center hover:bg-kloven-red hover:border-kloven-red group"
               >
-                <Instagram className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <Instagram className="w-5 h-5" />
               </a>
             </div>
           </div>
@@ -79,10 +79,10 @@ export default function Footer() {
         <div className="border-t border-kloven-smoke pt-10 flex flex-col md:flex-row justify-between items-center text-xs text-kloven-ash font-medium">
           <p>&copy; 2026 Kloven Argentina. Todos los derechos reservados.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <span className="cursor-pointer hover:text-kloven-white transition-colors">
+            <span className="cursor-pointer hover:text-kloven-red">
               Privacidad
             </span>
-            <span className="cursor-pointer hover:text-kloven-white transition-colors">
+            <span className="cursor-pointer hover:text-kloven-red">
               Terminos
             </span>
           </div>
