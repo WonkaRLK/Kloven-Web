@@ -162,8 +162,17 @@ export default function Hero() {
       <AnimatePresence>
         {showTitle && (
           <motion.div
-            exit={{ opacity: 0, scale: 1.08, filter: "blur(20px)" }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            exit={{
+              y: "-42vh",
+              x: "-30vw",
+              scale: 0.08,
+              opacity: 0,
+            }}
+            transition={{
+              duration: 0.7,
+              ease: [0.76, 0, 0.24, 1],
+              opacity: { delay: 0.4, duration: 0.3 },
+            }}
             className="absolute inset-0 z-20 flex items-center justify-center"
           >
             <div
