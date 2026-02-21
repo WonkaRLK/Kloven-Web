@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ShoppingBag, Menu, X, User, LogOut, Star } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import KlovenLogo from "@/components/KlovenLogo";
 import { categoryLabels } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -62,14 +63,13 @@ export default function Navbar() {
           )}
         </button>
 
-        {/* Logo — bigger, bolder */}
+        {/* Logo */}
         <Link
           href="/"
-          className="flex items-center cursor-pointer select-none"
+          className="flex items-center cursor-pointer select-none text-kloven-white"
         >
-          <span className="font-heading text-4xl sm:text-5xl tracking-wider text-kloven-white">
-            KLOVEN<span className="text-kloven-red">.</span>
-          </span>
+          <KlovenLogo height={36} className="sm:hidden" />
+          <KlovenLogo height={44} className="hidden sm:block" />
         </Link>
 
         {/* Desktop Links — instant color change on hover, no underline animation */}
