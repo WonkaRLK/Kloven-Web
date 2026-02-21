@@ -1,13 +1,97 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// 3 distinct glitch pattern sets — each has different clip/offset combos
+const GLITCH_PATTERNS = [
+  // Pattern A: horizontal slices, strong offset
+  [
+    { clipPath: "inset(15% 0 65% 0)", x: -4, y: 2 },
+    { clipPath: "inset(65% 0 10% 0)", x: 5, y: -1 },
+    { clipPath: "inset(40% 0 35% 0)", x: -3, y: 3 },
+  ],
+  // Pattern B: thin slices, vertical jitter
+  [
+    { clipPath: "inset(5% 0 85% 0)", x: 3, y: -4 },
+    { clipPath: "inset(50% 0 40% 0)", x: -6, y: 1 },
+    { clipPath: "inset(80% 0 5% 0)", x: 2, y: -3 },
+  ],
+  // Pattern C: wide slices, diagonal feel
+  [
+    { clipPath: "inset(25% 0 45% 0)", x: 6, y: 2 },
+    { clipPath: "inset(70% 0 15% 0)", x: -4, y: -2 },
+    { clipPath: "inset(10% 0 75% 0)", x: 5, y: 3 },
+  ],
+];
+
+interface GlitchLayer {
+  clipPath: string;
+  x: number;
+  y: number;
+  color: string;
+}
+
 export default function Hero() {
   const [showTitle, setShowTitle] = useState(true);
+  const [layers, setLayers] = useState<GlitchLayer[]>([]);
+  const [glitching, setGlitching] = useState(false);
 
+  const triggerGlitch = useCallback(() => {
+    const pattern =
+      GLITCH_PATTERNS[Math.floor(Math.random() * GLITCH_PATTERNS.length)];
+    const colors = ["#00ffff", "#D90429", "#ff00ff"];
+
+    // Rapidly cycle through the pattern's steps
+    let step = 0;
+    setGlitching(true);
+
+    const interval = setInterval(() => {
+      if (step >= pattern.length) {
+        clearInterval(interval);
+        setLayers([]);
+        setGlitching(false);
+        return;
+      }
+      const p = pattern[step];
+      setLayers([
+        { ...p, color: colors[step % colors.length] },
+        {
+          clipPath: p.clipPath,
+          x: -p.x * 1.2,
+          y: -p.y * 0.8,
+          color: colors[(step + 1) % colors.length],
+        },
+      ]);
+      step++;
+    }, 80);
+  }, []);
+
+  // Auto-glitch at random intervals between 1.5-4s
+  useEffect(() => {
+    if (!showTitle) return;
+
+    let timeout: ReturnType<typeof setTimeout>;
+    const scheduleNext = () => {
+      const delay = 1500 + Math.random() * 2500;
+      timeout = setTimeout(() => {
+        if (!glitching) triggerGlitch();
+        scheduleNext();
+      }, delay);
+    };
+
+    // First glitch after 1s
+    timeout = setTimeout(() => {
+      triggerGlitch();
+      scheduleNext();
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, [showTitle, glitching, triggerGlitch]);
+
+  // Hide title after 10s
   useEffect(() => {
     const timer = setTimeout(() => setShowTitle(false), 10000);
     return () => clearTimeout(timer);
@@ -17,7 +101,7 @@ export default function Hero() {
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-kloven-black">
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
-        {/* Giant KLOVEN with glitch — disappears after 10s */}
+        {/* Giant KLOVEN with JS glitch — disappears after 10s */}
         <AnimatePresence>
           {showTitle && (
             <motion.div
@@ -25,13 +109,27 @@ export default function Hero() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, y: -80 }}
               transition={{ duration: 0.6, ease: "easeInOut" }}
+              className="relative"
             >
-              <h1
-                className="glitch-text font-heading text-[20vw] sm:text-[15vw] leading-[0.85] tracking-wider text-kloven-white select-none"
-                data-text="KLOVEN"
-              >
+              <h1 className="font-heading text-[20vw] sm:text-[15vw] leading-[0.85] tracking-wider text-kloven-white select-none">
                 KLOVEN
               </h1>
+              {/* Glitch layers */}
+              {layers.map((layer, i) => (
+                <span
+                  key={i}
+                  aria-hidden
+                  className="absolute inset-0 font-heading text-[20vw] sm:text-[15vw] leading-[0.85] tracking-wider select-none pointer-events-none"
+                  style={{
+                    clipPath: layer.clipPath,
+                    transform: `translate(${layer.x}px, ${layer.y}px)`,
+                    color: layer.color,
+                    opacity: 0.8,
+                  }}
+                >
+                  KLOVEN
+                </span>
+              ))}
             </motion.div>
           )}
         </AnimatePresence>
@@ -54,7 +152,7 @@ export default function Hero() {
           className="w-16 h-[2px] bg-kloven-red mx-auto mt-6 sm:mt-8"
         />
 
-        {/* CTA — text link, not inflated button */}
+        {/* CTA */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
