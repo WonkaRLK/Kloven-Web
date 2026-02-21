@@ -60,21 +60,23 @@ export default function Hero() {
   }, [showTitle]);
 
   // Calculate exit target — position of navbar logo
+  // Runs after isMobile is determined and desktop version is rendered
   useEffect(() => {
-    const navLogo = document.querySelector("[data-navbar-logo]");
-    if (!navLogo || !titleRef.current) return;
-    const logoRect = navLogo.getBoundingClientRect();
-    const titleRect = titleRef.current.getBoundingClientRect();
-    const logoCenterX = logoRect.left + logoRect.width / 2;
-    const logoCenterY = logoRect.top + logoRect.height / 2;
-    const titleCenterX = titleRect.left + titleRect.width / 2;
-    const titleCenterY = titleRect.top + titleRect.height / 2;
-    setExitTarget({
-      x: logoCenterX - titleCenterX,
-      y: logoCenterY - titleCenterY,
-      scale: logoRect.width / titleRect.width,
-    });
-  }, []);
+    if (isMobile !== false || !showTitle) return;
+    // Small delay to ensure the DOM is painted with the desktop letters
+    const timer = setTimeout(() => {
+      const navLogo = document.querySelector("[data-navbar-logo]");
+      if (!navLogo || !titleRef.current) return;
+      const logoRect = navLogo.getBoundingClientRect();
+      const titleRect = titleRef.current.getBoundingClientRect();
+      setExitTarget({
+        x: (logoRect.left + logoRect.width / 2) - (titleRect.left + titleRect.width / 2),
+        y: (logoRect.top + logoRect.height / 2) - (titleRect.top + titleRect.height / 2),
+        scale: logoRect.width / titleRect.width,
+      });
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [isMobile, showTitle]);
 
   // Lightning flashes (desktop only)
   useEffect(() => {
