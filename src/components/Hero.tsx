@@ -117,21 +117,17 @@ export default function Hero() {
   }, []);
 
   return (
-    <motion.div
-      animate={{ minHeight: showTitle ? "100vh" : "100vh" }}
-      className="relative flex items-center justify-center overflow-hidden bg-kloven-black"
-    >
-      <div className="relative z-10 container mx-auto px-4 pt-24 pb-16">
-        {/* Phase 1: Giant KLOVEN glitch */}
-        <AnimatePresence>
-          {showTitle && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, filter: "blur(0px)" }}
-              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, scale: 1.15, y: -40, filter: "blur(20px)" }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
-              className="relative text-center"
-            >
+    <div className="relative min-h-screen overflow-hidden bg-kloven-black">
+      {/* Phase 1: Giant KLOVEN glitch — absolute so it doesn't affect layout */}
+      <AnimatePresence>
+        {showTitle && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, filter: "blur(0px)" }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, scale: 1.15, filter: "blur(20px)" }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="absolute inset-0 z-20 flex items-center justify-center text-center"
+          >
               <h1 className="font-heading text-[16vw] sm:text-[12vw] leading-[0.85] tracking-wider text-kloven-white select-none">
                 KLOVEN
               </h1>
@@ -150,18 +146,19 @@ export default function Hero() {
                   KLOVEN
                 </span>
               ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        {/* Phase 2: Manifesto + Featured product */}
+      {/* Phase 2: Manifesto + Featured product */}
+      <div className="relative z-10 container mx-auto px-4 pt-24 pb-16 flex items-center min-h-screen">
         <AnimatePresence>
           {!showTitle && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center min-h-[60vh]"
+              className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center w-full"
             >
               {/* Left: Manifesto */}
               <div className="flex flex-col justify-center">
@@ -237,6 +234,6 @@ export default function Hero() {
           <ChevronDown className="w-5 h-5" />
         </motion.div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
