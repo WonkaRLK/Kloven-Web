@@ -1,27 +1,40 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Hero() {
+  const [showTitle, setShowTitle] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowTitle(false), 10000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-kloven-black">
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
-        {/* Giant KLOVEN with glitch */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-        >
-          <h1
-            className="glitch-text font-heading text-[20vw] sm:text-[15vw] leading-[0.85] tracking-wider text-kloven-white select-none"
-            data-text="KLOVEN"
-          >
-            KLOVEN
-          </h1>
-        </motion.div>
+        {/* Giant KLOVEN with glitch — disappears after 10s */}
+        <AnimatePresence>
+          {showTitle && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, y: -80 }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+            >
+              <h1
+                className="glitch-text font-heading text-[20vw] sm:text-[15vw] leading-[0.85] tracking-wider text-kloven-white select-none"
+                data-text="KLOVEN"
+              >
+                KLOVEN
+              </h1>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Subtitle */}
         <motion.p
