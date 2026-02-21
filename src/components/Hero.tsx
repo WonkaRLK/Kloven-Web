@@ -313,7 +313,7 @@ export default function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center w-full"
+              className="grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-8 md:gap-0 items-center w-full"
             >
               {/* Left: Manifesto */}
               <div className="flex flex-col justify-center">
@@ -341,11 +341,11 @@ export default function Hero() {
                 </Link>
               </div>
 
-              {/* Right: Featured product */}
+              {/* Right: Featured product — extends to right edge */}
               {featuredProduct && (
                 <Link
                   href={`/producto/${featuredProduct.slug}`}
-                  className="group relative aspect-[3/4] max-h-[65vh] overflow-hidden block"
+                  className="group relative aspect-[3/4] max-h-[75vh] overflow-hidden block md:-mr-[calc((100vw-100%)/2+1rem)]"
                 >
                   <Image
                     src={featuredProduct.image_url}
