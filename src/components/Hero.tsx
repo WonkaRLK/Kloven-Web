@@ -97,7 +97,11 @@ export default function Hero() {
   }, []);
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-kloven-black">
+    <motion.div
+      animate={{ minHeight: showTitle ? "100vh" : "60vh" }}
+      transition={{ duration: 1, ease: "easeInOut", delay: showTitle ? 0 : 1 }}
+      className="relative flex items-center justify-center overflow-hidden bg-kloven-black"
+    >
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         {/* Giant KLOVEN with JS glitch — disappears after 10s */}
@@ -187,6 +191,6 @@ export default function Hero() {
           <ChevronDown className="w-5 h-5" />
         </motion.div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }
