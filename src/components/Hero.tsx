@@ -101,10 +101,10 @@ export default function Hero() {
   }, []);
 
   const redGlow = isMobile
-    ? "0 0 8px rgba(217,4,41,0.8), 0 0 25px rgba(217,4,41,0.4)"
+    ? "0 0 4px rgba(217,4,41,0.6)"
     : "0 0 10px rgba(217,4,41,0.9), 0 0 40px rgba(217,4,41,0.6), 0 0 80px rgba(217,4,41,0.4), 0 0 120px rgba(217,4,41,0.2)";
   const redGlowIntense = isMobile
-    ? "0 0 12px rgba(217,4,41,1), 0 0 35px rgba(217,4,41,0.6)"
+    ? "0 0 6px rgba(217,4,41,0.8)"
     : "0 0 15px rgba(217,4,41,1), 0 0 50px rgba(217,4,41,0.8), 0 0 100px rgba(217,4,41,0.5), 0 0 150px rgba(217,4,41,0.3), 0 0 200px rgba(217,4,41,0.1)";
 
   return (
