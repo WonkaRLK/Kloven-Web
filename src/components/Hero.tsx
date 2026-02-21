@@ -7,14 +7,27 @@ import { ChevronDown, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Product } from "@/lib/types";
 
+const LETTERS = ["K", "L", "O", "V", "E", "N"];
+
 const MANIFESTO = [
   "NO SEGUIMOS\nTENDENCIAS.\nLAS ROMPEMOS.",
   "LA CALLE\nES NUESTRA\nPASARELA.",
   "SIN REGLAS.\nSIN LIMITES.\nSIN COMPROMISOS.",
 ];
 
+// Each letter floats in from a random-ish position
+const LETTER_ORIGINS = [
+  { x: -60, y: -80 },
+  { x: 40, y: 90 },
+  { x: -30, y: 70 },
+  { x: 70, y: -60 },
+  { x: -50, y: -40 },
+  { x: 60, y: 50 },
+];
+
 export default function Hero() {
   const [showTitle, setShowTitle] = useState(true);
+  const [formed, setFormed] = useState(false);
   const [manifestoIndex, setManifestoIndex] = useState(0);
   const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
 
@@ -37,26 +50,68 @@ export default function Hero() {
     return () => clearInterval(interval);
   }, [showTitle]);
 
+  // Letters finish arriving ~1.8s, hold formed for 1.5s, then exit
   useEffect(() => {
-    const timer = setTimeout(() => setShowTitle(false), 1000);
-    return () => clearTimeout(timer);
+    const formTimer = setTimeout(() => setFormed(true), 1800);
+    const exitTimer = setTimeout(() => setShowTitle(false), 3300);
+    return () => {
+      clearTimeout(formTimer);
+      clearTimeout(exitTimer);
+    };
   }, []);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-kloven-black">
-      {/* Phase 1: Giant KLOVEN — clean, no glitch artifacts */}
+      {/* Phase 1: Stranger Things style letter reveal */}
       <AnimatePresence>
         {showTitle && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.15, filter: "blur(20px)" }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
+            exit={{ opacity: 0, scale: 1.1, filter: "blur(24px)" }}
+            transition={{ duration: 1.4, ease: "easeOut" }}
             className="absolute inset-0 z-20 flex items-center justify-center"
           >
-            <h1 className="font-heading text-[16vw] sm:text-[12vw] leading-[0.85] tracking-wider text-kloven-white select-none">
-              KLOVEN
-            </h1>
+            <div className="flex items-center">
+              {LETTERS.map((letter, i) => (
+                <motion.span
+                  key={i}
+                  initial={{
+                    opacity: 0,
+                    x: LETTER_ORIGINS[i].x,
+                    y: LETTER_ORIGINS[i].y,
+                    scale: 0.3,
+                    filter: "blur(12px)",
+                  }}
+                  animate={{
+                    opacity: 1,
+                    x: 0,
+                    y: 0,
+                    scale: 1,
+                    filter: "blur(0px)",
+                    textShadow: formed
+                      ? [
+                          "0 0 20px rgba(217,4,41,0.8), 0 0 60px rgba(217,4,41,0.4), 0 0 100px rgba(217,4,41,0.2)",
+                          "0 0 30px rgba(217,4,41,1), 0 0 80px rgba(217,4,41,0.6), 0 0 120px rgba(217,4,41,0.3)",
+                          "0 0 20px rgba(217,4,41,0.8), 0 0 60px rgba(217,4,41,0.4), 0 0 100px rgba(217,4,41,0.2)",
+                        ]
+                      : "0 0 40px rgba(217,4,41,0.6), 0 0 80px rgba(217,4,41,0.3)",
+                  }}
+                  transition={{
+                    opacity: { duration: 0.6, delay: i * 0.2 },
+                    x: { duration: 0.8, delay: i * 0.2, ease: "easeOut" },
+                    y: { duration: 0.8, delay: i * 0.2, ease: "easeOut" },
+                    scale: { duration: 0.8, delay: i * 0.2, ease: "easeOut" },
+                    filter: { duration: 0.8, delay: i * 0.2 },
+                    textShadow: formed
+                      ? { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                      : { duration: 0.6, delay: i * 0.2 },
+                  }}
+                  className="font-heading text-[16vw] sm:text-[12vw] leading-[0.85] tracking-wider text-kloven-white select-none inline-block"
+                  style={{ color: formed ? "#F5F5F5" : "rgba(245,245,245,0.9)" }}
+                >
+                  {letter}
+                </motion.span>
+              ))}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -135,7 +190,7 @@ export default function Hero() {
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-kloven-ash"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2.5, duration: 0.6 }}
+        transition={{ delay: 4, duration: 0.6 }}
       >
         <span className="text-[10px] uppercase tracking-widest">Scroll</span>
         <motion.div
