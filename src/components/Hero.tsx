@@ -33,7 +33,7 @@ export default function Hero() {
   const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const [exitTarget, setExitTarget] = useState({ x: 0, y: "-45vh" as string | number, scale: 0.06 });
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [titleExiting, setTitleExiting] = useState(false);
 
   useEffect(() => {
@@ -76,9 +76,9 @@ export default function Hero() {
     });
   }, []);
 
-  // Lightning flashes (skip on mobile for performance)
+  // Lightning flashes (desktop only)
   useEffect(() => {
-    if (isMobile) return;
+    if (isMobile !== false) return;
     const flashes = [300, 600, 750, 1000];
     const timers = flashes.map((t) =>
       setTimeout(() => {
@@ -89,10 +89,11 @@ export default function Hero() {
     return () => timers.forEach(clearTimeout);
   }, [isMobile]);
 
-  // Timeline: letters arrive 0.8s, formed glow, melt at 1.1s, exit at 1.5s
+  // Timeline — wait until isMobile is determined
   useEffect(() => {
-    const formTimer = setTimeout(() => setFormed(true), 800);
-    const meltTimer = setTimeout(() => setMelting(true), 1100);
+    if (isMobile === null) return;
+    const formTimer = setTimeout(() => setFormed(true), isMobile ? 0 : 800);
+    const meltTimer = setTimeout(() => setMelting(true), isMobile ? 0 : 1100);
     const exitStartTimer = isMobile
       ? setTimeout(() => setTitleExiting(true), 500)
       : undefined;
@@ -210,7 +211,7 @@ export default function Hero() {
 
       {/* Desktop: Framer Motion letter-by-letter */}
       <AnimatePresence>
-        {!isMobile && showTitle && (
+        {isMobile === false && showTitle && (
           <motion.div
             ref={titleRef}
             exit={{
