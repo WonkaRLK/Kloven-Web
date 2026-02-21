@@ -92,7 +92,7 @@ export default function Hero() {
 
   // Hide title after 3s with smoke effect
   useEffect(() => {
-    const timer = setTimeout(() => setShowTitle(false), 3000);
+    const timer = setTimeout(() => setShowTitle(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -115,7 +115,7 @@ export default function Hero() {
               transition={{ duration: 1.2, ease: "easeOut" }}
               className="relative"
             >
-              <h1 className="font-heading text-[20vw] sm:text-[15vw] leading-[0.85] tracking-wider text-kloven-white select-none">
+              <h1 className="font-heading text-[16vw] sm:text-[12vw] leading-[0.85] tracking-wider text-kloven-white select-none">
                 KLOVEN
               </h1>
               {/* Glitch layers */}
@@ -123,7 +123,7 @@ export default function Hero() {
                 <span
                   key={i}
                   aria-hidden
-                  className="absolute inset-0 font-heading text-[20vw] sm:text-[15vw] leading-[0.85] tracking-wider select-none pointer-events-none"
+                  className="absolute inset-0 font-heading text-[16vw] sm:text-[12vw] leading-[0.85] tracking-wider select-none pointer-events-none"
                   style={{
                     clipPath: layer.clipPath,
                     transform: `translate(${layer.x}px, ${layer.y}px)`,
