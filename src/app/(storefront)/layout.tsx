@@ -14,8 +14,6 @@ export default function StorefrontLayout({
     <AuthProvider>
       <CartProvider>
         <div className="min-h-screen flex flex-col bg-kloven-black text-kloven-white">
-
-          <div className="noise-overlay" />
           <Navbar />
           <CartDrawer />
           <main className="flex-grow">{children}</main>
