@@ -315,7 +315,7 @@ export default function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-[1fr_2fr] items-center w-full"
+              className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] items-center w-full"
             >
               {/* Left: Manifesto */}
               <div className="flex flex-col justify-center px-4 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-12">
@@ -347,7 +347,7 @@ export default function Hero() {
               {featuredProduct && (
                 <Link
                   href={`/producto/${featuredProduct.slug}`}
-                  className="group relative aspect-[3/4] max-h-[85vh] overflow-hidden block ml-auto"
+                  className="group relative w-full h-[80vh] overflow-hidden block"
                 >
                   <Image
                     src={featuredProduct.image_url}
