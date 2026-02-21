@@ -308,17 +308,17 @@ export default function Hero() {
       </AnimatePresence>
 
       {/* Phase 2: Manifesto + Featured product */}
-      <div className="relative z-10 container mx-auto px-4 pt-24 pb-16 flex items-center min-h-screen">
+      <div className="relative z-10 flex items-center min-h-screen">
         <AnimatePresence>
           {!showTitle && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-8 md:gap-0 items-center w-full"
+              className="grid grid-cols-1 md:grid-cols-[1fr_1.4fr] items-center w-full"
             >
               {/* Left: Manifesto */}
-              <div className="flex flex-col justify-center">
+              <div className="flex flex-col justify-center px-4 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-12">
                 <AnimatePresence mode="wait">
                   <motion.p
                     key={manifestoIndex}
@@ -347,7 +347,7 @@ export default function Hero() {
               {featuredProduct && (
                 <Link
                   href={`/producto/${featuredProduct.slug}`}
-                  className="group relative aspect-[3/4] max-h-[75vh] overflow-hidden block md:-mr-[calc((100vw-100%)/2+1rem)]"
+                  className="group relative aspect-[3/4] max-h-[80vh] overflow-hidden block"
                 >
                   <Image
                     src={featuredProduct.image_url}
