@@ -3,8 +3,9 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Check, Loader2, Crown } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { motion } from "framer-motion";
 
 interface OrderData {
   id: string;
@@ -79,30 +80,34 @@ function CompraExitoContent() {
 
   return (
     <div className="pt-28 pb-20 container mx-auto px-4 text-center max-w-2xl">
-      <div className="relative inline-block mb-8">
-        <div className="w-24 h-24 sm:w-32 sm:h-32 bg-green-50 rounded-full flex items-center justify-center text-green-500 mx-auto">
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
+        className="relative inline-block mb-8"
+      >
+        <div className="w-24 h-24 sm:w-32 sm:h-32 bg-green-900/30 rounded-full flex items-center justify-center text-green-400 mx-auto">
           <Check className="w-16 h-16" />
         </div>
-      </div>
+      </motion.div>
 
-      <h1 className="text-4xl md:text-5xl font-black uppercase mb-4 tracking-tighter">
+      <h1 className="font-heading text-5xl md:text-6xl uppercase mb-4 tracking-wider text-kloven-white">
         Pedido Exitoso!
       </h1>
-      <p className="text-gray-500 max-w-md mx-auto mb-10 text-base sm:text-lg">
+      <p className="text-kloven-ash max-w-md mx-auto mb-10 text-base sm:text-lg">
         Recibiras un email con los detalles del envio. Bienvenido a la familia
         Kloven!
       </p>
 
       {loading ? (
-        <div className="flex items-center justify-center gap-3 text-gray-500 mb-10">
+        <div className="flex items-center justify-center gap-3 text-kloven-ash mb-10">
           <Loader2 className="w-5 h-5 animate-spin" />
           <span>Confirmando pago...</span>
         </div>
       ) : order ? (
-        <div className="bg-gray-50 border border-gray-100 p-6 text-left mb-10 rounded-sm">
+        <div className="bg-kloven-dark border border-kloven-smoke p-6 text-left mb-10 rounded-sm">
           <div className="flex items-center gap-2 mb-4">
-            <Crown className="w-5 h-5" />
-            <h2 className="font-black uppercase tracking-wide">
+            <h2 className="font-heading text-2xl uppercase tracking-wider text-kloven-white">
               Resumen del pedido
             </h2>
           </div>
@@ -110,31 +115,31 @@ function CompraExitoContent() {
           <div className="space-y-3 mb-4">
             {order.order_items.map((item, i) => (
               <div key={i} className="flex justify-between text-sm">
-                <span>
+                <span className="text-kloven-ash">
                   {item.product_name} ({item.size}/{item.color}) x{" "}
                   {item.quantity}
                 </span>
-                <span className="font-bold">
+                <span className="font-bold text-kloven-white">
                   ${(item.unit_price * item.quantity).toLocaleString("es-AR")}
                 </span>
               </div>
             ))}
           </div>
 
-          <div className="border-t border-gray-200 pt-3 space-y-1 text-sm">
-            <div className="flex justify-between">
+          <div className="border-t border-kloven-smoke pt-3 space-y-1 text-sm">
+            <div className="flex justify-between text-kloven-ash">
               <span>Subtotal</span>
               <span>${order.subtotal.toLocaleString("es-AR")}</span>
             </div>
             {order.discount_amount > 0 && (
-              <div className="flex justify-between text-green-600">
+              <div className="flex justify-between text-green-400">
                 <span>Descuento</span>
                 <span>
                   -${order.discount_amount.toLocaleString("es-AR")}
                 </span>
               </div>
             )}
-            <div className="flex justify-between">
+            <div className="flex justify-between text-kloven-ash">
               <span>Envio</span>
               <span>
                 {order.shipping_cost === 0
@@ -142,7 +147,7 @@ function CompraExitoContent() {
                   : `$${order.shipping_cost.toLocaleString("es-AR")}`}
               </span>
             </div>
-            <div className="flex justify-between font-black text-lg border-t border-gray-200 pt-2 mt-2">
+            <div className="flex justify-between font-black text-lg border-t border-kloven-smoke pt-2 mt-2 text-kloven-white">
               <span>Total</span>
               <span>${order.total.toLocaleString("es-AR")}</span>
             </div>
@@ -152,7 +157,7 @@ function CompraExitoContent() {
 
       <Link
         href="/tienda"
-        className="inline-block bg-black text-white px-6 py-3 sm:px-10 sm:py-4 font-bold uppercase tracking-widest hover:bg-kloven-red transition-colors shadow-lg"
+        className="inline-block bg-kloven-red text-white px-6 py-3 sm:px-10 sm:py-4 font-bold uppercase tracking-widest hover:bg-kloven-red-dark transition-colors glow-red"
       >
         Seguir comprando
       </Link>
@@ -165,7 +170,7 @@ export default function CompraExitoPage() {
     <Suspense
       fallback={
         <div className="pt-28 pb-20 container mx-auto px-4 text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-gray-400" />
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-kloven-ash" />
         </div>
       }
     >

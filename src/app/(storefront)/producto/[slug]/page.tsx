@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ShoppingBag, ArrowLeft, Check } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import ProductCard from "@/components/ProductCard";
+import ScrollReveal from "@/components/animations/ScrollReveal";
 import type {
   ProductWithVariants,
   ProductVariant,
@@ -30,7 +31,6 @@ export default function ProductoPage() {
   const [added, setAdded] = useState(false);
   const [related, setRelated] = useState<Product[]>([]);
 
-  // Fetch product
   useEffect(() => {
     fetch(`/api/products/${slug}`)
       .then((r) => r.json())
@@ -45,7 +45,6 @@ export default function ProductoPage() {
       .catch(() => setLoading(false));
   }, [slug]);
 
-  // Fetch related products
   useEffect(() => {
     if (!product) return;
     fetch(`/api/products?category=${product.category}`)
@@ -60,7 +59,6 @@ export default function ProductoPage() {
       .catch(() => {});
   }, [product]);
 
-  // Find matching variant when size/color change
   useEffect(() => {
     if (!product || !selectedSize || !selectedColor) {
       setSelectedVariant(null);
@@ -72,7 +70,6 @@ export default function ProductoPage() {
     setSelectedVariant(variant || null);
   }, [product, selectedSize, selectedColor]);
 
-  // Get unique colors and available sizes
   const availableColors = product
     ? [...new Set(product.product_variants.map((v) => v.color))]
     : [];
@@ -100,12 +97,12 @@ export default function ProductoPage() {
     return (
       <div className="pt-28 container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 animate-pulse">
-          <div className="aspect-[3/4] bg-gray-200 rounded-sm" />
+          <div className="aspect-[3/4] bg-kloven-dark rounded-sm" />
           <div className="space-y-4 py-8">
-            <div className="h-4 bg-gray-200 rounded w-1/4" />
-            <div className="h-8 bg-gray-200 rounded w-3/4" />
-            <div className="h-6 bg-gray-200 rounded w-1/4" />
-            <div className="h-20 bg-gray-200 rounded w-full mt-8" />
+            <div className="h-4 bg-kloven-dark rounded w-1/4" />
+            <div className="h-8 bg-kloven-dark rounded w-3/4" />
+            <div className="h-6 bg-kloven-dark rounded w-1/4" />
+            <div className="h-20 bg-kloven-dark rounded w-full mt-8" />
           </div>
         </div>
       </div>
@@ -115,10 +112,10 @@ export default function ProductoPage() {
   if (!product) {
     return (
       <div className="pt-28 container mx-auto px-4 text-center py-32">
-        <p className="text-gray-500 text-lg mb-4">Producto no encontrado</p>
+        <p className="text-kloven-ash text-lg mb-4">Producto no encontrado</p>
         <Link
           href="/tienda"
-          className="text-black font-bold border-b-2 border-black pb-1"
+          className="text-kloven-white font-bold border-b-2 border-kloven-red pb-1"
         >
           Volver a la tienda
         </Link>
@@ -129,10 +126,9 @@ export default function ProductoPage() {
   return (
     <div className="pt-28 pb-20">
       <div className="container mx-auto px-4">
-        {/* Back link */}
         <Link
           href="/tienda"
-          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-black mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-kloven-ash hover:text-kloven-white mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver al catalogo
@@ -140,164 +136,171 @@ export default function ProductoPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-12">
           {/* Image */}
-          <div className="aspect-[3/4] bg-gray-100 overflow-hidden relative rounded-sm shadow-lg">
-            <Image
-              src={product.image_url}
-              alt={product.name}
-              fill
-              priority
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-          </div>
+          <ScrollReveal direction="left">
+            <div className="aspect-[3/4] bg-kloven-dark overflow-hidden relative rounded-sm border border-kloven-smoke">
+              <Image
+                src={product.image_url}
+                alt={product.name}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+          </ScrollReveal>
 
           {/* Info */}
-          <div className="py-4">
-            <p className="text-xs text-gray-500 uppercase tracking-widest mb-2">
-              {product.category}
-            </p>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-4">
-              {product.name}
-            </h1>
-            <p className="text-3xl font-black text-kloven-red mb-6">
-              ${product.price.toLocaleString("es-AR")}
-            </p>
-            <p className="text-gray-600 leading-relaxed mb-8">
-              {product.description}
-            </p>
+          <ScrollReveal direction="right" delay={0.2}>
+            <div className="py-4">
+              <p className="text-xs text-kloven-ash uppercase tracking-widest mb-2">
+                {product.category}
+              </p>
+              <h1 className="font-heading text-4xl md:text-5xl tracking-wider mb-4 text-kloven-white">
+                {product.name}
+              </h1>
+              <p className="font-heading text-4xl text-kloven-red mb-6 tracking-wider">
+                ${product.price.toLocaleString("es-AR")}
+              </p>
+              <p className="text-kloven-ash leading-relaxed mb-8">
+                {product.description}
+              </p>
 
-            {/* Material & Fit */}
-            {(product.material || product.fit) && (
-              <div className="flex gap-6 mb-8 text-sm">
-                {product.material && (
-                  <div>
-                    <span className="font-bold uppercase tracking-widest text-xs text-gray-500 block mb-1">
-                      Material
-                    </span>
-                    <span>{product.material}</span>
-                  </div>
-                )}
-                {product.fit && (
-                  <div>
-                    <span className="font-bold uppercase tracking-widest text-xs text-gray-500 block mb-1">
-                      Fit
-                    </span>
-                    <span>{product.fit}</span>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Color selector */}
-            {availableColors.length > 0 && (
-              <div className="mb-6">
-                <span className="font-bold uppercase tracking-widest text-xs text-gray-500 block mb-3">
-                  Color
-                </span>
-                <div className="flex gap-3">
-                  {availableColors.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={`px-4 py-2 text-sm font-medium border transition-all ${
-                        selectedColor === color
-                          ? "border-black bg-black text-white"
-                          : "border-gray-300 hover:border-black"
-                      }`}
-                    >
-                      {color}
-                    </button>
-                  ))}
+              {/* Material & Fit */}
+              {(product.material || product.fit) && (
+                <div className="flex gap-6 mb-8 text-sm">
+                  {product.material && (
+                    <div>
+                      <span className="font-bold uppercase tracking-widest text-xs text-kloven-ash block mb-1">
+                        Material
+                      </span>
+                      <span className="text-kloven-white">
+                        {product.material}
+                      </span>
+                    </div>
+                  )}
+                  {product.fit && (
+                    <div>
+                      <span className="font-bold uppercase tracking-widest text-xs text-kloven-ash block mb-1">
+                        Fit
+                      </span>
+                      <span className="text-kloven-white">{product.fit}</span>
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Size selector */}
-            <div className="mb-8">
-              <span className="font-bold uppercase tracking-widest text-xs text-gray-500 block mb-3">
-                Talle
-              </span>
-              <div className="flex flex-wrap gap-3">
-                {SIZES.map((size) => {
-                  const isAvailable = availableSizes.includes(size);
-                  const stock =
-                    selectedColor
+              {/* Color selector */}
+              {availableColors.length > 0 && (
+                <div className="mb-6">
+                  <span className="font-bold uppercase tracking-widest text-xs text-kloven-ash block mb-3">
+                    Color
+                  </span>
+                  <div className="flex gap-3">
+                    {availableColors.map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => setSelectedColor(color)}
+                        className={`px-4 py-2 text-sm font-medium border transition-all ${
+                          selectedColor === color
+                            ? "border-kloven-red bg-kloven-red text-white"
+                            : "border-kloven-smoke text-kloven-white hover:border-kloven-red"
+                        }`}
+                      >
+                        {color}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Size selector */}
+              <div className="mb-8">
+                <span className="font-bold uppercase tracking-widest text-xs text-kloven-ash block mb-3">
+                  Talle
+                </span>
+                <div className="flex flex-wrap gap-3">
+                  {SIZES.map((size) => {
+                    const isAvailable = availableSizes.includes(size);
+                    const stock = selectedColor
                       ? getStockForSizeColor(size, selectedColor)
                       : 0;
-                  const hasStock = selectedColor ? stock > 0 : isAvailable;
+                    const hasStock = selectedColor ? stock > 0 : isAvailable;
 
-                  return (
-                    <button
-                      key={size}
-                      onClick={() => hasStock && setSelectedSize(size)}
-                      disabled={!hasStock}
-                      className={`w-11 h-11 sm:w-14 sm:h-14 text-sm font-bold border transition-all ${
-                        selectedSize === size
-                          ? "border-black bg-black text-white"
-                          : hasStock
-                          ? "border-gray-300 hover:border-black"
-                          : "border-gray-200 text-gray-300 cursor-not-allowed line-through"
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  );
-                })}
+                    return (
+                      <button
+                        key={size}
+                        onClick={() => hasStock && setSelectedSize(size)}
+                        disabled={!hasStock}
+                        className={`w-11 h-11 sm:w-14 sm:h-14 text-sm font-bold border transition-all ${
+                          selectedSize === size
+                            ? "border-kloven-red bg-kloven-red text-white"
+                            : hasStock
+                            ? "border-kloven-smoke text-kloven-white hover:border-kloven-red"
+                            : "border-kloven-smoke/50 text-kloven-smoke cursor-not-allowed line-through"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
 
-            {/* Stock indicator */}
-            {selectedVariant && (
-              <div className="mb-6">
-                {selectedVariant.stock <= 0 ? (
-                  <p className="text-red-500 text-sm font-medium">Sin stock</p>
-                ) : selectedVariant.stock <= 3 ? (
-                  <p className="text-orange-500 text-sm font-medium">
-                    Ultimas {selectedVariant.stock} unidades!
-                  </p>
-                ) : (
-                  <p className="text-green-600 text-sm font-medium">
-                    En stock
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* Add to cart */}
-            <button
-              onClick={handleAddToCart}
-              disabled={!selectedVariant || selectedVariant.stock <= 0}
-              className={`w-full py-4 font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
-                added
-                  ? "bg-green-600 text-white"
-                  : selectedVariant && selectedVariant.stock > 0
-                  ? "bg-black text-white hover:bg-kloven-red hover:shadow-lg"
-                  : "bg-gray-200 text-gray-400 cursor-not-allowed"
-              }`}
-            >
-              {added ? (
-                <>
-                  <Check className="w-5 h-5" />
-                  Agregado!
-                </>
-              ) : (
-                <>
-                  <ShoppingBag className="w-5 h-5" />
-                  {!selectedSize || !selectedColor
-                    ? "Selecciona talle y color"
-                    : selectedVariant && selectedVariant.stock <= 0
-                    ? "Sin stock"
-                    : "Agregar al carrito"}
-                </>
+              {/* Stock indicator */}
+              {selectedVariant && (
+                <div className="mb-6">
+                  {selectedVariant.stock <= 0 ? (
+                    <p className="text-red-400 text-sm font-medium">
+                      Sin stock
+                    </p>
+                  ) : selectedVariant.stock <= 3 ? (
+                    <p className="text-orange-400 text-sm font-medium">
+                      Ultimas {selectedVariant.stock} unidades!
+                    </p>
+                  ) : (
+                    <p className="text-green-400 text-sm font-medium">
+                      En stock
+                    </p>
+                  )}
+                </div>
               )}
-            </button>
-          </div>
+
+              {/* Add to cart */}
+              <button
+                onClick={handleAddToCart}
+                disabled={!selectedVariant || selectedVariant.stock <= 0}
+                className={`w-full py-4 font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
+                  added
+                    ? "bg-green-600 text-white"
+                    : selectedVariant && selectedVariant.stock > 0
+                    ? "bg-kloven-red text-white hover:bg-kloven-red-dark glow-red"
+                    : "bg-kloven-smoke text-kloven-ash cursor-not-allowed"
+                }`}
+              >
+                {added ? (
+                  <>
+                    <Check className="w-5 h-5" />
+                    Agregado!
+                  </>
+                ) : (
+                  <>
+                    <ShoppingBag className="w-5 h-5" />
+                    {!selectedSize || !selectedColor
+                      ? "Selecciona talle y color"
+                      : selectedVariant && selectedVariant.stock <= 0
+                      ? "Sin stock"
+                      : "Agregar al carrito"}
+                  </>
+                )}
+              </button>
+            </div>
+          </ScrollReveal>
         </div>
 
         {/* Related products */}
         {related.length > 0 && (
           <div className="mt-24">
-            <h2 className="text-2xl font-black uppercase tracking-tighter mb-10">
+            <h2 className="font-heading text-3xl uppercase tracking-wider mb-10 text-kloven-white">
               Tambien te puede gustar
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-10 gap-y-10 sm:gap-y-16">

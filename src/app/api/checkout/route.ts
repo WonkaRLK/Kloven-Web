@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
       city,
       zip,
       promo_code,
+      user_id,
     } = body as {
       items: CheckoutItem[];
       email: string;
@@ -34,6 +35,7 @@ export async function POST(req: NextRequest) {
       city: string;
       zip: string;
       promo_code?: string;
+      user_id?: string;
     };
 
     // Validate required fields
@@ -138,6 +140,7 @@ export async function POST(req: NextRequest) {
       .from("orders")
       .insert({
         status: "pending",
+        user_id: user_id || null,
         payer_name: name,
         payer_email: email,
         payer_phone: phone || "",

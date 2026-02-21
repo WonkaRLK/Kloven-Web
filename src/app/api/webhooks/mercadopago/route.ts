@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     console.log(`Webhook: order ${orderId} updated to ${paymentData.status}`);
 
-    // If approved: send confirmation email
+    // If approved: send confirmation email + award points
     if (paymentData.status === "approved") {
       try {
         const { data: orderData } = await supabase
@@ -63,6 +63,30 @@ export async function POST(req: NextRequest) {
           console.log(
             `Webhook: email sent to ${orderData.payer_email} for order ${orderId}`
           );
+        }
+
+        // Award loyalty points if user is linked
+        if (orderData?.user_id) {
+          try {
+            const pointsPerUnit = parseInt(process.env.POINTS_PER_UNIT || "1");
+            const unitAmount = parseInt(process.env.POINTS_UNIT_AMOUNT || "100");
+
+            await supabase.rpc("award_points", {
+              p_user_id: orderData.user_id,
+              p_order_id: orderId,
+              p_order_total: orderData.total,
+              p_points_per_unit: pointsPerUnit,
+              p_unit_amount: unitAmount,
+            });
+            console.log(
+              `Webhook: points awarded to user ${orderData.user_id} for order ${orderId}`
+            );
+          } catch (pointsError) {
+            console.error(
+              `Webhook: failed to award points for order ${orderId}`,
+              pointsError
+            );
+          }
         }
       } catch (emailError) {
         console.error(

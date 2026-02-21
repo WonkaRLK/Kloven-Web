@@ -9,6 +9,7 @@ import {
   Package,
   ShoppingCart,
   Tag,
+  Gift,
   LogOut,
   Menu,
   X,
@@ -21,6 +22,7 @@ const NAV_ITEMS = [
   { href: "/admin/productos", label: "Productos", icon: Package },
   { href: "/admin/pedidos", label: "Pedidos", icon: ShoppingCart },
   { href: "/admin/promos", label: "Promos", icon: Tag },
+  { href: "/admin/recompensas", label: "Recompensas", icon: Gift },
 ];
 
 export default function AdminSidebar() {

@@ -11,11 +11,11 @@ export default function AdminShell({
   const { isAuthenticated } = useAdminAuth();
 
   if (!isAuthenticated) {
-    return <div className="min-h-screen bg-white">{children}</div>;
+    return <div className="min-h-screen bg-white text-black">{children}</div>;
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 text-black">
       <AdminSidebar />
       <main className="flex-1 min-h-screen overflow-y-auto">{children}</main>
     </div>

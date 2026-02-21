@@ -99,3 +99,45 @@ export interface CartItem {
   variant: ProductVariant;
   quantity: number;
 }
+
+// Points system types
+
+export interface UserProfile {
+  id: string;
+  display_name: string;
+  avatar_url: string;
+  points_balance: number;
+  total_points_earned: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export type PointTxType = "earn" | "redeem" | "expire" | "admin_adjust";
+
+export interface PointTransaction {
+  id: string;
+  user_id: string;
+  type: PointTxType;
+  amount: number;
+  balance_after: number;
+  description: string;
+  order_id: string | null;
+  reward_id: string | null;
+  created_at: string;
+}
+
+export type RewardType = "discount_code" | "free_product";
+
+export interface Reward {
+  id: string;
+  name: string;
+  description: string;
+  type: RewardType;
+  points_cost: number;
+  discount_percent: number;
+  product_id: string | null;
+  max_redemptions: number;
+  current_redemptions: number;
+  active: boolean;
+  created_at: string;
+}

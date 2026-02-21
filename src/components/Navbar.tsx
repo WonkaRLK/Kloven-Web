@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ShoppingBag, Menu, X, Crown } from "lucide-react";
+import Image from "next/image";
+import { ShoppingBag, Menu, X, User, LogOut, Star } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { categoryLabels, type Category } from "@/lib/types";
+import { useAuth } from "@/context/AuthContext";
+import { categoryLabels } from "@/lib/types";
+import { motion, AnimatePresence } from "framer-motion";
 
 const CATEGORIES: { id: string; label: string }[] = [
   { id: "all", label: "Todo" },
@@ -14,7 +17,10 @@ const CATEGORIES: { id: string; label: string }[] = [
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { totalItems, setIsOpen } = useCart();
+  const { user, profile, loading, signInWithGoogle, signOut } = useAuth();
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -22,18 +28,31 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(e.target as Node)
+      ) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         scrolled
-          ? "bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm"
+          ? "bg-kloven-black/90 backdrop-blur-md border-b border-kloven-smoke shadow-lg shadow-black/20"
           : "bg-transparent"
       }`}
     >
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2"
+          className="md:hidden p-2 text-kloven-white"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? (
@@ -46,12 +65,11 @@ export default function Navbar() {
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 cursor-pointer select-none"
+          className="flex items-center cursor-pointer select-none"
         >
-          <Crown className="w-8 h-8 text-black" strokeWidth={2.5} />
-          <div className="text-2xl sm:text-3xl font-black tracking-tighter uppercase">
-            Kloven<span className="text-kloven-red">.</span>
-          </div>
+          <span className="font-heading text-3xl sm:text-4xl tracking-wider text-kloven-white">
+            KLOVEN<span className="text-kloven-red">.</span>
+          </span>
         </Link>
 
         {/* Desktop Links */}
@@ -60,44 +78,183 @@ export default function Navbar() {
             <Link
               key={cat.id}
               href={cat.id === "all" ? "/tienda" : `/tienda?cat=${cat.id}`}
-              className="text-sm font-bold uppercase tracking-widest transition-all hover:-translate-y-0.5 text-gray-500 hover:text-black"
+              className="relative text-sm font-bold uppercase tracking-widest transition-colors text-kloven-ash hover:text-kloven-white group"
             >
               {cat.label}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-kloven-red transition-all duration-300 group-hover:w-full" />
             </Link>
           ))}
         </div>
 
-        {/* Cart */}
-        <div className="flex items-center space-x-6">
+        {/* Right section */}
+        <div className="flex items-center space-x-4">
+          {/* Auth section */}
+          {!loading && (
+            <>
+              {user ? (
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="flex items-center gap-2 text-kloven-ash hover:text-kloven-white transition-colors"
+                  >
+                    {user.user_metadata?.avatar_url ? (
+                      <Image
+                        src={user.user_metadata.avatar_url}
+                        alt="Avatar"
+                        width={28}
+                        height={28}
+                        className="rounded-full border border-kloven-smoke"
+                      />
+                    ) : (
+                      <User className="w-5 h-5" />
+                    )}
+                    {profile && profile.points_balance > 0 && (
+                      <span className="hidden sm:flex items-center gap-1 text-xs font-bold text-kloven-red">
+                        <Star className="w-3 h-3" fill="currentColor" />
+                        {profile.points_balance}
+                      </span>
+                    )}
+                  </button>
+
+                  <AnimatePresence>
+                    {userMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -5, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -5, scale: 0.95 }}
+                        className="absolute right-0 top-full mt-2 w-48 bg-kloven-dark border border-kloven-smoke rounded-sm shadow-xl overflow-hidden"
+                      >
+                        <div className="px-4 py-3 border-b border-kloven-smoke">
+                          <p className="text-sm font-bold text-kloven-white truncate">
+                            {user.user_metadata?.full_name || user.email}
+                          </p>
+                          {profile && (
+                            <p className="text-xs text-kloven-red flex items-center gap-1 mt-1">
+                              <Star className="w-3 h-3" fill="currentColor" />
+                              {profile.points_balance} puntos
+                            </p>
+                          )}
+                        </div>
+                        <Link
+                          href="/perfil"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center gap-2 px-4 py-3 text-sm text-kloven-ash hover:text-kloven-white hover:bg-kloven-carbon transition-colors"
+                        >
+                          <User className="w-4 h-4" />
+                          Mi Perfil
+                        </Link>
+                        <button
+                          onClick={() => {
+                            setUserMenuOpen(false);
+                            signOut();
+                          }}
+                          className="flex items-center gap-2 px-4 py-3 text-sm text-kloven-ash hover:text-kloven-red hover:bg-kloven-carbon transition-colors w-full"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Cerrar sesion
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <button
+                  onClick={signInWithGoogle}
+                  className="hidden sm:flex items-center gap-2 text-kloven-ash hover:text-kloven-white transition-colors text-sm font-medium"
+                >
+                  <User className="w-5 h-5" />
+                </button>
+              )}
+            </>
+          )}
+
+          {/* Cart */}
           <button
-            className="relative text-black hover:scale-105 transition-transform"
+            className="relative text-kloven-white hover:text-kloven-red transition-colors"
             onClick={() => setIsOpen(true)}
           >
             <ShoppingBag className="w-6 h-6" />
-            {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1 bg-kloven-red text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                {totalItems}
-              </span>
-            )}
+            <AnimatePresence>
+              {totalItems > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  className="absolute -top-1 -right-1 bg-kloven-red text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center"
+                >
+                  {totalItems}
+                </motion.span>
+              )}
+            </AnimatePresence>
           </button>
         </div>
       </div>
 
       {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-20 left-0 w-full bg-white border-b border-gray-100 p-4 flex flex-col space-y-4 shadow-lg animate-fade-in">
-          {CATEGORIES.map((cat) => (
-            <Link
-              key={cat.id}
-              href={cat.id === "all" ? "/tienda" : `/tienda?cat=${cat.id}`}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="text-left font-bold uppercase tracking-widest p-2 text-gray-500 hover:text-black hover:bg-gray-50"
-            >
-              {cat.label}
-            </Link>
-          ))}
-        </div>
-      )}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="md:hidden absolute top-20 left-0 w-full bg-kloven-dark border-b border-kloven-smoke p-4 flex flex-col space-y-1 shadow-2xl"
+          >
+            {CATEGORIES.map((cat) => (
+              <Link
+                key={cat.id}
+                href={cat.id === "all" ? "/tienda" : `/tienda?cat=${cat.id}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-white hover:bg-kloven-carbon transition-all"
+              >
+                {cat.label}
+              </Link>
+            ))}
+            {!loading && (
+              <>
+                {user ? (
+                  <>
+                    <Link
+                      href="/perfil"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-white hover:bg-kloven-carbon transition-all flex items-center gap-2"
+                    >
+                      <User className="w-4 h-4" />
+                      Mi Perfil
+                      {profile && profile.points_balance > 0 && (
+                        <span className="text-kloven-red text-xs flex items-center gap-1 ml-auto">
+                          <Star className="w-3 h-3" fill="currentColor" />
+                          {profile.points_balance}
+                        </span>
+                      )}
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        signOut();
+                      }}
+                      className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-red hover:bg-kloven-carbon transition-all flex items-center gap-2"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Cerrar sesion
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      signInWithGoogle();
+                    }}
+                    className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-white hover:bg-kloven-carbon transition-all flex items-center gap-2"
+                  >
+                    <User className="w-4 h-4" />
+                    Iniciar sesion
+                  </button>
+                )}
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
