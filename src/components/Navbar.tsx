@@ -19,6 +19,7 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [logoVisible, setLogoVisible] = useState(false);
   const { totalItems, setIsOpen } = useCart();
   const { user, profile, loading, signInWithGoogle, signOut } = useAuth();
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -27,6 +28,12 @@ export default function Navbar() {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Logo appears after hero title animation finishes
+  useEffect(() => {
+    const timer = setTimeout(() => setLogoVisible(true), 2200);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -63,10 +70,15 @@ export default function Navbar() {
           )}
         </button>
 
-        {/* Logo */}
+        {/* Logo — hidden until hero title animation ends */}
         <Link
           href="/"
           className="flex items-center cursor-pointer select-none text-kloven-white"
+          data-navbar-logo
+          style={{
+            opacity: logoVisible ? 1 : 0,
+            transition: "opacity 0.3s ease-in",
+          }}
         >
           <KlovenLogo height={36} className="sm:hidden" />
           <KlovenLogo height={44} className="hidden sm:block" />

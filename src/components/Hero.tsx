@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronDown, ArrowRight } from "lucide-react";
@@ -31,6 +31,8 @@ export default function Hero() {
   const [lightning, setLightning] = useState(false);
   const [manifestoIndex, setManifestoIndex] = useState(0);
   const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
+  const [exitTarget, setExitTarget] = useState({ x: 0, y: "-45vh" as string | number, scale: 0.06 });
 
   useEffect(() => {
     fetch("/api/products?featured=true")
@@ -50,6 +52,23 @@ export default function Hero() {
     }, 4000);
     return () => clearInterval(interval);
   }, [showTitle]);
+
+  // Calculate exit target — position of navbar logo
+  useEffect(() => {
+    const navLogo = document.querySelector("[data-navbar-logo]");
+    if (!navLogo || !titleRef.current) return;
+    const logoRect = navLogo.getBoundingClientRect();
+    const titleRect = titleRef.current.getBoundingClientRect();
+    const logoCenterX = logoRect.left + logoRect.width / 2;
+    const logoCenterY = logoRect.top + logoRect.height / 2;
+    const titleCenterX = titleRect.left + titleRect.width / 2;
+    const titleCenterY = titleRect.top + titleRect.height / 2;
+    setExitTarget({
+      x: logoCenterX - titleCenterX,
+      y: logoCenterY - titleCenterY,
+      scale: logoRect.width / titleRect.width,
+    });
+  }, []);
 
   // Lightning flashes
   useEffect(() => {
@@ -162,16 +181,17 @@ export default function Hero() {
       <AnimatePresence>
         {showTitle && (
           <motion.div
+            ref={titleRef}
             exit={{
-              y: "-42vh",
-              x: "-30vw",
-              scale: 0.08,
+              x: exitTarget.x,
+              y: exitTarget.y,
+              scale: exitTarget.scale,
               opacity: 0,
             }}
             transition={{
               duration: 0.7,
               ease: [0.76, 0, 0.24, 1],
-              opacity: { delay: 0.4, duration: 0.3 },
+              opacity: { delay: 0.5, duration: 0.2 },
             }}
             className="absolute inset-0 z-20 flex items-center justify-center"
           >
