@@ -33,6 +33,11 @@ export default function Hero() {
   const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const [exitTarget, setExitTarget] = useState({ x: 0, y: "-45vh" as string | number, scale: 0.06 });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768 || "ontouchstart" in window);
+  }, []);
 
   useEffect(() => {
     fetch("/api/products?featured=true")
@@ -70,8 +75,9 @@ export default function Hero() {
     });
   }, []);
 
-  // Lightning flashes
+  // Lightning flashes (skip on mobile for performance)
   useEffect(() => {
+    if (isMobile) return;
     const flashes = [300, 600, 750, 1000];
     const timers = flashes.map((t) =>
       setTimeout(() => {
@@ -80,7 +86,7 @@ export default function Hero() {
       }, t)
     );
     return () => timers.forEach(clearTimeout);
-  }, []);
+  }, [isMobile]);
 
   // Timeline: letters arrive 0.8s, formed glow, melt at 1.1s, exit at 1.5s
   useEffect(() => {
@@ -94,10 +100,12 @@ export default function Hero() {
     };
   }, []);
 
-  const redGlow =
-    "0 0 10px rgba(217,4,41,0.9), 0 0 40px rgba(217,4,41,0.6), 0 0 80px rgba(217,4,41,0.4), 0 0 120px rgba(217,4,41,0.2)";
-  const redGlowIntense =
-    "0 0 15px rgba(217,4,41,1), 0 0 50px rgba(217,4,41,0.8), 0 0 100px rgba(217,4,41,0.5), 0 0 150px rgba(217,4,41,0.3), 0 0 200px rgba(217,4,41,0.1)";
+  const redGlow = isMobile
+    ? "0 0 8px rgba(217,4,41,0.8), 0 0 25px rgba(217,4,41,0.4)"
+    : "0 0 10px rgba(217,4,41,0.9), 0 0 40px rgba(217,4,41,0.6), 0 0 80px rgba(217,4,41,0.4), 0 0 120px rgba(217,4,41,0.2)";
+  const redGlowIntense = isMobile
+    ? "0 0 12px rgba(217,4,41,1), 0 0 35px rgba(217,4,41,0.6)"
+    : "0 0 15px rgba(217,4,41,1), 0 0 50px rgba(217,4,41,0.8), 0 0 100px rgba(217,4,41,0.5), 0 0 150px rgba(217,4,41,0.3), 0 0 200px rgba(217,4,41,0.1)";
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-kloven-black">
@@ -198,7 +206,9 @@ export default function Hero() {
             <div
               className="flex items-center"
               style={{
-                filter: melting
+                filter: isMobile
+                  ? "none"
+                  : melting
                   ? "url(#meltHeavy)"
                   : formed
                   ? "url(#melt)"
@@ -214,33 +224,37 @@ export default function Hero() {
                     x: LETTER_ORIGINS[i].x,
                     y: LETTER_ORIGINS[i].y,
                     scale: 0.2,
-                    filter: "blur(8px)",
+                    ...(isMobile ? {} : { filter: "blur(8px)" }),
                   }}
                   animate={{
-                    opacity: [0, 0.4, 1, 0.7, 1],
+                    opacity: isMobile ? [0, 1] : [0, 0.4, 1, 0.7, 1],
                     x: 0,
                     y: melting ? 4 + i * 2 : 0,
                     scale: melting ? 1.02 : 1,
-                    filter: "blur(0px)",
-                    textShadow: formed
+                    ...(isMobile ? {} : { filter: "blur(0px)" }),
+                    textShadow: isMobile
+                      ? redGlow
+                      : formed
                       ? [redGlow, redGlowIntense, redGlow]
                       : redGlow,
                   }}
                   transition={{
                     opacity: {
-                      duration: 0.4,
-                      delay: i * 0.1,
-                      times: [0, 0.2, 0.5, 0.7, 1],
+                      duration: isMobile ? 0.3 : 0.4,
+                      delay: i * 0.08,
+                      ...(isMobile ? {} : { times: [0, 0.2, 0.5, 0.7, 1] }),
                     },
-                    x: { duration: 0.5, delay: i * 0.1, ease: "easeOut" },
+                    x: { duration: isMobile ? 0.3 : 0.5, delay: i * 0.08, ease: "easeOut" },
                     y: { duration: 0.4, ease: "easeIn" },
                     scale: {
-                      duration: 0.5,
-                      delay: melting ? 0 : i * 0.1,
+                      duration: isMobile ? 0.3 : 0.5,
+                      delay: melting ? 0 : i * 0.08,
                       ease: "easeOut",
                     },
-                    filter: { duration: 0.4, delay: i * 0.1 },
-                    textShadow: formed
+                    ...(isMobile ? {} : { filter: { duration: 0.4, delay: i * 0.1 } }),
+                    textShadow: isMobile
+                      ? { duration: 0.3, delay: i * 0.08 }
+                      : formed
                       ? {
                           duration: 1.5,
                           repeat: Infinity,
@@ -249,7 +263,7 @@ export default function Hero() {
                       : { duration: 0.3, delay: i * 0.1 },
                   }}
                   className="font-heading text-[16vw] sm:text-[12vw] leading-[0.85] tracking-wider select-none inline-block"
-                  style={{ color: "#F5F5F5" }}
+                  style={{ color: "#F5F5F5", willChange: "transform, opacity" }}
                 >
                   {letter}
                 </motion.span>
