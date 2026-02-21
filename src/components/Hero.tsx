@@ -103,7 +103,7 @@ export default function Hero() {
       className="relative flex items-center justify-center overflow-hidden bg-kloven-black"
     >
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 text-center">
+      <div className="relative z-10 container mx-auto px-4 text-center pt-20">
         {/* Giant KLOVEN with JS glitch — disappears after 10s */}
         <AnimatePresence>
           {showTitle && (
