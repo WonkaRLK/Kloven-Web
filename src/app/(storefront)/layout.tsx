@@ -3,7 +3,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 import CartDrawer from "@/components/CartDrawer";
 import Footer from "@/components/Footer";
-import CustomCursor from "@/components/animations/CustomCursor";
+
 
 export default function StorefrontLayout({
   children,
@@ -14,7 +14,7 @@ export default function StorefrontLayout({
     <AuthProvider>
       <CartProvider>
         <div className="min-h-screen flex flex-col bg-kloven-black text-kloven-white">
-          <CustomCursor />
+
           <div className="noise-overlay" />
           <div className="scanlines-overlay" />
           <Navbar />
