@@ -1,29 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronDown, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Product } from "@/lib/types";
-
-const GLITCH_PATTERNS = [
-  [
-    { clipPath: "inset(15% 0 65% 0)", x: -4, y: 2 },
-    { clipPath: "inset(65% 0 10% 0)", x: 5, y: -1 },
-    { clipPath: "inset(40% 0 35% 0)", x: -3, y: 3 },
-  ],
-  [
-    { clipPath: "inset(5% 0 85% 0)", x: 3, y: -4 },
-    { clipPath: "inset(50% 0 40% 0)", x: -6, y: 1 },
-    { clipPath: "inset(80% 0 5% 0)", x: 2, y: -3 },
-  ],
-  [
-    { clipPath: "inset(25% 0 45% 0)", x: 6, y: 2 },
-    { clipPath: "inset(70% 0 15% 0)", x: -4, y: -2 },
-    { clipPath: "inset(10% 0 75% 0)", x: 5, y: 3 },
-  ],
-];
 
 const MANIFESTO = [
   "NO SEGUIMOS\nTENDENCIAS.\nLAS ROMPEMOS.",
@@ -31,21 +13,11 @@ const MANIFESTO = [
   "SIN REGLAS.\nSIN LIMITES.\nSIN COMPROMISOS.",
 ];
 
-interface GlitchLayer {
-  clipPath: string;
-  x: number;
-  y: number;
-  color: string;
-}
-
 export default function Hero() {
   const [showTitle, setShowTitle] = useState(true);
-  const [layers, setLayers] = useState<GlitchLayer[]>([]);
-  const [glitching, setGlitching] = useState(false);
   const [manifestoIndex, setManifestoIndex] = useState(0);
   const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
 
-  // Fetch a featured product
   useEffect(() => {
     fetch("/api/products?featured=true")
       .then((r) => r.json())
@@ -57,7 +29,6 @@ export default function Hero() {
       .catch(() => {});
   }, []);
 
-  // Rotate manifesto phrases
   useEffect(() => {
     if (showTitle) return;
     const interval = setInterval(() => {
@@ -66,51 +37,6 @@ export default function Hero() {
     return () => clearInterval(interval);
   }, [showTitle]);
 
-  const triggerGlitch = useCallback(() => {
-    const pattern =
-      GLITCH_PATTERNS[Math.floor(Math.random() * GLITCH_PATTERNS.length)];
-    const colors = ["#00ffff", "#D90429", "#ff00ff"];
-    let step = 0;
-    setGlitching(true);
-
-    const interval = setInterval(() => {
-      if (step >= pattern.length) {
-        clearInterval(interval);
-        setLayers([]);
-        setGlitching(false);
-        return;
-      }
-      const p = pattern[step];
-      setLayers([
-        { ...p, color: colors[step % colors.length] },
-        {
-          clipPath: p.clipPath,
-          x: -p.x * 1.2,
-          y: -p.y * 0.8,
-          color: colors[(step + 1) % colors.length],
-        },
-      ]);
-      step++;
-    }, 80);
-  }, []);
-
-  useEffect(() => {
-    if (!showTitle) return;
-    let timeout: ReturnType<typeof setTimeout>;
-    const scheduleNext = () => {
-      const delay = 500 + Math.random() * 1000;
-      timeout = setTimeout(() => {
-        if (!glitching) triggerGlitch();
-        scheduleNext();
-      }, delay);
-    };
-    timeout = setTimeout(() => {
-      triggerGlitch();
-      scheduleNext();
-    }, 400);
-    return () => clearTimeout(timeout);
-  }, [showTitle, glitching, triggerGlitch]);
-
   useEffect(() => {
     const timer = setTimeout(() => setShowTitle(false), 1000);
     return () => clearTimeout(timer);
@@ -118,34 +44,19 @@ export default function Hero() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-kloven-black">
-      {/* Phase 1: Giant KLOVEN glitch — absolute so it doesn't affect layout */}
+      {/* Phase 1: Giant KLOVEN — clean, no glitch artifacts */}
       <AnimatePresence>
         {showTitle && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, filter: "blur(0px)" }}
-            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.15, filter: "blur(20px)" }}
             transition={{ duration: 1.2, ease: "easeOut" }}
-            className="absolute inset-0 z-20 flex items-center justify-center text-center"
+            className="absolute inset-0 z-20 flex items-center justify-center"
           >
-              <h1 className="font-heading text-[16vw] sm:text-[12vw] leading-[0.85] tracking-wider text-kloven-white select-none">
-                KLOVEN
-              </h1>
-              {layers.map((layer, i) => (
-                <span
-                  key={i}
-                  aria-hidden
-                  className="absolute inset-0 font-heading text-[16vw] sm:text-[12vw] leading-[0.85] tracking-wider select-none pointer-events-none"
-                  style={{
-                    clipPath: layer.clipPath,
-                    transform: `translate(${layer.x}px, ${layer.y}px)`,
-                    color: layer.color,
-                    opacity: 0.8,
-                  }}
-                >
-                  KLOVEN
-                </span>
-              ))}
+            <h1 className="font-heading text-[16vw] sm:text-[12vw] leading-[0.85] tracking-wider text-kloven-white select-none">
+              KLOVEN
+            </h1>
           </motion.div>
         )}
       </AnimatePresence>
