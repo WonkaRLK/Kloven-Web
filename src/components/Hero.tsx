@@ -358,7 +358,7 @@ export default function Hero() {
                       alt={featuredProduct.name}
                       fill
                       priority
-                      className="object-cover group-hover:scale-105 transition-transform duration-700 contrast-[1.8] brightness-[0.65] saturate-[1.3]"
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
                       sizes="(max-width: 768px) 100vw, 50vw"
                     />
                     <div className="absolute bottom-0 left-0 p-6">
