@@ -347,7 +347,7 @@ export default function Hero() {
               {featuredProduct && (
                 <Link
                   href={`/producto/${featuredProduct.slug}`}
-                  className="group relative w-full h-[70vh] overflow-hidden block"
+                  className="group relative w-full max-w-[500px] aspect-[3/4] overflow-hidden block ml-auto"
                 >
                   <Image
                     src={featuredProduct.image_url}
