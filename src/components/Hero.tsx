@@ -358,10 +358,9 @@ export default function Hero() {
                       alt={featuredProduct.name}
                       fill
                       priority
-                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="object-cover group-hover:scale-105 transition-transform duration-700 contrast-[1.8] brightness-[0.65] saturate-[1.3]"
                       sizes="(max-width: 768px) 100vw, 50vw"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-kloven-black/80 via-transparent to-transparent" />
                     <div className="absolute bottom-0 left-0 p-6">
                       <p className="text-xs text-kloven-ash uppercase tracking-widest mb-1">
                         {featuredProduct.category}
