@@ -348,7 +348,7 @@ export default function Hero() {
                 <div className="flex items-center justify-center w-full">
                   <Link
                     href={`/producto/${featuredProduct.slug}`}
-                    className="group relative w-full max-w-[420px] aspect-[3/4] overflow-hidden block"
+                    className="group relative w-full max-w-[420px] aspect-[3/4] overflow-hidden block animate-[levitate_4s_ease-in-out_infinite]"
                     style={{
                       clipPath: "polygon(3% 0%, 100% 2%, 97% 100%, 0% 98%)",
                     }}
