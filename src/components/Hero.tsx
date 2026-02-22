@@ -343,33 +343,38 @@ export default function Hero() {
                 </Link>
               </div>
 
-              {/* Right: Featured product — extends to right edge */}
+              {/* Right: Featured product */}
               {featuredProduct && (
-                <Link
-                  href={`/producto/${featuredProduct.slug}`}
-                  className="group relative w-full max-w-[500px] aspect-[3/4] overflow-hidden block ml-auto"
-                >
-                  <Image
-                    src={featuredProduct.image_url}
-                    alt={featuredProduct.name}
-                    fill
-                    priority
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-kloven-black/80 via-transparent to-transparent" />
-                  <div className="absolute bottom-0 left-0 p-6">
-                    <p className="text-xs text-kloven-ash uppercase tracking-widest mb-1">
-                      {featuredProduct.category}
-                    </p>
-                    <h3 className="font-heading text-2xl sm:text-3xl tracking-wider text-kloven-white mb-1">
-                      {featuredProduct.name}
-                    </h3>
-                    <span className="font-heading text-xl text-kloven-red tracking-wider">
-                      ${featuredProduct.price.toLocaleString("es-AR")}
-                    </span>
-                  </div>
-                </Link>
+                <div className="flex items-center justify-center w-full">
+                  <Link
+                    href={`/producto/${featuredProduct.slug}`}
+                    className="group relative w-full max-w-[420px] aspect-[3/4] overflow-hidden block"
+                    style={{
+                      clipPath: "polygon(3% 0%, 100% 2%, 97% 100%, 0% 98%)",
+                    }}
+                  >
+                    <Image
+                      src={featuredProduct.image_url}
+                      alt={featuredProduct.name}
+                      fill
+                      priority
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-kloven-black/80 via-transparent to-transparent" />
+                    <div className="absolute bottom-0 left-0 p-6">
+                      <p className="text-xs text-kloven-ash uppercase tracking-widest mb-1">
+                        {featuredProduct.category}
+                      </p>
+                      <h3 className="font-heading text-2xl sm:text-3xl tracking-wider text-kloven-white mb-1">
+                        {featuredProduct.name}
+                      </h3>
+                      <span className="font-heading text-xl text-kloven-red tracking-wider">
+                        ${featuredProduct.price.toLocaleString("es-AR")}
+                      </span>
+                    </div>
+                  </Link>
+                </div>
               )}
             </motion.div>
           )}
