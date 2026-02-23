@@ -349,7 +349,7 @@ export default function Hero() {
                   <div className="animate-[levitate_4s_ease-in-out_infinite]">
                     <Link
                       href={`/producto/${featuredProduct.slug}`}
-                      className="group relative block w-full max-w-[800px]"
+                      className="group relative block w-full max-w-[1000px]"
                     >
                       {/* Photo frame */}
                       <div
