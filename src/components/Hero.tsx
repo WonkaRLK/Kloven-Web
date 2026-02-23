@@ -318,7 +318,7 @@ export default function Hero() {
               className="flex flex-col md:flex-row items-center w-full min-h-screen"
             >
               {/* Left: Manifesto — fixed width */}
-              <div className="flex flex-col justify-center px-4 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-12 md:w-[40%] md:shrink-0">
+              <div className="flex flex-col justify-center px-4 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-8 md:w-[30%] md:shrink-0">
                 <AnimatePresence mode="wait">
                   <motion.p
                     key={manifestoIndex}
