@@ -346,33 +346,43 @@ export default function Hero() {
               {/* Right: Featured product */}
               {featuredProduct && (
                 <div className="flex items-center justify-center w-full">
-                  <Link
-                    href={`/producto/${featuredProduct.slug}`}
-                    className="group relative w-full max-w-[420px] aspect-[3/4] overflow-hidden block animate-[levitate_4s_ease-in-out_infinite]"
-                    style={{
-                      clipPath: "polygon(2% 3%, 8% 0%, 15% 2%, 22% 0%, 30% 1%, 38% 0%, 45% 2%, 52% 0%, 60% 1%, 68% 0%, 75% 2%, 82% 0%, 90% 1%, 95% 0%, 100% 3%, 99% 10%, 100% 18%, 98% 25%, 100% 33%, 99% 40%, 100% 48%, 98% 55%, 100% 62%, 99% 70%, 100% 78%, 98% 85%, 100% 92%, 99% 97%, 95% 100%, 88% 98%, 80% 100%, 72% 98%, 65% 100%, 58% 98%, 50% 100%, 42% 98%, 35% 100%, 28% 98%, 20% 100%, 12% 98%, 5% 100%, 0% 97%, 1% 90%, 0% 82%, 2% 75%, 0% 68%, 1% 60%, 0% 52%, 2% 45%, 0% 38%, 1% 30%, 0% 22%, 2% 15%, 0% 8%)",
-                    }}
-                  >
-                    <Image
-                      src={featuredProduct.image_url}
-                      alt={featuredProduct.name}
-                      fill
-                      priority
-                      className="object-cover group-hover:scale-105 transition-transform duration-700"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                    <div className="absolute bottom-0 left-0 p-6">
-                      <p className="text-xs text-kloven-ash uppercase tracking-widest mb-1">
-                        {featuredProduct.category}
-                      </p>
-                      <h3 className="font-heading text-2xl sm:text-3xl tracking-wider text-kloven-white mb-1">
-                        {featuredProduct.name}
-                      </h3>
-                      <span className="font-heading text-xl text-kloven-red tracking-wider">
-                        ${featuredProduct.price.toLocaleString("es-AR")}
-                      </span>
-                    </div>
-                  </Link>
+                  <div className="animate-[levitate_4s_ease-in-out_infinite]">
+                    <Link
+                      href={`/producto/${featuredProduct.slug}`}
+                      className="group relative block w-full max-w-[420px]"
+                    >
+                      {/* Photo frame */}
+                      <div
+                        className="relative p-[6px] sm:p-2"
+                        style={{
+                          background: "linear-gradient(135deg, #d4cfc4 0%, #e8e4d9 30%, #cdc7ba 60%, #e0dbd0 100%)",
+                          boxShadow: "0 4px 20px rgba(0,0,0,0.5), inset 0 0 8px rgba(0,0,0,0.1)",
+                        }}
+                      >
+                        <div className="relative aspect-[3/4] overflow-hidden">
+                          <Image
+                            src={featuredProduct.image_url}
+                            alt={featuredProduct.name}
+                            fill
+                            priority
+                            className="object-cover group-hover:scale-105 transition-transform duration-700"
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-4 pl-1">
+                        <p className="text-xs text-kloven-ash uppercase tracking-widest mb-1">
+                          {featuredProduct.category}
+                        </p>
+                        <h3 className="font-heading text-2xl sm:text-3xl tracking-wider text-kloven-white mb-1">
+                          {featuredProduct.name}
+                        </h3>
+                        <span className="font-heading text-xl text-kloven-red tracking-wider">
+                          ${featuredProduct.price.toLocaleString("es-AR")}
+                        </span>
+                      </div>
+                    </Link>
+                  </div>
                 </div>
               )}
             </motion.div>
