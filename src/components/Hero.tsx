@@ -343,9 +343,9 @@ export default function Hero() {
                 </Link>
               </div>
 
-              {/* Right: Featured product */}
+              {/* Right: Featured product — desktop only */}
               {featuredProduct && (
-                <div className="flex items-center justify-center md:justify-end w-full md:pr-12 mt-8 md:mt-0">
+                <div className="hidden md:flex items-center justify-end w-full md:pr-12">
                   <div className="animate-[levitate_4s_ease-in-out_infinite]">
                     <Link
                       href={`/producto/${featuredProduct.slug}`}
