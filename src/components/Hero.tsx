@@ -318,7 +318,7 @@ export default function Hero() {
               className="flex flex-col md:flex-row items-center w-full min-h-screen"
             >
               {/* Left: Manifesto — fixed width */}
-              <div className="flex flex-col justify-center px-4 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-8 md:w-[30%] md:shrink-0">
+              <div className="flex flex-col justify-center px-4 pt-24 md:pt-0 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-8 md:w-[30%] md:shrink-0">
                 <AnimatePresence mode="wait">
                   <motion.p
                     key={manifestoIndex}
@@ -326,7 +326,7 @@ export default function Hero() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.5 }}
-                    className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl uppercase leading-[0.95] tracking-wider text-kloven-white whitespace-pre-line"
+                    className="font-heading text-2xl sm:text-5xl md:text-6xl lg:text-7xl uppercase leading-[0.95] tracking-wider text-kloven-white whitespace-pre-line"
                   >
                     {MANIFESTO[manifestoIndex]}
                   </motion.p>
