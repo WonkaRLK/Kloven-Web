@@ -116,7 +116,7 @@ export default function Hero() {
     : "0 0 15px rgba(217,4,41,1), 0 0 50px rgba(217,4,41,0.8), 0 0 100px rgba(217,4,41,0.5), 0 0 150px rgba(217,4,41,0.3), 0 0 200px rgba(217,4,41,0.1)";
 
   return (
-    <div className="relative md:min-h-screen overflow-hidden bg-kloven-black">
+    <div className={`relative overflow-hidden bg-kloven-black ${showTitle ? "min-h-screen" : "md:min-h-screen"}`}>
       {/* SVG Filters */}
       <svg className="absolute w-0 h-0">
         <defs>
