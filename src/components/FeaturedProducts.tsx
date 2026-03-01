@@ -26,7 +26,7 @@ export default function FeaturedProducts() {
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-2 sm:gap-0 mb-10 sm:mb-16">
           <div>
             <h2
-              className="glitch-text font-heading text-5xl md:text-6xl uppercase tracking-wider"
+              className="glitch-text font-heading text-3xl sm:text-5xl md:text-6xl uppercase tracking-wider"
               data-text="Ultimos Drops"
             >
               Ultimos Drops

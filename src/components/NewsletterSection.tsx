@@ -10,7 +10,7 @@ export default function NewsletterSection() {
 
       <ScrollReveal>
         <div className="max-w-3xl mx-auto relative z-10 p-6 sm:p-10 border border-kloven-smoke">
-          <h2 className="font-heading text-5xl md:text-6xl uppercase mb-4 tracking-wider">
+          <h2 className="font-heading text-3xl sm:text-5xl md:text-6xl uppercase mb-4 tracking-wider">
             No te quedes afuera
           </h2>
           <p className="text-kloven-ash mb-10 text-base sm:text-lg">

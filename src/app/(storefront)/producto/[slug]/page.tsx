@@ -134,9 +134,9 @@ export default function ProductoPage() {
           Volver al catalogo
         </Link>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-12 overflow-hidden">
           {/* Image */}
-          <ScrollReveal direction="left">
+          <ScrollReveal>
             <div className="aspect-[3/4] bg-kloven-dark overflow-hidden relative border border-kloven-smoke">
               <Image
                 src={product.image_url}
@@ -150,7 +150,7 @@ export default function ProductoPage() {
           </ScrollReveal>
 
           {/* Info */}
-          <ScrollReveal direction="right" delay={0.2}>
+          <ScrollReveal delay={0.2}>
             <div className="py-4">
               <p className="text-xs text-kloven-ash uppercase tracking-widest mb-2">
                 {product.category}

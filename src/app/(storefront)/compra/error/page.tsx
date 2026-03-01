@@ -17,7 +17,7 @@ export default function CompraErrorPage() {
         </div>
       </motion.div>
 
-      <h1 className="font-heading text-5xl md:text-6xl uppercase mb-4 tracking-wider text-kloven-white">
+      <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl uppercase mb-4 tracking-wider text-kloven-white">
         Error en el Pago
       </h1>
       <p className="text-kloven-ash max-w-md mx-auto mb-10 text-base sm:text-lg">

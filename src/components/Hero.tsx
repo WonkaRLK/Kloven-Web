@@ -315,7 +315,7 @@ export default function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-col md:flex-row items-center w-full min-h-screen"
+              className="flex flex-col md:flex-row items-center w-full md:min-h-screen"
             >
               {/* Left: Manifesto — fixed width */}
               <div className="flex flex-col justify-center px-4 pt-24 md:pt-0 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-8 md:w-[30%] md:shrink-0">
@@ -332,7 +332,7 @@ export default function Hero() {
                   </motion.p>
                 </AnimatePresence>
 
-                <div className="h-[2px] w-12 bg-kloven-red mt-8 mb-6" />
+                <div className="h-[2px] w-12 bg-kloven-red mt-5 mb-4 md:mt-8 md:mb-6" />
 
                 <Link
                   href="/tienda"
