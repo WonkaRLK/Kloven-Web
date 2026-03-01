@@ -345,7 +345,7 @@ export default function Hero() {
 
               {/* Right: Featured product */}
               {featuredProduct && (
-                <div className="flex items-center justify-end w-full md:pr-12">
+                <div className="flex items-center justify-center md:justify-end w-full md:pr-12 mt-8 md:mt-0">
                   <div className="animate-[levitate_4s_ease-in-out_infinite]">
                     <Link
                       href={`/producto/${featuredProduct.slug}`}
@@ -353,7 +353,7 @@ export default function Hero() {
                     >
                       {/* Photo frame */}
                       <div className="torn">
-                        <div className="relative w-[33vw] h-[70vh] overflow-hidden">
+                        <div className="relative w-[70vw] h-[55vh] md:w-[33vw] md:h-[70vh] overflow-hidden">
                           <Image
                             src={featuredProduct.image_url}
                             alt={featuredProduct.name}
