@@ -67,7 +67,9 @@ export default function Footer() {
             </h4>
             <div className="flex space-x-4">
               <a
-                href="#"
+                href="https://www.instagram.com/kloven.ar/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-12 h-12 border border-kloven-smoke flex items-center justify-center hover:bg-kloven-red hover:border-kloven-red group"
               >
                 <Instagram className="w-5 h-5" />
