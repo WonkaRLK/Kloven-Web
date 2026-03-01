@@ -71,7 +71,7 @@ export default function SmokeBackground() {
 
   return (
     <div
-      className="fixed inset-0 z-[1] pointer-events-none overflow-hidden"
+      className="fixed inset-0 z-0 pointer-events-none overflow-hidden"
       style={{
         opacity: visible ? 1 : 0,
         transition: "opacity 2s ease-in",

@@ -17,7 +17,7 @@ export default function StorefrontLayout({
           <SmokeBackground />
           <Navbar />
           <CartDrawer />
-          <main className="flex-grow">{children}</main>
+          <main className="flex-grow relative z-[1]">{children}</main>
           <Footer />
         </div>
       </CartProvider>
