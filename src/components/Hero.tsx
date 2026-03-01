@@ -353,7 +353,7 @@ export default function Hero() {
                     >
                       {/* Photo frame */}
                       <div className="torn">
-                        <div className="relative w-[33vw] h-[50vh] overflow-hidden">
+                        <div className="relative w-[33vw] h-[70vh] overflow-hidden">
                           <Image
                             src={featuredProduct.image_url}
                             alt={featuredProduct.name}
@@ -364,7 +364,7 @@ export default function Hero() {
                           />
                         </div>
                       </div>
-                      <div className="mt-4 pl-1">
+                      <div className="mt-4 text-center">
                         <p className="text-xs text-kloven-ash uppercase tracking-widest mb-1">
                           {featuredProduct.category}
                         </p>
