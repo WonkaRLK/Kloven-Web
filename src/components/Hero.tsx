@@ -116,7 +116,7 @@ export default function Hero() {
     : "0 0 15px rgba(217,4,41,1), 0 0 50px rgba(217,4,41,0.8), 0 0 100px rgba(217,4,41,0.5), 0 0 150px rgba(217,4,41,0.3), 0 0 200px rgba(217,4,41,0.1)";
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-kloven-black">
+    <div className="relative md:min-h-screen overflow-hidden bg-kloven-black">
       {/* SVG Filters */}
       <svg className="absolute w-0 h-0">
         <defs>
@@ -308,7 +308,7 @@ export default function Hero() {
       </AnimatePresence>
 
       {/* Phase 2: Manifesto + Featured product */}
-      <div className="relative z-10 flex items-center min-h-screen">
+      <div className="relative z-[1] flex items-center md:min-h-screen">
         <AnimatePresence>
           {!showTitle && (
             <motion.div
@@ -318,7 +318,7 @@ export default function Hero() {
               className="flex flex-col md:flex-row items-center w-full md:min-h-screen"
             >
               {/* Left: Manifesto — fixed width */}
-              <div className="flex flex-col justify-center px-4 pt-24 md:pt-0 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-8 md:w-[30%] md:shrink-0">
+              <div className="flex flex-col justify-center px-4 pt-20 pb-10 md:pt-0 md:pb-0 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-8 md:w-[30%] md:shrink-0">
                 <AnimatePresence mode="wait">
                   <motion.p
                     key={manifestoIndex}
