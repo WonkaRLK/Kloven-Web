@@ -11,7 +11,7 @@ export default function FeaturedProducts() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/products?featured=true")
+    fetch("/api/products")
       .then((r) => r.json())
       .then((data) => {
         setProducts(Array.isArray(data) ? data : []);

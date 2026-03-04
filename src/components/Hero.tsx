@@ -323,7 +323,7 @@ export default function Hero() {
               className="flex flex-col md:flex-row items-center w-full md:min-h-screen"
             >
               {/* Left: Manifesto — fixed width */}
-              <div className="flex flex-col justify-center px-4 pt-20 pb-10 md:pt-0 md:pb-0 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-8 md:w-[30%] md:shrink-0">
+              <div className="flex flex-col justify-center px-4 pt-20 pb-10 md:pt-0 md:pb-0 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-8 md:w-[50%] md:shrink-0">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={manifestoIndex}
@@ -331,14 +331,14 @@ export default function Hero() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.5 }}
-                    className="relative w-full aspect-[4/3] max-h-[50vh]"
+                    className="relative w-full aspect-[4/3] max-h-[80vh]"
                   >
                     <Image
                       src={HERO_IMAGES[manifestoIndex]}
                       alt={`Kloven hero ${manifestoIndex + 1}`}
                       fill
                       className="object-contain object-left"
-                      sizes="(max-width: 768px) 100vw, 30vw"
+                      sizes="(max-width: 768px) 100vw, 50vw"
                       priority
                     />
                   </motion.div>
