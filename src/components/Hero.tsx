@@ -9,10 +9,15 @@ import type { Product } from "@/lib/types";
 
 const LETTERS = ["K", "L", "O", "V", "E", "N"];
 
-const MANIFESTO = [
-  "NO SEGUIMOS\nTENDENCIAS.\nLAS ROMPEMOS.",
-  "LA CALLE\nES NUESTRA\nPASARELA.",
-  "SIN REGLAS.\nSIN LIMITES.\nSIN COMPROMISOS.",
+const HERO_IMAGES = [
+  "/hero/1.jpg",
+  "/hero/2.jpg",
+  "/hero/3.jpg",
+  "/hero/4.jpg",
+  "/hero/5.jpg",
+  "/hero/6.jpg",
+  "/hero/7.jpg",
+  "/hero/8.jpg",
 ];
 
 const LETTER_ORIGINS = [
@@ -54,7 +59,7 @@ export default function Hero() {
   useEffect(() => {
     if (showTitle) return;
     const interval = setInterval(() => {
-      setManifestoIndex((prev) => (prev + 1) % MANIFESTO.length);
+      setManifestoIndex((prev) => (prev + 1) % HERO_IMAGES.length);
     }, 4000);
     return () => clearInterval(interval);
   }, [showTitle]);
@@ -320,16 +325,23 @@ export default function Hero() {
               {/* Left: Manifesto — fixed width */}
               <div className="flex flex-col justify-center px-4 pt-20 pb-10 md:pt-0 md:pb-0 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-8 md:w-[30%] md:shrink-0">
                 <AnimatePresence mode="wait">
-                  <motion.p
+                  <motion.div
                     key={manifestoIndex}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.5 }}
-                    className="font-heading text-2xl sm:text-5xl md:text-6xl lg:text-7xl uppercase leading-[0.95] tracking-wider text-kloven-white whitespace-pre-line"
+                    className="relative w-full aspect-[4/3] max-h-[50vh]"
                   >
-                    {MANIFESTO[manifestoIndex]}
-                  </motion.p>
+                    <Image
+                      src={HERO_IMAGES[manifestoIndex]}
+                      alt={`Kloven hero ${manifestoIndex + 1}`}
+                      fill
+                      className="object-contain object-left"
+                      sizes="(max-width: 768px) 100vw, 30vw"
+                      priority
+                    />
+                  </motion.div>
                 </AnimatePresence>
 
                 <div className="h-[2px] w-12 bg-kloven-red mt-5 mb-4 md:mt-8 md:mb-6" />
