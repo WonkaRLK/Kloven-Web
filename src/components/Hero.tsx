@@ -9,15 +9,10 @@ import type { Product } from "@/lib/types";
 
 const LETTERS = ["K", "L", "O", "V", "E", "N"];
 
-const HERO_IMAGES = [
-  "/hero/1.jpg",
-  "/hero/2.jpg",
-  "/hero/3.jpg",
-  "/hero/4.jpg",
-  "/hero/5.jpg",
-  "/hero/6.jpg",
-  "/hero/7.jpg",
-  "/hero/8.jpg",
+const HERO_COLUMNS = [
+  ["/hero/1.jpg", "/hero/4.jpg", "/hero/7.jpg"],
+  ["/hero/2.jpg", "/hero/5.jpg", "/hero/8.jpg"],
+  ["/hero/3.jpg", "/hero/6.jpg", "/hero/1.jpg"],
 ];
 
 const LETTER_ORIGINS = [
@@ -34,7 +29,6 @@ export default function Hero() {
   const [formed, setFormed] = useState(false);
   const [melting, setMelting] = useState(false);
   const [lightning, setLightning] = useState(false);
-  const [manifestoIndex, setManifestoIndex] = useState(0);
   const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const [exitTarget, setExitTarget] = useState({ x: 0, y: "-45vh" as string | number, scale: 0.06 });
@@ -55,14 +49,6 @@ export default function Hero() {
       })
       .catch(() => {});
   }, []);
-
-  useEffect(() => {
-    if (showTitle) return;
-    const interval = setInterval(() => {
-      setManifestoIndex((prev) => (prev + 1) % HERO_IMAGES.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [showTitle]);
 
   // Calculate exit target — position of navbar logo
   // Runs after isMobile is determined and desktop version is rendered
@@ -322,27 +308,45 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="flex flex-col md:flex-row items-center w-full md:min-h-screen"
             >
-              {/* Left: Manifesto — fixed width */}
+              {/* Left: 3-column vertical scroll */}
               <div className="flex flex-col justify-center px-4 pt-20 pb-10 md:pt-0 md:pb-0 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-8 md:w-[50%] md:shrink-0">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={manifestoIndex}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.5 }}
-                    className="relative w-full aspect-[4/3] max-h-[80vh]"
-                  >
-                    <Image
-                      src={HERO_IMAGES[manifestoIndex]}
-                      alt={`Kloven hero ${manifestoIndex + 1}`}
-                      fill
-                      className="object-contain object-left"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      priority
-                    />
-                  </motion.div>
-                </AnimatePresence>
+                <style>{`
+                  @keyframes heroScrollUp {
+                    0% { transform: translateY(0); }
+                    100% { transform: translateY(-50%); }
+                  }
+                  @keyframes heroScrollDown {
+                    0% { transform: translateY(-50%); }
+                    100% { transform: translateY(0); }
+                  }
+                `}</style>
+                <div className="relative w-full h-[55vh] md:h-[75vh] overflow-hidden rounded-lg">
+                  <div className="grid grid-cols-3 gap-2 h-full">
+                    {HERO_COLUMNS.map((col, colIndex) => (
+                      <div key={colIndex} className="relative overflow-hidden h-full">
+                        <div
+                          className="flex flex-col gap-2"
+                          style={{
+                            animation: `${colIndex % 2 === 0 ? "heroScrollUp" : "heroScrollDown"} ${18 + colIndex * 4}s linear infinite`,
+                          }}
+                        >
+                          {[...col, ...col].map((src, i) => (
+                            <div key={i} className="relative aspect-[3/4] w-full shrink-0">
+                              <Image
+                                src={src}
+                                alt="Kloven"
+                                fill
+                                className="object-cover rounded-sm"
+                                sizes="(max-width: 768px) 33vw, 17vw"
+                                priority={i < 3}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
                 <div className="h-[2px] w-12 bg-kloven-red mt-5 mb-4 md:mt-8 md:mb-6" />
 
