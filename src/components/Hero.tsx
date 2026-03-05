@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronDown, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import type { Product } from "@/lib/types";
 
 const LETTERS = ["K", "L", "O", "V", "E", "N"];
 
@@ -29,7 +28,6 @@ export default function Hero() {
   const [formed, setFormed] = useState(false);
   const [melting, setMelting] = useState(false);
   const [lightning, setLightning] = useState(false);
-  const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const [exitTarget, setExitTarget] = useState({ x: 0, y: "-45vh" as string | number, scale: 0.06 });
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
@@ -37,17 +35,6 @@ export default function Hero() {
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768 || "ontouchstart" in window);
-  }, []);
-
-  useEffect(() => {
-    fetch("/api/products?featured=true")
-      .then((r) => r.json())
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setFeaturedProduct(data[0]);
-        }
-      })
-      .catch(() => {});
   }, []);
 
   // Calculate exit target — position of navbar logo
@@ -306,10 +293,10 @@ export default function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-col md:flex-row items-center w-full md:min-h-screen"
+              className="flex flex-col items-center w-full md:min-h-screen"
             >
-              {/* Left: 3-column vertical scroll */}
-              <div className="flex flex-col justify-center px-4 pt-20 pb-10 md:pt-0 md:pb-0 md:pl-[max(2rem,calc((100vw-1280px)/2+1rem))] md:pr-8 md:w-[50%] md:shrink-0">
+              {/* 3-column vertical scroll gallery */}
+              <div className="flex flex-col justify-center px-4 pt-20 pb-10 md:pt-0 md:pb-0 w-full md:px-[max(2rem,calc((100vw-1280px)/2+1rem))]">
                 <style>{`
                   @keyframes heroScrollUp {
                     0% { transform: translateY(0); }
@@ -359,42 +346,6 @@ export default function Hero() {
                 </Link>
               </div>
 
-              {/* Right: Featured product — desktop only */}
-              {featuredProduct && (
-                <div className="hidden md:flex items-center justify-end w-full md:pr-12">
-                  <div className="animate-[levitate_4s_ease-in-out_infinite]">
-                    <Link
-                      href={`/producto/${featuredProduct.slug}`}
-                      className="group relative block"
-                    >
-                      {/* Photo frame */}
-                      <div className="torn">
-                        <div className="relative w-[70vw] h-[55vh] md:w-[33vw] md:h-[70vh] overflow-hidden">
-                          <Image
-                            src={featuredProduct.image_url}
-                            alt={featuredProduct.name}
-                            fill
-                            priority
-                            className="object-cover group-hover:scale-105 transition-transform duration-700"
-                            sizes="(max-width: 768px) 100vw, 50vw"
-                          />
-                        </div>
-                      </div>
-                      <div className="mt-4 text-center">
-                        <p className="text-xs text-kloven-ash uppercase tracking-widest mb-1">
-                          {featuredProduct.category}
-                        </p>
-                        <h3 className="font-heading text-2xl sm:text-3xl tracking-wider text-kloven-white mb-1">
-                          {featuredProduct.name}
-                        </h3>
-                        <span className="font-heading text-xl text-kloven-red tracking-wider">
-                          ${featuredProduct.price.toLocaleString("es-AR")}
-                        </span>
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              )}
             </motion.div>
           )}
         </AnimatePresence>
