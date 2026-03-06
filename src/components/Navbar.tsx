@@ -42,9 +42,9 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Logo appears after hero title animation finishes
+  // Logo appears after hero glitch animation finishes
   useEffect(() => {
-    const timer = setTimeout(() => setLogoVisible(true), 2200);
+    const timer = setTimeout(() => setLogoVisible(true), 900);
     return () => clearTimeout(timer);
   }, []);
 

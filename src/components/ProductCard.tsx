@@ -14,7 +14,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     <div className="group flex flex-col items-center">
       <Link
         href={`/producto/${product.slug}`}
-        className="relative aspect-[3/4] w-full overflow-hidden bg-kloven-dark mb-6 cursor-pointer block transition-all duration-300 ease-out group-hover:-translate-y-2 group-hover:shadow-[0_8px_30px_rgba(217,4,41,0.25)]"
+        className="relative aspect-[3/4] w-full overflow-hidden bg-kloven-dark mb-6 cursor-pointer block transition-all duration-300 ease-out group-hover:-translate-y-2 group-hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)]"
       >
         <Image
           src={product.image_url}
