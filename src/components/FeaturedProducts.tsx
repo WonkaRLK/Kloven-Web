@@ -5,6 +5,7 @@ import ProductCard from "./ProductCard";
 import type { Product } from "@/lib/types";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import { StaggerContainer, StaggerItem } from "@/components/animations/StaggerChildren";
+import GlitchText from "@/components/animations/GlitchText";
 
 export default function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -25,12 +26,10 @@ export default function FeaturedProducts() {
       <ScrollReveal>
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-2 sm:gap-0 mb-10 sm:mb-16">
           <div>
-            <h2
-              className="glitch-text font-heading text-3xl sm:text-5xl md:text-6xl uppercase tracking-wider"
-              data-text="Últimos Drops"
-            >
-              Últimos Drops
-            </h2>
+            <GlitchText
+              text="Últimos Drops"
+              className="font-heading text-3xl sm:text-5xl md:text-6xl uppercase tracking-wider"
+            />
           </div>
           <span className="text-sm font-bold text-kloven-ash font-mono tabular-nums">
             [{String(products.length).padStart(2, "0")}] items

@@ -7,6 +7,7 @@ import type { Product, Category } from "@/lib/types";
 import { ShoppingBag, Loader2 } from "lucide-react";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import { StaggerContainer, StaggerItem } from "@/components/animations/StaggerChildren";
+import GlitchText from "@/components/animations/GlitchText";
 
 function TiendaContent() {
   const searchParams = useSearchParams();
@@ -56,18 +57,15 @@ function TiendaContent() {
         <ScrollReveal>
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-2 sm:gap-0 mb-8 sm:mb-12">
             <div>
-              <h2
-                className="glitch-text font-heading text-3xl sm:text-5xl md:text-6xl uppercase tracking-wider"
-                data-text={
+              <GlitchText
+                key={activeCategory}
+                text={
                   activeCategory === "all"
                     ? "Todos los Productos"
                     : categoryMap[activeCategory] || "Productos"
                 }
-              >
-                {activeCategory === "all"
-                  ? "Todos los Productos"
-                  : categoryMap[activeCategory] || "Productos"}
-              </h2>
+                className="font-heading text-3xl sm:text-5xl md:text-6xl uppercase tracking-wider"
+              />
             </div>
             <span className="text-sm font-bold text-kloven-ash font-mono tabular-nums">
               [{String(products.length).padStart(2, "0")}] items
