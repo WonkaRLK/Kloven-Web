@@ -1,11 +1,11 @@
-export type Category = "remeras" | "buzos" | "pantalones" | "accesorios";
-
-export const categoryLabels: Record<Category, string> = {
-  remeras: "Remeras",
-  buzos: "Hoodies & Buzos",
-  pantalones: "Pantalones",
-  accesorios: "Accesorios",
-};
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  sort_order: number;
+  active: boolean;
+  created_at: string;
+}
 
 export type Size = "S" | "M" | "L" | "XL" | "XXL";
 
@@ -15,7 +15,7 @@ export interface Product {
   slug: string;
   description: string;
   price: number;
-  category: Category;
+  category: string;
   image_url: string;
   images: string[];
   material: string;

@@ -10,6 +10,7 @@ import {
   ShoppingCart,
   Tag,
   Gift,
+  Layers,
   LogOut,
   Menu,
   X,
@@ -20,6 +21,7 @@ import { useAdminAuth } from "@/context/AdminAuthContext";
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/productos", label: "Productos", icon: Package },
+  { href: "/admin/categorias", label: "Categorias", icon: Layers },
   { href: "/admin/pedidos", label: "Pedidos", icon: ShoppingCart },
   { href: "/admin/promos", label: "Promos", icon: Tag },
   { href: "/admin/recompensas", label: "Recompensas", icon: Gift },

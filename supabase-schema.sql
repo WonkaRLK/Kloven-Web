@@ -3,6 +3,25 @@
 -- Run this in the Supabase SQL Editor
 -- ============================================
 
+-- Categories
+CREATE TABLE categories (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  sort_order INTEGER DEFAULT 0,
+  active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public can read active categories" ON categories FOR SELECT USING (active = true);
+
+INSERT INTO categories (name, slug, sort_order) VALUES
+  ('Remeras', 'remeras', 0),
+  ('Hoodies & Buzos', 'buzos', 1),
+  ('Pantalones', 'pantalones', 2),
+  ('Accesorios', 'accesorios', 3);
+
 -- Products
 CREATE TABLE products (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -10,7 +29,7 @@ CREATE TABLE products (
   slug TEXT UNIQUE NOT NULL,
   description TEXT DEFAULT '',
   price INTEGER NOT NULL,
-  category TEXT NOT NULL CHECK (category IN ('remeras', 'buzos', 'pantalones', 'accesorios')),
+  category TEXT NOT NULL,
   image_url TEXT DEFAULT '',
   images TEXT[] DEFAULT '{}',
   material TEXT DEFAULT '',

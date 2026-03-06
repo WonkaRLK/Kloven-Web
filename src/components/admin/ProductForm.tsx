@@ -1,18 +1,11 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 import { Loader2, Plus, Trash2, Upload, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Category, Size, ProductWithVariants } from "@/lib/types";
-
-const CATEGORIES: { value: Category; label: string }[] = [
-  { value: "remeras", label: "Remeras" },
-  { value: "buzos", label: "Hoodies & Buzos" },
-  { value: "pantalones", label: "Pantalones" },
-  { value: "accesorios", label: "Accesorios" },
-];
 
 const SIZES: Size[] = ["S", "M", "L", "XL", "XXL"];
 
@@ -32,12 +25,23 @@ export default function ProductForm({ product }: ProductFormProps) {
   const { token } = useAdminAuth();
   const isEdit = !!product;
 
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    fetch("/api/categories")
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) setCategories(data);
+      })
+      .catch(() => {});
+  }, []);
+
   const [name, setName] = useState(product?.name || "");
   const [slug, setSlug] = useState(product?.slug || "");
   const [description, setDescription] = useState(product?.description || "");
   const [price, setPrice] = useState(product?.price?.toString() || "");
-  const [category, setCategory] = useState<Category>(
-    product?.category || "remeras"
+  const [category, setCategory] = useState(
+    product?.category || ""
   );
   const [images, _setImages] = useState<string[]>(
     product?.images?.length ? product.images : product?.image_url ? [product.image_url] : []
@@ -286,13 +290,17 @@ export default function ProductForm({ product }: ProductFormProps) {
               Categoria
             </label>
             <select
+              required
               value={category}
-              onChange={(e) => setCategory(e.target.value as Category)}
+              onChange={(e) => setCategory(e.target.value)}
               className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black transition-colors"
             >
-              {CATEGORIES.map((c) => (
-                <option key={c.value} value={c.value}>
-                  {c.label}
+              <option value="" disabled>
+                Seleccionar...
+              </option>
+              {categories.map((c) => (
+                <option key={c.slug} value={c.slug}>
+                  {c.name}
                 </option>
               ))}
             </select>

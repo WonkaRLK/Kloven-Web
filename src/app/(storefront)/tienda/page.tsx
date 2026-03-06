@@ -3,16 +3,11 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
-import { categoryLabels, type Product, type Category } from "@/lib/types";
+import type { Product, Category } from "@/lib/types";
 import { ShoppingBag, Loader2 } from "lucide-react";
 import Link from "next/link";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import { StaggerContainer, StaggerItem } from "@/components/animations/StaggerChildren";
-
-const CATEGORIES: { id: string; label: string }[] = [
-  { id: "all", label: "Todo" },
-  ...Object.entries(categoryLabels).map(([id, label]) => ({ id, label })),
-];
 
 function TiendaContent() {
   const searchParams = useSearchParams();
@@ -21,6 +16,27 @@ function TiendaContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState(catParam);
+  const [categories, setCategories] = useState<
+    { id: string; label: string }[]
+  >([{ id: "all", label: "Todo" }]);
+  const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    fetch("/api/categories")
+      .then((r) => r.json())
+      .then((data: Category[]) => {
+        if (Array.isArray(data)) {
+          setCategories([
+            { id: "all", label: "Todo" },
+            ...data.map((c) => ({ id: c.slug, label: c.name })),
+          ]);
+          const map: Record<string, string> = {};
+          data.forEach((c) => (map[c.slug] = c.name));
+          setCategoryMap(map);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     setActiveCategory(catParam);
@@ -47,7 +63,7 @@ function TiendaContent() {
       {/* Category filters — instant color change, no transition */}
       <div className="container mx-auto px-4 mb-8">
         <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <Link
               key={cat.id}
               href={cat.id === "all" ? "/tienda" : `/tienda?cat=${cat.id}`}
@@ -72,12 +88,12 @@ function TiendaContent() {
                 data-text={
                   activeCategory === "all"
                     ? "Todos los Productos"
-                    : categoryLabels[activeCategory as Category] || "Productos"
+                    : categoryMap[activeCategory] || "Productos"
                 }
               >
                 {activeCategory === "all"
                   ? "Todos los Productos"
-                  : categoryLabels[activeCategory as Category]}
+                  : categoryMap[activeCategory] || "Productos"}
               </h2>
             </div>
             <span className="text-sm font-bold text-kloven-ash font-mono tabular-nums">
