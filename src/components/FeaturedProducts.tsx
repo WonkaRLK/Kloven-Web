@@ -27,9 +27,9 @@ export default function FeaturedProducts() {
           <div>
             <h2
               className="glitch-text font-heading text-3xl sm:text-5xl md:text-6xl uppercase tracking-wider"
-              data-text="Ultimos Drops"
+              data-text="Últimos Drops"
             >
-              Ultimos Drops
+              Últimos Drops
             </h2>
           </div>
           <span className="text-sm font-bold text-kloven-ash font-mono tabular-nums">
