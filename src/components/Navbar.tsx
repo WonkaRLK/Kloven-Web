@@ -7,6 +7,7 @@ import { ShoppingBag, Menu, X, User, LogOut, Star } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import KlovenLogo from "@/components/KlovenLogo";
+import type { Category } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
@@ -14,9 +15,26 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [logoVisible, setLogoVisible] = useState(false);
+  const [navCategories, setNavCategories] = useState<
+    { id: string; label: string }[]
+  >([{ id: "all", label: "Todo" }]);
   const { totalItems, setIsOpen } = useCart();
   const { user, profile, loading, signInWithGoogle, signOut } = useAuth();
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetch("/api/categories")
+      .then((r) => r.json())
+      .then((data: Category[]) => {
+        if (Array.isArray(data)) {
+          setNavCategories([
+            { id: "all", label: "Todo" },
+            ...data.map((c) => ({ id: c.slug, label: c.name })),
+          ]);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -76,12 +94,15 @@ export default function Navbar() {
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center space-x-8">
-          <Link
-            href="/tienda"
-            className="text-sm font-bold uppercase tracking-widest text-kloven-ash hover:text-kloven-red"
-          >
-            Tienda
-          </Link>
+          {navCategories.map((cat) => (
+            <Link
+              key={cat.id}
+              href={cat.id === "all" ? "/tienda" : `/tienda?cat=${cat.id}`}
+              className="text-sm font-bold uppercase tracking-widest text-kloven-ash hover:text-kloven-red"
+            >
+              {cat.label}
+            </Link>
+          ))}
         </div>
 
         {/* Right section */}
@@ -197,13 +218,16 @@ export default function Navbar() {
             exit={{ opacity: 0, y: -10 }}
             className="md:hidden absolute top-20 left-0 w-full bg-kloven-dark border-b border-kloven-smoke p-4 flex flex-col space-y-1 shadow-2xl"
           >
-            <Link
-              href="/tienda"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-red hover:bg-kloven-carbon"
-            >
-              Tienda
-            </Link>
+            {navCategories.map((cat) => (
+              <Link
+                key={cat.id}
+                href={cat.id === "all" ? "/tienda" : `/tienda?cat=${cat.id}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-red hover:bg-kloven-carbon"
+              >
+                {cat.label}
+              </Link>
+            ))}
             {!loading && (
               <>
                 {user ? (
