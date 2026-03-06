@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/context/AdminAuthContext";
-import { Loader2, Plus, Trash2, Upload } from "lucide-react";
+import { Loader2, Plus, Trash2, Upload, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Category, Size, ProductWithVariants } from "@/lib/types";
 
 const CATEGORIES: { value: Category; label: string }[] = [
@@ -39,7 +39,17 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [category, setCategory] = useState<Category>(
     product?.category || "remeras"
   );
-  const [imageUrl, setImageUrl] = useState(product?.image_url || "");
+  const [images, _setImages] = useState<string[]>(
+    product?.images?.length ? product.images : product?.image_url ? [product.image_url] : []
+  );
+  const imagesRef = useRef(images);
+  const setImages = (updater: string[] | ((prev: string[]) => string[])) => {
+    _setImages((prev) => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      imagesRef.current = next;
+      return next;
+    });
+  };
   const [material, setMaterial] = useState(product?.material || "");
   const [fit, setFit] = useState(product?.fit || "");
   const [featured, setFeatured] = useState(product?.featured || false);
@@ -54,6 +64,7 @@ export default function ProductForm({ product }: ProductFormProps) {
     })) || [{ size: "M", color: "Negro", stock: 10, sku: "" }]
   );
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -75,46 +86,65 @@ export default function ProductForm({ product }: ProductFormProps) {
     }
   };
 
-  // Upload image
+  // Upload images (supports multiple files)
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files?.length) return;
 
     setUploading(true);
     try {
-      // Get signed URL
-      const res = await fetch("/api/admin/upload", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          fileName: file.name,
-          contentType: file.type,
-        }),
-      });
+      const newUrls: string[] = [];
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      for (const file of Array.from(files)) {
+        const res = await fetch("/api/admin/upload", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            fileName: file.name,
+            contentType: file.type,
+          }),
+        });
 
-      // Upload directly to Supabase
-      const uploadRes = await fetch(data.signedUrl, {
-        method: "PUT",
-        headers: { "Content-Type": file.type },
-        body: file,
-      });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
 
-      if (!uploadRes.ok) throw new Error("Upload failed");
+        const uploadRes = await fetch(data.signedUrl, {
+          method: "PUT",
+          headers: { "Content-Type": file.type },
+          body: file,
+        });
 
-      setImageUrl(data.publicUrl);
+        if (!uploadRes.ok) throw new Error("Error al subir " + file.name);
+
+        newUrls.push(data.publicUrl);
+      }
+
+      setImages([...imagesRef.current, ...newUrls]);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Error al subir imagen"
       );
     } finally {
       setUploading(false);
+      e.target.value = "";
     }
+  };
+
+  const removeImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const moveImage = (index: number, direction: -1 | 1) => {
+    const newIndex = index + direction;
+    if (newIndex < 0 || newIndex >= images.length) return;
+    setImages((prev) => {
+      const copy = [...prev];
+      [copy[index], copy[newIndex]] = [copy[newIndex], copy[index]];
+      return copy;
+    });
   };
 
   // Add/remove variants
@@ -152,7 +182,8 @@ export default function ProductForm({ product }: ProductFormProps) {
         description,
         price: parseInt(price, 10),
         category,
-        image_url: imageUrl,
+        images,
+        image_url: images[0] || "",
         material,
         fit,
         featured,
@@ -315,43 +346,80 @@ export default function ProductForm({ product }: ProductFormProps) {
         </div>
       </div>
 
-      {/* Image */}
+      {/* Images */}
       <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
-        <h2 className="font-black uppercase tracking-wide text-sm">Imagen</h2>
+        <h2 className="font-black uppercase tracking-wide text-sm">
+          Imagenes ({images.length})
+        </h2>
 
-        {imageUrl && (
-          <div className="relative w-48 h-64 bg-gray-100 rounded overflow-hidden">
-            <Image
-              src={imageUrl}
-              alt="Preview"
-              fill
-              className="object-cover"
-              sizes="192px"
-            />
+        {images.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {images.map((url, i) => (
+              <div key={url + i} className="relative group">
+                <div className="relative aspect-[3/4] bg-gray-100 rounded overflow-hidden">
+                  <Image
+                    src={url}
+                    alt={`Imagen ${i + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="192px"
+                  />
+                  {i === 0 && (
+                    <span className="absolute top-1 left-1 bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                      PRINCIPAL
+                    </span>
+                  )}
+                </div>
+                <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    type="button"
+                    onClick={() => moveImage(i, -1)}
+                    disabled={i === 0}
+                    className="bg-white/90 hover:bg-white rounded p-1 disabled:opacity-30"
+                    title="Mover a la izquierda"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => moveImage(i, 1)}
+                    disabled={i === images.length - 1}
+                    className="bg-white/90 hover:bg-white rounded p-1 disabled:opacity-30"
+                    title="Mover a la derecha"
+                  >
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeImage(i)}
+                    className="bg-red-500/90 hover:bg-red-600 text-white rounded p-1"
+                    title="Eliminar"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
-        <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded cursor-pointer transition-colors text-sm font-medium">
-            <Upload className="w-4 h-4" />
-            {uploading ? "Subiendo..." : "Subir imagen"}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-              disabled={uploading}
-            />
-          </label>
-          <span className="text-xs text-gray-400">o</span>
-          <input
-            type="text"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            placeholder="URL de imagen"
-            className="flex-1 bg-gray-50 border border-gray-200 p-2 text-sm focus:outline-none focus:border-black transition-colors"
-          />
-        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleImageUpload}
+          className="hidden"
+        />
+        <button
+          type="button"
+          disabled={uploading}
+          onClick={() => fileInputRef.current?.click()}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded transition-colors text-sm font-medium disabled:opacity-50"
+        >
+          <Upload className="w-4 h-4" />
+          {uploading ? "Subiendo..." : "Subir imagenes"}
+        </button>
       </div>
 
       {/* Variants */}

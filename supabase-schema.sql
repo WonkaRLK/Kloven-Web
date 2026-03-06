@@ -12,6 +12,7 @@ CREATE TABLE products (
   price INTEGER NOT NULL,
   category TEXT NOT NULL CHECK (category IN ('remeras', 'buzos', 'pantalones', 'accesorios')),
   image_url TEXT DEFAULT '',
+  images TEXT[] DEFAULT '{}',
   material TEXT DEFAULT '',
   fit TEXT DEFAULT '',
   featured BOOLEAN DEFAULT false,

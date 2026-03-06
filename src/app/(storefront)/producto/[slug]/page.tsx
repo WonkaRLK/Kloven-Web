@@ -30,6 +30,7 @@ export default function ProductoPage() {
   );
   const [added, setAdded] = useState(false);
   const [related, setRelated] = useState<Product[]>([]);
+  const [activeImage, setActiveImage] = useState(0);
 
   useEffect(() => {
     fetch(`/api/products/${slug}`)
@@ -135,17 +136,46 @@ export default function ProductoPage() {
         </Link>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-12 overflow-hidden">
-          {/* Image */}
+          {/* Image gallery */}
           <ScrollReveal>
-            <div className="aspect-[3/4] bg-kloven-dark overflow-hidden relative border border-kloven-smoke">
-              <Image
-                src={product.image_url}
-                alt={product.name}
-                fill
-                priority
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
+            <div className="space-y-3">
+              <div className="aspect-[3/4] bg-kloven-dark overflow-hidden relative border border-kloven-smoke">
+                <Image
+                  src={
+                    product.images?.length
+                      ? product.images[activeImage]
+                      : product.image_url
+                  }
+                  alt={product.name}
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              </div>
+              {product.images?.length > 1 && (
+                <div className="grid grid-cols-5 gap-2">
+                  {product.images.map((img, i) => (
+                    <button
+                      key={img + i}
+                      onClick={() => setActiveImage(i)}
+                      className={`relative aspect-square overflow-hidden border-2 transition-colors ${
+                        activeImage === i
+                          ? "border-kloven-red"
+                          : "border-kloven-smoke hover:border-kloven-ash"
+                      }`}
+                    >
+                      <Image
+                        src={img}
+                        alt={`${product.name} ${i + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="80px"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </ScrollReveal>
 

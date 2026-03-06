@@ -17,6 +17,7 @@ export interface Product {
   price: number;
   category: Category;
   image_url: string;
+  images: string[];
   material: string;
   fit: string;
   featured: boolean;
