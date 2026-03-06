@@ -11,7 +11,7 @@ export default function SmokeBackground() {
   const activeRef = useRef<"A" | "B">("A");
 
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), 2200);
+    const timer = setTimeout(() => setVisible(true), 900);
     return () => clearTimeout(timer);
   }, []);
 
