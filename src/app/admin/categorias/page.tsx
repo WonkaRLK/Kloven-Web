@@ -24,12 +24,14 @@ export default function AdminCategoriasPage() {
   // Form state
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
+  const [sizeType, setSizeType] = useState("clothing");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   // Edit state
   const [editName, setEditName] = useState("");
   const [editSlug, setEditSlug] = useState("");
+  const [editSizeType, setEditSizeType] = useState("clothing");
 
   const fetchCategories = async () => {
     try {
@@ -68,7 +70,7 @@ export default function AdminCategoriasPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ name, slug: slug || generateSlug(name) }),
+        body: JSON.stringify({ name, slug: slug || generateSlug(name), size_type: sizeType }),
       });
 
       const data = await res.json();
@@ -77,6 +79,7 @@ export default function AdminCategoriasPage() {
       setShowForm(false);
       setName("");
       setSlug("");
+      setSizeType("clothing");
       fetchCategories();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al crear");
@@ -88,12 +91,14 @@ export default function AdminCategoriasPage() {
     setEditId(cat.id);
     setEditName(cat.name);
     setEditSlug(cat.slug);
+    setEditSizeType(cat.size_type || "clothing");
   };
 
   const cancelEdit = () => {
     setEditId(null);
     setEditName("");
     setEditSlug("");
+    setEditSizeType("clothing");
   };
 
   const handleEdit = async (id: string) => {
@@ -104,7 +109,7 @@ export default function AdminCategoriasPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ id, name: editName, slug: editSlug }),
+        body: JSON.stringify({ id, name: editName, slug: editSlug, size_type: editSizeType }),
       });
 
       const data = await res.json();
@@ -218,7 +223,7 @@ export default function AdminCategoriasPage() {
           <h2 className="font-black uppercase tracking-wide text-sm">
             Nueva Categoria
           </h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-[10px] font-bold uppercase mb-1 tracking-widest">
                 Nombre
@@ -247,6 +252,19 @@ export default function AdminCategoriasPage() {
                 className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
                 placeholder="camperas"
               />
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold uppercase mb-1 tracking-widest">
+                Tipo de talle
+              </label>
+              <select
+                value={sizeType}
+                onChange={(e) => setSizeType(e.target.value)}
+                className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
+              >
+                <option value="clothing">Ropa (S/M/L/XL/XXL)</option>
+                <option value="shoes">Calzado (36-44)</option>
+              </select>
             </div>
           </div>
           <button
@@ -279,6 +297,9 @@ export default function AdminCategoriasPage() {
                 </th>
                 <th className="text-left p-4 font-bold uppercase text-[10px] tracking-widest text-gray-500 hidden sm:table-cell">
                   Slug
+                </th>
+                <th className="text-left p-4 font-bold uppercase text-[10px] tracking-widest text-gray-500 hidden sm:table-cell">
+                  Talles
                 </th>
                 <th className="text-left p-4 font-bold uppercase text-[10px] tracking-widest text-gray-500">
                   Estado
@@ -335,6 +356,22 @@ export default function AdminCategoriasPage() {
                     ) : (
                       <span className="font-mono text-gray-500">
                         {cat.slug}
+                      </span>
+                    )}
+                  </td>
+                  <td className="p-4 hidden sm:table-cell">
+                    {editId === cat.id ? (
+                      <select
+                        value={editSizeType}
+                        onChange={(e) => setEditSizeType(e.target.value)}
+                        className="bg-gray-50 border border-gray-200 p-2 text-sm focus:outline-none focus:border-black"
+                      >
+                        <option value="clothing">Ropa</option>
+                        <option value="shoes">Calzado</option>
+                      </select>
+                    ) : (
+                      <span className="text-gray-500 text-xs">
+                        {cat.size_type === "shoes" ? "Calzado" : "Ropa"}
                       </span>
                     )}
                   </td>

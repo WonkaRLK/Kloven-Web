@@ -3,11 +3,10 @@ export interface Category {
   name: string;
   slug: string;
   sort_order: number;
+  size_type: string;
   active: boolean;
   created_at: string;
 }
-
-export type Size = "S" | "M" | "L" | "XL" | "XXL";
 
 export interface Product {
   id: string;
@@ -29,7 +28,7 @@ export interface Product {
 export interface ProductVariant {
   id: string;
   product_id: string;
-  size: Size;
+  size: string;
   color: string;
   stock: number;
   sku: string;

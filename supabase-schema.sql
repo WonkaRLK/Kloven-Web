@@ -9,6 +9,7 @@ CREATE TABLE categories (
   name TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
   sort_order INTEGER DEFAULT 0,
+  size_type TEXT DEFAULT 'clothing',
   active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT now()
 );
@@ -16,11 +17,12 @@ CREATE TABLE categories (
 ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public can read active categories" ON categories FOR SELECT USING (active = true);
 
-INSERT INTO categories (name, slug, sort_order) VALUES
-  ('Remeras', 'remeras', 0),
-  ('Hoodies & Buzos', 'buzos', 1),
-  ('Pantalones', 'pantalones', 2),
-  ('Accesorios', 'accesorios', 3);
+INSERT INTO categories (name, slug, sort_order, size_type) VALUES
+  ('Remeras', 'remeras', 0, 'clothing'),
+  ('Hoodies & Buzos', 'buzos', 1, 'clothing'),
+  ('Pantalones', 'pantalones', 2, 'clothing'),
+  ('Accesorios', 'accesorios', 3, 'clothing'),
+  ('Zapatillas', 'zapatillas', 4, 'shoes');
 
 -- Products
 CREATE TABLE products (
@@ -44,7 +46,7 @@ CREATE TABLE products (
 CREATE TABLE product_variants (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-  size TEXT NOT NULL CHECK (size IN ('S', 'M', 'L', 'XL', 'XXL')),
+  size TEXT NOT NULL,
   color TEXT NOT NULL,
   stock INTEGER DEFAULT 0,
   sku TEXT DEFAULT '',

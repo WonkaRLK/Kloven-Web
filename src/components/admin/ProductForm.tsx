@@ -5,12 +5,11 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 import { Loader2, Plus, Trash2, Upload, ChevronLeft, ChevronRight } from "lucide-react";
-import type { Category, Size, ProductWithVariants } from "@/lib/types";
-
-const SIZES: Size[] = ["S", "M", "L", "XL", "XXL"];
+import type { Category, ProductWithVariants } from "@/lib/types";
+import { getSizesForType, CLOTHING_SIZES } from "@/lib/sizes";
 
 interface Variant {
-  size: Size;
+  size: string;
   color: string;
   stock: number;
   sku: string;
@@ -58,6 +57,11 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [fit, setFit] = useState(product?.fit || "");
   const [featured, setFeatured] = useState(product?.featured || false);
   const [active, setActive] = useState(product?.active !== false);
+
+  const selectedCategory = categories.find((c) => c.slug === category);
+  const sizes = selectedCategory
+    ? getSizesForType(selectedCategory.size_type)
+    : CLOTHING_SIZES;
 
   const [variants, setVariants] = useState<Variant[]>(
     product?.product_variants?.map((v) => ({
@@ -155,7 +159,7 @@ export default function ProductForm({ product }: ProductFormProps) {
   const addVariant = () => {
     setVariants([
       ...variants,
-      { size: "M", color: "Negro", stock: 10, sku: "" },
+      { size: sizes[0], color: "Negro", stock: 10, sku: "" },
     ]);
   };
 
@@ -476,7 +480,7 @@ export default function ProductForm({ product }: ProductFormProps) {
                       }
                       className="bg-gray-50 border border-gray-200 p-2 text-sm w-20"
                     >
-                      {SIZES.map((s) => (
+                      {sizes.map((s) => (
                         <option key={s} value={s}>
                           {s}
                         </option>

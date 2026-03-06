@@ -8,14 +8,13 @@ import { ShoppingBag, ArrowLeft, Check } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import ProductCard from "@/components/ProductCard";
 import ScrollReveal from "@/components/animations/ScrollReveal";
+import { getSizesForType } from "@/lib/sizes";
 import type {
   ProductWithVariants,
   ProductVariant,
   Product,
-  Size,
+  Category,
 } from "@/lib/types";
-
-const SIZES: Size[] = ["S", "M", "L", "XL", "XXL"];
 
 export default function ProductoPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -23,7 +22,7 @@ export default function ProductoPage() {
 
   const [product, setProduct] = useState<ProductWithVariants | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedSize, setSelectedSize] = useState<Size | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     null
@@ -31,6 +30,7 @@ export default function ProductoPage() {
   const [added, setAdded] = useState(false);
   const [related, setRelated] = useState<Product[]>([]);
   const [activeImage, setActiveImage] = useState(0);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     fetch(`/api/products/${slug}`)
@@ -45,6 +45,15 @@ export default function ProductoPage() {
       })
       .catch(() => setLoading(false));
   }, [slug]);
+
+  useEffect(() => {
+    fetch("/api/categories")
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) setCategories(data);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!product) return;
@@ -71,6 +80,11 @@ export default function ProductoPage() {
     setSelectedVariant(variant || null);
   }, [product, selectedSize, selectedColor]);
 
+  const productCategory = categories.find((c) => c.slug === product?.category);
+  const orderedSizes = productCategory
+    ? getSizesForType(productCategory.size_type)
+    : null;
+
   const availableColors = product
     ? [...new Set(product.product_variants.map((v) => v.color))]
     : [];
@@ -79,7 +93,12 @@ export default function ProductoPage() {
     ? [...new Set(product.product_variants.map((v) => v.size))]
     : [];
 
-  const getStockForSizeColor = (size: Size, color: string) => {
+  // Show sizes in the canonical order for the category, falling back to variant order
+  const displaySizes = orderedSizes
+    ? orderedSizes.filter((s) => availableSizes.includes(s))
+    : availableSizes;
+
+  const getStockForSizeColor = (size: string, color: string) => {
     if (!product) return 0;
     const v = product.product_variants.find(
       (v) => v.size === size && v.color === color
@@ -249,12 +268,11 @@ export default function ProductoPage() {
                   Talle
                 </span>
                 <div className="flex flex-wrap gap-3">
-                  {SIZES.map((size) => {
-                    const isAvailable = availableSizes.includes(size);
+                  {displaySizes.map((size) => {
                     const stock = selectedColor
                       ? getStockForSizeColor(size, selectedColor)
                       : 0;
-                    const hasStock = selectedColor ? stock > 0 : isAvailable;
+                    const hasStock = selectedColor ? stock > 0 : true;
 
                     return (
                       <button

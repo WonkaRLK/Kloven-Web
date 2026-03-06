@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
       name: body.name,
       slug: body.slug,
       sort_order: nextOrder,
+      size_type: body.size_type || "clothing",
       active: body.active !== false,
     })
     .select()
@@ -66,6 +67,7 @@ export async function PUT(request: NextRequest) {
   if (body.slug !== undefined) updates.slug = body.slug;
   if (body.sort_order !== undefined) updates.sort_order = body.sort_order;
   if (body.active !== undefined) updates.active = body.active;
+  if (body.size_type !== undefined) updates.size_type = body.size_type;
 
   const { data, error } = await supabase
     .from("categories")
