@@ -79,7 +79,7 @@ export default function Navbar() {
         </button>
 
         {/* Logo — hidden until hero title animation ends */}
-        <Link
+        <a
           href="/"
           className="flex items-center cursor-pointer select-none text-kloven-white"
           data-navbar-logo
@@ -90,7 +90,7 @@ export default function Navbar() {
         >
           <KlovenLogo height={36} className="sm:hidden" />
           <KlovenLogo height={44} className="hidden sm:block" />
-        </Link>
+        </a>
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center space-x-8">
