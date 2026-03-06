@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import type { Product, Category } from "@/lib/types";
 import { ShoppingBag, Loader2 } from "lucide-react";
+import Link from "next/link";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import { StaggerContainer, StaggerItem } from "@/components/animations/StaggerChildren";
 
@@ -15,6 +16,9 @@ function TiendaContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState(catParam);
+  const [categories, setCategories] = useState<
+    { id: string; label: string }[]
+  >([{ id: "all", label: "Todo" }]);
   const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -22,6 +26,10 @@ function TiendaContent() {
       .then((r) => r.json())
       .then((data: Category[]) => {
         if (Array.isArray(data)) {
+          setCategories([
+            { id: "all", label: "Todo" },
+            ...data.map((c) => ({ id: c.slug, label: c.name })),
+          ]);
           const map: Record<string, string> = {};
           data.forEach((c) => (map[c.slug] = c.name));
           setCategoryMap(map);
@@ -52,6 +60,25 @@ function TiendaContent() {
 
   return (
     <div className="pt-24">
+      {/* Category filters */}
+      <div className="container mx-auto px-4 mb-8">
+        <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
+          {categories.map((cat) => (
+            <Link
+              key={cat.id}
+              href={cat.id === "all" ? "/tienda" : `/tienda?cat=${cat.id}`}
+              className={`text-xs sm:text-sm font-bold uppercase tracking-widest px-3 sm:px-4 py-2 ${
+                activeCategory === cat.id
+                  ? "text-kloven-red border-b-2 border-kloven-red"
+                  : "text-kloven-ash hover:text-kloven-red"
+              }`}
+            >
+              {cat.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+
       <section className="container mx-auto px-4 pb-20">
         <ScrollReveal>
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-2 sm:gap-0 mb-8 sm:mb-12">
