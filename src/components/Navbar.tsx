@@ -51,11 +51,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-40 ${
-        scrolled
-          ? "bg-kloven-black/90 backdrop-blur-md border-b border-kloven-smoke shadow-lg shadow-black/20"
-          : "bg-transparent"
-      }`}
+      className="fixed top-0 left-0 right-0 z-40 bg-kloven-black/85 backdrop-blur-md border-b border-kloven-smoke"
     >
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         {/* Mobile Menu Button */}
