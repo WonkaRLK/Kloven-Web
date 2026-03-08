@@ -7,9 +7,11 @@ import { ChevronDown, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 const HERO_COLUMNS = [
-  ["/hero/1.jpg", "/hero/4.jpg", "/hero/7.jpg"],
+  ["/hero/1.jpg", "/hero/6.jpg", "/hero/3.jpg"],
+  ["/hero/4.jpg", "/hero/7.jpg", "/hero/2.jpg"],
   ["/hero/2.jpg", "/hero/5.jpg", "/hero/8.jpg"],
-  ["/hero/3.jpg", "/hero/6.jpg", "/hero/1.jpg"],
+  ["/hero/8.jpg", "/hero/3.jpg", "/hero/6.jpg"],
+  ["/hero/5.jpg", "/hero/1.jpg", "/hero/7.jpg"],
 ];
 
 export default function Hero() {
@@ -102,13 +104,13 @@ export default function Hero() {
                   }
                 `}</style>
                 <div className="relative w-full h-[55vh] md:h-[75vh] overflow-hidden rounded-lg">
-                  <div className="grid grid-cols-3 gap-2 h-full">
+                  <div className="grid grid-cols-5 gap-2 h-full">
                     {HERO_COLUMNS.map((col, colIndex) => (
                       <div key={colIndex} className="relative overflow-hidden h-full">
                         <div
                           className="flex flex-col gap-2"
                           style={{
-                            animation: `${colIndex % 2 === 0 ? "heroScrollUp" : "heroScrollDown"} ${18 + colIndex * 4}s linear infinite`,
+                            animation: `${colIndex % 2 === 0 ? "heroScrollUp" : "heroScrollDown"} ${18 + colIndex * 2}s linear infinite`,
                           }}
                         >
                           {[...col, ...col].map((src, i) => (
@@ -118,7 +120,7 @@ export default function Hero() {
                                 alt="Kloven"
                                 fill
                                 className="object-cover rounded-sm"
-                                sizes="(max-width: 768px) 33vw, 17vw"
+                                sizes="(max-width: 768px) 20vw, 11vw"
                                 priority={i < 3}
                               />
                             </div>
