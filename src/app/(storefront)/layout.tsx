@@ -21,7 +21,7 @@ export default function StorefrontLayout({
           <Footer />
           {/* WhatsApp floating button */}
           <a
-            href="https://wa.me/5491100000000"
+            href="https://wa.me/5493442319968"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Contactar por WhatsApp"
