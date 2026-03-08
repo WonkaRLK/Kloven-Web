@@ -39,6 +39,8 @@ CREATE TABLE products (
   fit TEXT DEFAULT '',
   featured BOOLEAN DEFAULT false,
   active BOOLEAN DEFAULT true,
+  on_sale BOOLEAN DEFAULT false,
+  tags TEXT[] DEFAULT '{}',
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );

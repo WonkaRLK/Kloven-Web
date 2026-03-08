@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/context/AdminAuthContext";
-import { Loader2, Plus, Trash2, Upload, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, Plus, Trash2, Upload, ChevronLeft, ChevronRight, X } from "lucide-react";
 import type { Category, ProductWithVariants } from "@/lib/types";
 import { getSizesForType, CLOTHING_SIZES, generateNumericSizes, detectSizeMode } from "@/lib/sizes";
 
@@ -60,6 +60,9 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [fit, setFit] = useState(product?.fit || "");
   const [featured, setFeatured] = useState(product?.featured || false);
   const [active, setActive] = useState(product?.active !== false);
+  const [onSale, setOnSale] = useState(product?.on_sale || false);
+  const [tags, setTags] = useState<string[]>(product?.tags || []);
+  const [tagInput, setTagInput] = useState("");
 
   const existingVariantSizes = product?.product_variants?.map((v) => v.size) || [];
   const detectedMode = detectSizeMode(existingVariantSizes);
@@ -270,6 +273,8 @@ export default function ProductForm({ product }: ProductFormProps) {
         fit,
         featured,
         active,
+        on_sale: onSale,
+        tags,
         variants,
       };
 
@@ -422,6 +427,46 @@ export default function ProductForm({ product }: ProductFormProps) {
           />
         </div>
 
+        <div>
+          <label className="block text-[10px] font-bold uppercase mb-1 tracking-widest">
+            Etiquetas
+          </label>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center gap-1 bg-gray-100 border border-gray-200 px-2.5 py-1 text-sm rounded"
+              >
+                {tag}
+                <button
+                  type="button"
+                  onClick={() => setTags(tags.filter((t) => t !== tag))}
+                  className="text-gray-400 hover:text-red-500 transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </span>
+            ))}
+          </div>
+          <input
+            type="text"
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                const value = tagInput.trim();
+                if (value && !tags.includes(value)) {
+                  setTags([...tags, value]);
+                }
+                setTagInput("");
+              }
+            }}
+            placeholder="Escribir etiqueta y presionar Enter"
+            className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black transition-colors"
+          />
+        </div>
+
         <div className="flex gap-6">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
@@ -431,6 +476,15 @@ export default function ProductForm({ product }: ProductFormProps) {
               className="accent-kloven-red w-4 h-4"
             />
             <span className="text-sm font-medium">Destacado</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={onSale}
+              onChange={(e) => setOnSale(e.target.checked)}
+              className="accent-kloven-red w-4 h-4"
+            />
+            <span className="text-sm font-medium text-red-600">Super Oferta</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer">
             <input

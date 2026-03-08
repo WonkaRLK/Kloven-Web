@@ -13,7 +13,7 @@ interface MobileFilterDrawerProps {
   filters: TiendaFilters;
   facets: FacetCounts;
   hasActiveFilters: boolean;
-  onToggle: (key: "categories" | "sizes" | "colors", value: string) => void;
+  onToggle: (key: "categories" | "sizes" | "colors" | "tags", value: string) => void;
   onSetFilters: (update: Partial<TiendaFilters>) => void;
   onClear: () => void;
   categoryMap: Record<string, string>;

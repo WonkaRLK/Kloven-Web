@@ -42,6 +42,8 @@ export async function POST(request: NextRequest) {
       fit: body.fit || "",
       featured: body.featured || false,
       active: body.active !== false,
+      on_sale: body.on_sale || false,
+      tags: body.tags || [],
     })
     .select()
     .single();

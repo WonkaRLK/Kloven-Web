@@ -12,6 +12,8 @@ const DEFAULT_FILTERS: TiendaFilters = {
   categories: [],
   sizes: [],
   colors: [],
+  tags: [],
+  onSale: false,
   minPrice: null,
   maxPrice: null,
   sort: "newest",
@@ -21,6 +23,8 @@ function parseFilters(params: URLSearchParams): TiendaFilters {
   const cat = params.get("cat");
   const size = params.get("size");
   const color = params.get("color");
+  const tags = params.get("tags");
+  const sale = params.get("sale");
   const minP = params.get("minPrice");
   const maxP = params.get("maxPrice");
   const sort = params.get("sort");
@@ -29,6 +33,8 @@ function parseFilters(params: URLSearchParams): TiendaFilters {
     categories: cat ? cat.split(",").filter(Boolean) : [],
     sizes: size ? size.split(",").filter(Boolean) : [],
     colors: color ? color.split(",").filter(Boolean) : [],
+    tags: tags ? tags.split(",").filter(Boolean) : [],
+    onSale: sale === "true",
     minPrice: minP ? Number(minP) : null,
     maxPrice: maxP ? Number(maxP) : null,
     sort: (["newest", "price_asc", "price_desc", "name_asc"].includes(sort || "")
@@ -42,6 +48,8 @@ function filtersToParams(filters: TiendaFilters): URLSearchParams {
   if (filters.categories.length) params.set("cat", filters.categories.join(","));
   if (filters.sizes.length) params.set("size", filters.sizes.join(","));
   if (filters.colors.length) params.set("color", filters.colors.join(","));
+  if (filters.tags.length) params.set("tags", filters.tags.join(","));
+  if (filters.onSale) params.set("sale", "true");
   if (filters.minPrice !== null) params.set("minPrice", String(filters.minPrice));
   if (filters.maxPrice !== null) params.set("maxPrice", String(filters.maxPrice));
   if (filters.sort !== "newest") params.set("sort", filters.sort);
@@ -52,6 +60,8 @@ export interface FacetCounts {
   categories: Record<string, number>;
   sizes: Record<string, number>;
   colors: Record<string, number>;
+  tags: Record<string, number>;
+  onSaleCount: number;
 }
 
 export function useTiendaFilters(products: ProductWithVariants[]) {
@@ -65,6 +75,8 @@ export function useTiendaFilters(products: ProductWithVariants[]) {
       filters.categories.length > 0 ||
       filters.sizes.length > 0 ||
       filters.colors.length > 0 ||
+      filters.tags.length > 0 ||
+      filters.onSale ||
       filters.minPrice !== null ||
       filters.maxPrice !== null,
     [filters]
@@ -75,9 +87,19 @@ export function useTiendaFilters(products: ProductWithVariants[]) {
     const cats: Record<string, number> = {};
     const sizes: Record<string, number> = {};
     const colors: Record<string, number> = {};
+    const tags: Record<string, number> = {};
+    let onSaleCount = 0;
 
     for (const p of products) {
       cats[p.category] = (cats[p.category] || 0) + 1;
+      if (p.on_sale) {
+        onSaleCount++;
+      }
+      if (p.tags) {
+        for (const tag of p.tags) {
+          tags[tag] = (tags[tag] || 0) + 1;
+        }
+      }
       for (const v of p.product_variants) {
         if (v.stock > 0) {
           sizes[v.size] = (sizes[v.size] || 0) + 1;
@@ -86,12 +108,24 @@ export function useTiendaFilters(products: ProductWithVariants[]) {
       }
     }
 
-    return { categories: cats, sizes, colors } satisfies FacetCounts;
+    return { categories: cats, sizes, colors, tags, onSaleCount } satisfies FacetCounts;
   }, [products]);
 
   // Filter & sort products
   const filtered = useMemo(() => {
     let result = products;
+
+    // On sale filter
+    if (filters.onSale) {
+      result = result.filter((p) => p.on_sale);
+    }
+
+    // Tags filter (product must have at least one of the selected tags)
+    if (filters.tags.length > 0) {
+      result = result.filter(
+        (p) => p.tags && p.tags.some((t) => filters.tags.includes(t))
+      );
+    }
 
     // Category filter
     if (filters.categories.length > 0) {
@@ -165,7 +199,7 @@ export function useTiendaFilters(products: ProductWithVariants[]) {
   }, [filters.sort, router]);
 
   const toggleFilter = useCallback(
-    (key: "categories" | "sizes" | "colors", value: string) => {
+    (key: "categories" | "sizes" | "colors" | "tags", value: string) => {
       const current = filters[key];
       const next = current.includes(value)
         ? current.filter((v) => v !== value)

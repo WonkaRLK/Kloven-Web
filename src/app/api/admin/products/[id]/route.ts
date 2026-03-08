@@ -52,6 +52,8 @@ export async function PUT(
       fit: body.fit,
       featured: body.featured,
       active: body.active,
+      on_sale: body.on_sale || false,
+      tags: body.tags || [],
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)

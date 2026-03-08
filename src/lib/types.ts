@@ -22,6 +22,8 @@ export interface Product {
   fit: string;
   featured: boolean;
   active: boolean;
+  on_sale: boolean;
+  tags: string[];
   created_at: string;
   updated_at: string;
 }
@@ -46,6 +48,8 @@ export interface TiendaFilters {
   categories: string[];
   sizes: string[];
   colors: string[];
+  tags: string[];
+  onSale: boolean;
   minPrice: number | null;
   maxPrice: number | null;
   sort: TiendaSortOption;

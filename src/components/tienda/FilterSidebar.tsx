@@ -9,7 +9,7 @@ interface FilterSidebarProps {
   filters: TiendaFilters;
   facets: FacetCounts;
   hasActiveFilters: boolean;
-  onToggle: (key: "categories" | "sizes" | "colors", value: string) => void;
+  onToggle: (key: "categories" | "sizes" | "colors" | "tags", value: string) => void;
   onSetFilters: (update: Partial<TiendaFilters>) => void;
   onClear: () => void;
   categoryMap: Record<string, string>;
@@ -158,6 +158,51 @@ export default function FilterSidebar({
         )}
       </div>
 
+      {/* OFERTAS - highlighted in red */}
+      {facets.onSaleCount > 0 && (
+        <div className="border-b border-kloven-smoke pb-4 mb-4">
+          <button
+            type="button"
+            onClick={() => onSetFilters({ onSale: !filters.onSale })}
+            className="flex items-center gap-2.5 cursor-pointer group py-0.5 w-full text-left"
+          >
+            <div
+              className={`w-4 h-4 border flex-shrink-0 flex items-center justify-center transition-all ${
+                filters.onSale
+                  ? "bg-kloven-red border-kloven-red"
+                  : "border-kloven-red/50 group-hover:border-kloven-red"
+              }`}
+            >
+              {filters.onSale && (
+                <svg
+                  className="w-2.5 h-2.5 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={3}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              )}
+            </div>
+            <span
+              className={`text-sm font-bold flex-1 transition-colors ${
+                filters.onSale ? "text-kloven-red" : "text-kloven-red/80 group-hover:text-kloven-red"
+              }`}
+            >
+              OFERTAS
+            </span>
+            <span className="text-xs font-medium text-kloven-red/70 tabular-nums">
+              {facets.onSaleCount}
+            </span>
+          </button>
+        </div>
+      )}
+
       {/* Categories */}
       {sortedCategories.length > 0 && (
         <FilterSection title="Categorias">
@@ -170,6 +215,23 @@ export default function FilterSidebar({
               onChange={() => onToggle("categories", cat)}
             />
           ))}
+        </FilterSection>
+      )}
+
+      {/* Etiquetas */}
+      {Object.keys(facets.tags).length > 0 && (
+        <FilterSection title="Etiquetas" defaultOpen={false}>
+          {Object.keys(facets.tags)
+            .sort((a, b) => a.localeCompare(b))
+            .map((tag) => (
+              <CheckboxItem
+                key={tag}
+                label={tag}
+                count={facets.tags[tag]}
+                checked={filters.tags.includes(tag)}
+                onChange={() => onToggle("tags", tag)}
+              />
+            ))}
         </FilterSection>
       )}
 

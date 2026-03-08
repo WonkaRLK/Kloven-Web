@@ -8,7 +8,7 @@ interface TopBarProps {
   resultCount: number;
   filters: TiendaFilters;
   onSortChange: (sort: TiendaSortOption) => void;
-  onToggle: (key: "categories" | "sizes" | "colors", value: string) => void;
+  onToggle: (key: "categories" | "sizes" | "colors" | "tags", value: string) => void;
   onSetFilters: (update: Partial<TiendaFilters>) => void;
   hasActiveFilters: boolean;
   onOpenMobileFilters: () => void;
@@ -28,11 +28,25 @@ export default function TopBar({
   // Build active filter tags
   const tags: { key: string; label: string; onRemove: () => void }[] = [];
 
+  if (filters.onSale) {
+    tags.push({
+      key: "sale",
+      label: "En oferta",
+      onRemove: () => onSetFilters({ onSale: false }),
+    });
+  }
   for (const cat of filters.categories) {
     tags.push({
       key: `cat-${cat}`,
       label: categoryMap[cat] || cat,
       onRemove: () => onToggle("categories", cat),
+    });
+  }
+  for (const tag of filters.tags) {
+    tags.push({
+      key: `tag-${tag}`,
+      label: tag,
+      onRemove: () => onToggle("tags", tag),
     });
   }
   for (const size of filters.sizes) {
