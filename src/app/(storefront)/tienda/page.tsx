@@ -59,7 +59,7 @@ function TiendaContent() {
 
   return (
     <div className="pt-24">
-      <section className="max-w-[1600px] mx-auto px-4 lg:px-8 pb-20">
+      <section className="max-w-[1600px] mx-auto px-4 lg:pl-4 lg:pr-8 pb-20">
         {/* Title */}
         <ScrollReveal>
           <div className="mb-8 sm:mb-10">

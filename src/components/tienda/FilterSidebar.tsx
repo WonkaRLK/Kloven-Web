@@ -141,7 +141,7 @@ export default function FilterSidebar({
   );
 
   return (
-    <div className="sticky top-24">
+    <div className="sticky top-24 bg-white/[0.03] border border-kloven-smoke/50 rounded-sm p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-kloven-white">
