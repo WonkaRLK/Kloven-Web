@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 import { Loader2, Plus, Trash2, Upload, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Category, ProductWithVariants } from "@/lib/types";
-import { getSizesForType, CLOTHING_SIZES } from "@/lib/sizes";
+import { getSizesForType, CLOTHING_SIZES, generateNumericSizes, detectSizeMode } from "@/lib/sizes";
 
 interface Variant {
   size: string;
@@ -58,10 +58,46 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [featured, setFeatured] = useState(product?.featured || false);
   const [active, setActive] = useState(product?.active !== false);
 
+  const existingVariantSizes = product?.product_variants?.map((v) => v.size) || [];
+  const detectedMode = detectSizeMode(existingVariantSizes);
+
   const selectedCategory = categories.find((c) => c.slug === category);
-  const sizes = selectedCategory
-    ? getSizesForType(selectedCategory.size_type)
-    : CLOTHING_SIZES;
+  const defaultMode = isEdit
+    ? detectedMode
+    : selectedCategory?.size_type === "shoes"
+      ? "numeric"
+      : "letters";
+
+  const [sizeMode, setSizeMode] = useState<"letters" | "numeric">(defaultMode);
+  const [sizeMin, setSizeMin] = useState(() => {
+    if (detectedMode === "numeric" && existingVariantSizes.length > 0) {
+      const nums = existingVariantSizes.map(Number).filter((n) => !isNaN(n));
+      return nums.length > 0 ? Math.min(...nums) : 35;
+    }
+    return 35;
+  });
+  const [sizeMax, setSizeMax] = useState(() => {
+    if (detectedMode === "numeric" && existingVariantSizes.length > 0) {
+      const nums = existingVariantSizes.map(Number).filter((n) => !isNaN(n));
+      return nums.length > 0 ? Math.max(...nums) : 45;
+    }
+    return 45;
+  });
+
+  const sizes =
+    sizeMode === "numeric"
+      ? generateNumericSizes(sizeMin, sizeMax)
+      : selectedCategory
+        ? getSizesForType(selectedCategory.size_type)
+        : CLOTHING_SIZES;
+
+  // Sync sizeMode when category changes (only for new products)
+  useEffect(() => {
+    if (!isEdit && selectedCategory) {
+      const newMode = selectedCategory.size_type === "shoes" ? "numeric" : "letters";
+      setSizeMode(newMode as "letters" | "numeric");
+    }
+  }, [selectedCategory, isEdit]);
 
   const [variants, setVariants] = useState<Variant[]>(
     product?.product_variants?.map((v) => ({
@@ -448,6 +484,64 @@ export default function ProductForm({ product }: ProductFormProps) {
             <Plus className="w-4 h-4" />
             Agregar
           </button>
+        </div>
+
+        {/* Size mode selector */}
+        <div className="bg-gray-50 border border-gray-200 rounded p-4 space-y-3">
+          <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500">
+            Tipo de talle
+          </label>
+          <div className="flex gap-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="sizeMode"
+                checked={sizeMode === "letters"}
+                onChange={() => setSizeMode("letters")}
+                className="accent-kloven-red w-4 h-4"
+              />
+              <span className="text-sm font-medium">Letras (S, M, L, XL...)</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="sizeMode"
+                checked={sizeMode === "numeric"}
+                onChange={() => setSizeMode("numeric")}
+                className="accent-kloven-red w-4 h-4"
+              />
+              <span className="text-sm font-medium">Numerico (35, 36, 37...)</span>
+            </label>
+          </div>
+          {sizeMode === "numeric" && (
+            <div className="flex items-center gap-3">
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1">
+                  Desde
+                </label>
+                <input
+                  type="number"
+                  value={sizeMin}
+                  onChange={(e) => setSizeMin(parseInt(e.target.value) || 0)}
+                  className="bg-white border border-gray-200 p-2 text-sm w-20 focus:outline-none focus:border-black transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1">
+                  Hasta
+                </label>
+                <input
+                  type="number"
+                  value={sizeMax}
+                  onChange={(e) => setSizeMax(parseInt(e.target.value) || 0)}
+                  className="bg-white border border-gray-200 p-2 text-sm w-20 focus:outline-none focus:border-black transition-colors"
+                />
+              </div>
+              <span className="text-xs text-gray-400 self-end pb-2">
+                {sizes.length} talles disponibles
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="overflow-x-auto">

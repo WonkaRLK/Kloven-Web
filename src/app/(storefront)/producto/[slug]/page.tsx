@@ -94,9 +94,18 @@ export default function ProductoPage() {
     : [];
 
   // Show sizes in the canonical order for the category, falling back to variant order
-  const displaySizes = orderedSizes
+  // If canonical order has no overlap (e.g. numeric sizes on clothing category), sort naturally
+  const filteredByCanon = orderedSizes
     ? orderedSizes.filter((s) => availableSizes.includes(s))
-    : availableSizes;
+    : [];
+  const displaySizes =
+    filteredByCanon.length > 0
+      ? filteredByCanon
+      : availableSizes.sort((a, b) => {
+          const na = Number(a), nb = Number(b);
+          if (!isNaN(na) && !isNaN(nb)) return na - nb;
+          return a.localeCompare(b);
+        });
 
   const getStockForSizeColor = (size: string, color: string) => {
     if (!product) return 0;
