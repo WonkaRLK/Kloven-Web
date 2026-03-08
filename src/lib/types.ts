@@ -40,6 +40,17 @@ export interface ProductWithVariants extends Product {
   product_variants: ProductVariant[];
 }
 
+export type TiendaSortOption = "newest" | "price_asc" | "price_desc" | "name_asc";
+
+export interface TiendaFilters {
+  categories: string[];
+  sizes: string[];
+  colors: string[];
+  minPrice: number | null;
+  maxPrice: number | null;
+  sort: TiendaSortOption;
+}
+
 export type OrderStatus =
   | "pending"
   | "approved"

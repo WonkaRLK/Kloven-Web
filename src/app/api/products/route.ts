@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
 
   let query = supabase
     .from("products")
-    .select("*")
+    .select("*, product_variants(*)")
     .eq("active", true);
 
   if (category) {
@@ -26,5 +26,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(data);
+  // Filter inactive variants
+  const products = (data || []).map((p: Record<string, unknown>) => ({
+    ...p,
+    product_variants: (p.product_variants as { active: boolean }[]).filter(
+      (v) => v.active
+    ),
+  }));
+
+  return NextResponse.json(products);
 }

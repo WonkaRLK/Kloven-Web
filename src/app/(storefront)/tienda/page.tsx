@@ -1,23 +1,37 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
-import type { Product, Category } from "@/lib/types";
-import { ShoppingBag, Loader2 } from "lucide-react";
+import type { ProductWithVariants, Category } from "@/lib/types";
+import { ShoppingBag, Loader2, XCircle } from "lucide-react";
 import ScrollReveal from "@/components/animations/ScrollReveal";
-import { StaggerContainer, StaggerItem } from "@/components/animations/StaggerChildren";
+import {
+  StaggerContainer,
+  StaggerItem,
+} from "@/components/animations/StaggerChildren";
 import GlitchText from "@/components/animations/GlitchText";
+import { useTiendaFilters } from "@/hooks/useTiendaFilters";
+import FilterSidebar from "@/components/tienda/FilterSidebar";
+import MobileFilterDrawer from "@/components/tienda/MobileFilterDrawer";
+import TopBar from "@/components/tienda/TopBar";
 
 function TiendaContent() {
-  const searchParams = useSearchParams();
-  const catParam = searchParams.get("cat") || "all";
-
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState(catParam);
   const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
+  const {
+    filters,
+    filtered,
+    allFacets,
+    hasActiveFilters,
+    setFilters,
+    clearFilters,
+    toggleFilter,
+  } = useTiendaFilters(products);
+
+  // Fetch categories
   useEffect(() => {
     fetch("/api/categories")
       .then((r) => r.json())
@@ -31,76 +45,135 @@ function TiendaContent() {
       .catch(() => {});
   }, []);
 
-  useEffect(() => {
-    setActiveCategory(catParam);
-  }, [catParam]);
-
+  // Fetch all products (with variants) once
   useEffect(() => {
     setLoading(true);
-    const url =
-      activeCategory === "all"
-        ? "/api/products"
-        : `/api/products?category=${activeCategory}`;
-
-    fetch(url)
+    fetch("/api/products")
       .then((r) => r.json())
       .then((data) => {
         setProducts(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [activeCategory]);
+  }, []);
 
   return (
     <div className="pt-24">
       <section className="container mx-auto px-4 pb-20">
+        {/* Title */}
         <ScrollReveal>
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-2 sm:gap-0 mb-8 sm:mb-12">
-            <div>
-              <GlitchText
-                key={activeCategory}
-                text={
-                  activeCategory === "all"
-                    ? "Todos los Productos"
-                    : categoryMap[activeCategory] || "Productos"
-                }
-                className="font-heading text-3xl sm:text-5xl md:text-6xl uppercase tracking-wider"
-              />
-            </div>
-            <span className="text-sm font-bold text-kloven-ash font-mono tabular-nums">
-              [{String(products.length).padStart(2, "0")}] items
-            </span>
+          <div className="mb-8 sm:mb-10">
+            <GlitchText
+              text="Tienda"
+              className="font-heading text-3xl sm:text-5xl md:text-6xl uppercase tracking-wider"
+            />
           </div>
         </ScrollReveal>
 
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-3 sm:gap-x-5 lg:gap-x-6 gap-y-8 sm:gap-y-10">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="animate-pulse">
-                <div className="aspect-[3/4] bg-kloven-dark mb-6" />
-                <div className="h-4 bg-kloven-dark w-1/3 mx-auto mb-2" />
-                <div className="h-5 bg-kloven-dark w-2/3 mx-auto mb-2" />
-                <div className="h-6 bg-kloven-dark w-1/4 mx-auto" />
+          /* Skeleton loader */
+          <div className="flex gap-8">
+            {/* Sidebar skeleton - desktop only */}
+            <div className="hidden lg:block w-64 flex-shrink-0 space-y-6">
+              <div className="h-4 bg-kloven-dark w-20 mb-6" />
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="space-y-3">
+                  <div className="h-3 bg-kloven-dark w-24" />
+                  <div className="h-4 bg-kloven-dark w-full" />
+                  <div className="h-4 bg-kloven-dark w-3/4" />
+                  <div className="h-4 bg-kloven-dark w-1/2" />
+                </div>
+              ))}
+            </div>
+            {/* Grid skeleton */}
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-6">
+                <div className="h-5 bg-kloven-dark w-32 animate-pulse" />
+                <div className="h-10 bg-kloven-dark w-40 animate-pulse" />
               </div>
-            ))}
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 sm:gap-x-5 lg:gap-x-6 gap-y-8 sm:gap-y-10">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="aspect-[3/4] bg-kloven-dark mb-4" />
+                    <div className="h-3 bg-kloven-dark w-1/3 mx-auto mb-2" />
+                    <div className="h-4 bg-kloven-dark w-2/3 mx-auto mb-2" />
+                    <div className="h-5 bg-kloven-dark w-1/4 mx-auto" />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-        ) : products.length > 0 ? (
-          <StaggerContainer className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-3 sm:gap-x-5 lg:gap-x-6 gap-y-8 sm:gap-y-10">
-            {products.map((product) => (
-              <StaggerItem key={product.id}>
-                <ProductCard product={product} />
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
         ) : (
-          <div className="text-center py-32 bg-kloven-dark border border-dashed border-kloven-smoke">
-            <ShoppingBag className="w-12 h-12 mx-auto text-kloven-ash mb-4" />
-            <p className="text-kloven-ash text-lg font-medium">
-              No hay productos en esta categoria por el momento.
-            </p>
+          <div className="flex gap-8">
+            {/* Sidebar - desktop only */}
+            <aside className="hidden lg:block w-64 flex-shrink-0">
+              <FilterSidebar
+                filters={filters}
+                facets={allFacets}
+                hasActiveFilters={hasActiveFilters}
+                onToggle={toggleFilter}
+                onSetFilters={setFilters}
+                onClear={clearFilters}
+                categoryMap={categoryMap}
+              />
+            </aside>
+
+            {/* Main content */}
+            <div className="flex-1 min-w-0">
+              <TopBar
+                resultCount={filtered.length}
+                filters={filters}
+                onSortChange={(sort) => setFilters({ sort })}
+                onToggle={toggleFilter}
+                onSetFilters={setFilters}
+                hasActiveFilters={hasActiveFilters}
+                onOpenMobileFilters={() => setMobileFiltersOpen(true)}
+                categoryMap={categoryMap}
+              />
+
+              {filtered.length > 0 ? (
+                <StaggerContainer className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 sm:gap-x-5 lg:gap-x-6 gap-y-8 sm:gap-y-10">
+                  {filtered.map((product) => (
+                    <StaggerItem key={product.id}>
+                      <ProductCard product={product} />
+                    </StaggerItem>
+                  ))}
+                </StaggerContainer>
+              ) : (
+                <div className="text-center py-32 bg-kloven-dark border border-dashed border-kloven-smoke">
+                  <ShoppingBag className="w-12 h-12 mx-auto text-kloven-ash mb-4" />
+                  <p className="text-kloven-ash text-lg font-medium mb-4">
+                    No hay productos que coincidan con los filtros.
+                  </p>
+                  {hasActiveFilters && (
+                    <button
+                      onClick={clearFilters}
+                      className="inline-flex items-center gap-2 text-kloven-red hover:text-kloven-red-dark transition-colors font-bold text-sm uppercase tracking-widest"
+                    >
+                      <XCircle className="w-4 h-4" />
+                      Limpiar filtros
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </section>
+
+      {/* Mobile filter drawer */}
+      <MobileFilterDrawer
+        open={mobileFiltersOpen}
+        onClose={() => setMobileFiltersOpen(false)}
+        resultCount={filtered.length}
+        filters={filters}
+        facets={allFacets}
+        hasActiveFilters={hasActiveFilters}
+        onToggle={toggleFilter}
+        onSetFilters={setFilters}
+        onClear={clearFilters}
+        categoryMap={categoryMap}
+      />
     </div>
   );
 }
