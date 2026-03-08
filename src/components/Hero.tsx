@@ -17,6 +17,7 @@ const HERO_COLUMNS = [
 export default function Hero() {
   const [showTitle, setShowTitle] = useState(true);
   const [glitchPhase, setGlitchPhase] = useState(0);
+  const [overlayGlitch, setOverlayGlitch] = useState(false);
 
   useEffect(() => {
     // Glitch timeline: appear → glitch → settle → fade out
@@ -26,6 +27,15 @@ export default function Hero() {
     const t4 = setTimeout(() => setShowTitle(false), 900);  // fade out & show content
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
   }, []);
+
+  useEffect(() => {
+    if (showTitle) return;
+    const interval = setInterval(() => {
+      setOverlayGlitch(true);
+      setTimeout(() => setOverlayGlitch(false), 500);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [showTitle]);
 
   return (
     <div className={`relative overflow-hidden ${showTitle ? "min-h-screen bg-kloven-black" : "md:min-h-screen"}`}>
@@ -60,6 +70,53 @@ export default function Hero() {
         .hero-glitch-active::after {
           color: #F5F5F5;
           animation: glitchSlice2 0.15s steps(2) 3;
+        }
+        @keyframes overlayGlitch1 {
+          0%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+          10% { clip-path: inset(20% 0 60% 0); transform: translateX(-6px) skewX(-2deg); }
+          20% { clip-path: inset(50% 0 20% 0); transform: translateX(4px) skewX(1deg); }
+          30% { clip-path: inset(10% 0 70% 0); transform: translateX(-3px); }
+          40% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+        }
+        @keyframes overlayGlitch2 {
+          0%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+          10% { clip-path: inset(60% 0 10% 0); transform: translateX(5px) skewX(1deg); }
+          20% { clip-path: inset(15% 0 55% 0); transform: translateX(-8px) skewX(-2deg); }
+          30% { clip-path: inset(40% 0 30% 0); transform: translateX(6px); }
+          40% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+        }
+        .hero-overlay-logo {
+          opacity: 0.35;
+          text-shadow: 0 0 40px rgba(0,0,0,0.6);
+          transition: opacity 1s ease-out;
+        }
+        @media (min-width: 768px) {
+          .hero-overlay-logo {
+            opacity: 0.12;
+            text-shadow: none;
+          }
+        }
+        .hero-overlay-logo.glitch-burst {
+          opacity: 0.7;
+          transition: opacity 0.15s ease-in;
+        }
+        .hero-overlay-logo.glitch-burst::before,
+        .hero-overlay-logo.glitch-burst::after {
+          content: 'KLOVEN';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          text-align: center;
+          opacity: 0.6;
+        }
+        .hero-overlay-logo.glitch-burst::before {
+          color: #D90429;
+          animation: overlayGlitch1 0.4s steps(2) 1;
+        }
+        .hero-overlay-logo.glitch-burst::after {
+          color: #F5F5F5;
+          animation: overlayGlitch2 0.4s steps(2) 1;
         }
       `}</style>
 
@@ -104,6 +161,14 @@ export default function Hero() {
                   }
                 `}</style>
                 <div className="relative w-full h-[55vh] md:h-[75vh] overflow-hidden rounded-lg">
+                  {/* Logo overlay */}
+                  <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+                    <span
+                      className={`font-heading text-[20vw] md:text-[14vw] leading-none tracking-[0.15em] select-none text-kloven-white relative hero-overlay-logo ${overlayGlitch ? "glitch-burst" : ""}`}
+                    >
+                      KLOVEN
+                    </span>
+                  </div>
                   <div className="grid grid-cols-5 gap-2 h-full">
                     {HERO_COLUMNS.map((col, colIndex) => (
                       <div key={colIndex} className="relative overflow-hidden h-full">
