@@ -31,6 +31,7 @@ CREATE TABLE products (
   slug TEXT UNIQUE NOT NULL,
   description TEXT DEFAULT '',
   price INTEGER NOT NULL,
+  compare_at_price INTEGER DEFAULT NULL,
   category TEXT NOT NULL,
   image_url TEXT DEFAULT '',
   images TEXT[] DEFAULT '{}',

@@ -44,6 +44,7 @@ export async function PUT(
       slug: body.slug,
       description: body.description,
       price: body.price,
+      compare_at_price: body.compare_at_price || null,
       category: body.category,
       images: body.images || [],
       image_url: body.images?.[0] || body.image_url || "",

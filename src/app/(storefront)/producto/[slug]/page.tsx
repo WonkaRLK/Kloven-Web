@@ -216,9 +216,16 @@ export default function ProductoPage() {
               <h1 className="font-heading text-4xl md:text-5xl tracking-wider mb-4 text-kloven-white">
                 {product.name}
               </h1>
-              <p className="font-heading text-4xl text-kloven-red mb-6 tracking-wider">
-                ${product.price.toLocaleString("es-AR")}
-              </p>
+              <div className="flex items-baseline gap-3 mb-6">
+                <p className="font-heading text-4xl text-kloven-red tracking-wider">
+                  ${product.price.toLocaleString("es-AR")}
+                </p>
+                {product.compare_at_price && product.compare_at_price > product.price && (
+                  <p className="text-xl text-kloven-ash line-through">
+                    ${product.compare_at_price.toLocaleString("es-AR")}
+                  </p>
+                )}
+              </div>
               <p className="text-kloven-ash leading-relaxed mb-8">
                 {product.description}
               </p>

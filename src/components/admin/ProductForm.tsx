@@ -39,6 +39,9 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [slug, setSlug] = useState(product?.slug || "");
   const [description, setDescription] = useState(product?.description || "");
   const [price, setPrice] = useState(product?.price?.toString() || "");
+  const [compareAtPrice, setCompareAtPrice] = useState(
+    product?.compare_at_price?.toString() || ""
+  );
   const [category, setCategory] = useState(
     product?.category || ""
   );
@@ -225,6 +228,7 @@ export default function ProductForm({ product }: ProductFormProps) {
         slug,
         description,
         price: parseInt(price, 10),
+        compare_at_price: compareAtPrice ? parseInt(compareAtPrice, 10) : null,
         category,
         images,
         image_url: images[0] || "",
@@ -312,7 +316,7 @@ export default function ProductForm({ product }: ProductFormProps) {
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div>
             <label className="block text-[10px] font-bold uppercase mb-1 tracking-widest">
               Precio (ARS)
@@ -322,6 +326,18 @@ export default function ProductForm({ product }: ProductFormProps) {
               type="number"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
+              className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black transition-colors"
+            />
+          </div>
+          <div>
+            <label className="block text-[10px] font-bold uppercase mb-1 tracking-widest">
+              Precio sin descuento
+            </label>
+            <input
+              type="number"
+              value={compareAtPrice}
+              onChange={(e) => setCompareAtPrice(e.target.value)}
+              placeholder="Opcional"
               className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black transition-colors"
             />
           </div>

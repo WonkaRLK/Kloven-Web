@@ -14,6 +14,7 @@ export interface Product {
   slug: string;
   description: string;
   price: number;
+  compare_at_price: number | null;
   category: string;
   image_url: string;
   images: string[];

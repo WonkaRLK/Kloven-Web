@@ -40,9 +40,16 @@ export default function ProductCard({ product }: ProductCardProps) {
         <h3 className="font-bold text-lg leading-tight mb-2 truncate text-kloven-white">
           {product.name}
         </h3>
-        <span className="font-heading text-2xl text-kloven-red tracking-wider">
-          ${product.price.toLocaleString("es-AR")}
-        </span>
+        <div className="flex items-center justify-center gap-2">
+          <span className="font-heading text-2xl text-kloven-red tracking-wider">
+            ${product.price.toLocaleString("es-AR")}
+          </span>
+          {product.compare_at_price && product.compare_at_price > product.price && (
+            <span className="text-base text-kloven-ash line-through">
+              ${product.compare_at_price.toLocaleString("es-AR")}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
