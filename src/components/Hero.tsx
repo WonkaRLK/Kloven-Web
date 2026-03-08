@@ -92,7 +92,7 @@ export default function Hero() {
             className="flex flex-col items-center w-full md:min-h-screen"
           >
               {/* 3-column vertical scroll gallery */}
-              <div className="flex flex-col justify-center px-4 pt-20 pb-10 md:pt-24 md:pb-0 w-full md:px-[max(2rem,calc((100vw-1280px)/2+1rem))]">
+              <div className="flex flex-col justify-center px-2 pt-20 pb-10 md:pt-24 md:pb-0 w-full md:px-4">
                 <style>{`
                   @keyframes heroScrollUp {
                     0% { transform: translateY(0); }
