@@ -164,7 +164,7 @@ export default function Hero() {
                   {/* Logo overlay */}
                   <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
                     <span
-                      className={`font-heading text-[20vw] md:text-[14vw] leading-none tracking-[0.15em] select-none text-kloven-white relative hero-overlay-logo ${overlayGlitch ? "glitch-burst" : ""}`}
+                      className={`font-heading text-[13vw] md:text-[14vw] leading-none tracking-[0.15em] select-none text-kloven-white relative hero-overlay-logo ${overlayGlitch ? "glitch-burst" : ""}`}
                     >
                       KLOVEN
                     </span>
