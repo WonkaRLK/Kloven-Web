@@ -9,15 +9,18 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@imgly/background-removal-node": "^1.4.5",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.95.3",
     "framer-motion": "^12.34.3",
+    "jimp": "^1.6.0",
     "lucide-react": "^0.469.0",
     "mercadopago": "^2.12.0",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "resend": "^6.9.2"
+    "resend": "^6.9.2",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

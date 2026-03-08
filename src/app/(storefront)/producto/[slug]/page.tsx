@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -31,6 +31,21 @@ export default function ProductoPage() {
   const [related, setRelated] = useState<Product[]>([]);
   const [activeImage, setActiveImage] = useState(0);
   const [categories, setCategories] = useState<Category[]>([]);
+
+  // Zoom state
+  const [isZooming, setIsZooming] = useState(false);
+  const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setZoomPos({ x, y });
+  }, []);
+
+  const handleMouseEnter = useCallback(() => setIsZooming(true), []);
+  const handleMouseLeave = useCallback(() => setIsZooming(false), []);
 
   useEffect(() => {
     fetch(`/api/products/${slug}`)
@@ -164,25 +179,12 @@ export default function ProductoPage() {
         </Link>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-12 overflow-hidden">
-          {/* Image gallery */}
+          {/* Image gallery — thumbnails left, main image right with zoom */}
           <ScrollReveal>
-            <div className="space-y-3">
-              <div className="aspect-[3/4] bg-kloven-dark overflow-hidden relative border border-kloven-smoke">
-                <Image
-                  src={
-                    product.images?.length
-                      ? product.images[activeImage]
-                      : product.image_url
-                  }
-                  alt={product.name}
-                  fill
-                  priority
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-              </div>
+            <div className="flex gap-3">
+              {/* Vertical thumbnails — hidden on mobile, shown on md+ */}
               {product.images?.length > 1 && (
-                <div className="grid grid-cols-5 gap-2">
+                <div className="hidden md:flex flex-col gap-2 shrink-0 w-16 lg:w-20">
                   {product.images.map((img, i) => (
                     <button
                       key={img + i}
@@ -204,6 +206,63 @@ export default function ProductoPage() {
                   ))}
                 </div>
               )}
+
+              {/* Main image with hover zoom */}
+              <div className="flex-1 flex flex-col gap-3">
+                <div
+                  ref={imageContainerRef}
+                  onMouseMove={handleMouseMove}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  className="aspect-[3/4] bg-kloven-dark overflow-hidden relative border border-kloven-smoke cursor-crosshair"
+                >
+                  <Image
+                    src={
+                      product.images?.length
+                        ? product.images[activeImage]
+                        : product.image_url
+                    }
+                    alt={product.name}
+                    fill
+                    priority
+                    className="object-cover transition-transform duration-200 ease-out"
+                    style={
+                      isZooming
+                        ? {
+                            transform: "scale(2)",
+                            transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                          }
+                        : undefined
+                    }
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+
+                {/* Horizontal thumbnails — mobile only */}
+                {product.images?.length > 1 && (
+                  <div className="grid grid-cols-5 gap-2 md:hidden">
+                    {product.images.map((img, i) => (
+                      <button
+                        key={img + i}
+                        onClick={() => setActiveImage(i)}
+                        className={`relative aspect-square overflow-hidden border-2 transition-colors ${
+                          activeImage === i
+                            ? "border-kloven-red"
+                            : "border-kloven-smoke hover:border-kloven-ash"
+                        }`}
+                      >
+                        <Image
+                          src={img}
+                          alt={`${product.name} ${i + 1}`}
+                          fill
+                          className="object-cover"
+                          sizes="80px"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </ScrollReveal>
 
@@ -367,7 +426,7 @@ export default function ProductoPage() {
             <h2 className="font-heading text-3xl uppercase tracking-wider mb-10 text-kloven-white">
               Tambien te puede gustar
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-10 gap-y-10 sm:gap-y-16">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-3 sm:gap-x-5 lg:gap-x-6 gap-y-8 sm:gap-y-10">
               {related.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}

@@ -338,6 +338,15 @@ body {
   }
 }
 
+/* Hide scrollbar for horizontal overflow */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Font heading class */
 .font-heading {
   font-family: var(--font-heading), Arial, sans-serif;
