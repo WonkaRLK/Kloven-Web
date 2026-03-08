@@ -59,7 +59,7 @@ function TiendaContent() {
 
   return (
     <div className="pt-24">
-      <section className="container mx-auto px-4 pb-20">
+      <section className="max-w-[1600px] mx-auto px-4 lg:px-8 pb-20">
         {/* Title */}
         <ScrollReveal>
           <div className="mb-8 sm:mb-10">
@@ -72,7 +72,7 @@ function TiendaContent() {
 
         {loading ? (
           /* Skeleton loader */
-          <div className="flex gap-8">
+          <div className="flex gap-5 lg:gap-6">
             {/* Sidebar skeleton - desktop only */}
             <div className="hidden lg:block w-64 flex-shrink-0 space-y-6">
               <div className="h-4 bg-kloven-dark w-20 mb-6" />
@@ -104,7 +104,7 @@ function TiendaContent() {
             </div>
           </div>
         ) : (
-          <div className="flex gap-8">
+          <div className="flex gap-5 lg:gap-6">
             {/* Sidebar - desktop only */}
             <aside className="hidden lg:block w-64 flex-shrink-0">
               <FilterSidebar

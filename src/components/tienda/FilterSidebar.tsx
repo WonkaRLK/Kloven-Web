@@ -58,7 +58,11 @@ function CheckboxItem({
   onChange: () => void;
 }) {
   return (
-    <label className="flex items-center gap-2.5 cursor-pointer group py-0.5">
+    <button
+      type="button"
+      onClick={onChange}
+      className="flex items-center gap-2.5 cursor-pointer group py-0.5 w-full text-left"
+    >
       <div
         className={`w-4 h-4 border flex-shrink-0 flex items-center justify-center transition-all ${
           checked
@@ -90,7 +94,7 @@ function CheckboxItem({
         {label}
       </span>
       <span className="text-xs text-kloven-ash tabular-nums">{count}</span>
-    </label>
+    </button>
   );
 }
 
