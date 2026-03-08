@@ -114,11 +114,11 @@ export default function FeaturedProducts() {
         </div>
       </ScrollReveal>
 
-      {/* Sticky category navigation */}
+      {/* Sticky category navigation — desktop only */}
       {!loading && sections.length > 0 && (
         <div
           ref={navRef}
-          className="sticky top-20 z-10 -mx-4 px-4 py-3 mb-8 sm:mb-12 bg-kloven-black/90 backdrop-blur-md border-y border-kloven-smoke"
+          className="hidden md:block sticky top-20 z-10 -mx-4 px-4 py-3 mb-8 sm:mb-12 bg-kloven-black/90 backdrop-blur-md border-y border-kloven-smoke"
         >
           <div className="flex gap-2 overflow-x-auto scrollbar-hide">
             {sections.map(({ category }) => (
@@ -141,17 +141,17 @@ export default function FeaturedProducts() {
       {/* Content */}
       {loading ? (
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-3 sm:gap-x-5 lg:gap-x-6 gap-y-8 sm:gap-y-10">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3, 4].map((i) => (
             <div key={i} className="animate-pulse">
-              <div className="aspect-[3/4] bg-kloven-dark mb-6" />
-              <div className="h-4 bg-kloven-dark w-1/3 mx-auto mb-2" />
-              <div className="h-5 bg-kloven-dark w-2/3 mx-auto mb-2" />
-              <div className="h-6 bg-kloven-dark w-1/4 mx-auto" />
+              <div className="aspect-[3/4] bg-kloven-dark mb-4" />
+              <div className="h-3 bg-kloven-dark w-1/3 mx-auto mb-2" />
+              <div className="h-4 bg-kloven-dark w-2/3 mx-auto mb-2" />
+              <div className="h-5 bg-kloven-dark w-1/4 mx-auto" />
             </div>
           ))}
         </div>
       ) : sections.length > 0 ? (
-        <div className="space-y-16 sm:space-y-24">
+        <div className="space-y-12 md:space-y-24">
           {sections.map(({ category, products }) => (
             <div
               key={category.slug}
@@ -159,28 +159,42 @@ export default function FeaturedProducts() {
               ref={setSectionRef(category.slug)}
             >
               <ScrollReveal>
-                <div className="flex items-end justify-between mb-8 sm:mb-12 border-b border-kloven-smoke pb-4">
+                <div className="flex items-end justify-between mb-5 md:mb-12 border-b border-kloven-smoke pb-3 md:pb-4">
                   <GlitchText
                     text={category.name}
-                    className="font-heading text-2xl sm:text-3xl md:text-4xl uppercase tracking-wider"
+                    className="font-heading text-xl sm:text-3xl md:text-4xl uppercase tracking-wider"
                   />
-                  <span className="text-xs font-bold text-kloven-ash font-mono tabular-nums">
+                  <span className="text-[10px] md:text-xs font-bold text-kloven-ash font-mono tabular-nums">
                     [{String(products.length).padStart(2, "0")}]
                   </span>
                 </div>
               </ScrollReveal>
 
               {products.length > 0 ? (
-                <StaggerContainer className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-3 sm:gap-x-5 lg:gap-x-6 gap-y-8 sm:gap-y-10">
-                  {products.map((product) => (
-                    <StaggerItem key={product.id}>
-                      <ProductCard product={product} />
-                    </StaggerItem>
-                  ))}
-                </StaggerContainer>
+                <>
+                  {/* Mobile: horizontal carousel */}
+                  <div className="md:hidden -mx-4 px-4">
+                    <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+                      {products.map((product) => (
+                        <div key={product.id} className="w-40 shrink-0">
+                          <ProductCard product={product} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Desktop: grid */}
+                  <StaggerContainer className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-x-5 lg:gap-x-6 gap-y-8 lg:gap-y-10">
+                    {products.map((product) => (
+                      <StaggerItem key={product.id}>
+                        <ProductCard product={product} />
+                      </StaggerItem>
+                    ))}
+                  </StaggerContainer>
+                </>
               ) : (
-                <div className="text-center py-16 border border-dashed border-kloven-smoke">
-                  <p className="text-kloven-ash text-sm font-medium uppercase tracking-widest">
+                <div className="text-center py-12 md:py-16 border border-dashed border-kloven-smoke">
+                  <p className="text-kloven-ash text-xs md:text-sm font-medium uppercase tracking-widest">
                     Proximamente
                   </p>
                 </div>
