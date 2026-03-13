@@ -3,10 +3,22 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag, X, Minus, Plus, Check } from "lucide-react";
+import { ShoppingBag, X, Minus, Plus, Check, Package } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { getShippingInfo } from "@/lib/shipping";
 import { motion, AnimatePresence } from "framer-motion";
+import type { CartItem } from "@/lib/types";
+
+function getItemKey(item: CartItem): string {
+  return item.type === "combo" ? item.comboId : item.variant.id;
+}
+
+function getMaxQuantity(item: CartItem): number {
+  if (item.type === "regular") return item.variant.stock;
+  return Math.min(
+    ...item.comboSelections.map((s) => Math.floor(s.stock / s.quantity))
+  );
+}
 
 export default function CartDrawer() {
   const {
@@ -120,72 +132,96 @@ export default function CartDrawer() {
             </div>
           ) : (
             <AnimatePresence>
-              {items.map((item, index) => (
-                <motion.div
-                  key={item.variant.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, x: 100 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="flex gap-4"
-                >
-                  <div className="w-24 h-32 bg-kloven-carbon flex-shrink-0 overflow-hidden relative border border-kloven-smoke">
-                    <Image
-                      src={item.product.image_url}
-                      alt={item.product.name}
-                      fill
-                      className="object-cover"
-                      sizes="96px"
-                    />
-                  </div>
-                  <div className="flex-1 flex flex-col justify-between py-1">
-                    <div>
-                      <div className="flex justify-between items-start">
-                        <h3 className="font-bold text-sm pr-4 text-kloven-white">
-                          {item.product.name}
-                        </h3>
-                        <button
-                          onClick={() => removeFromCart(item.variant.id)}
-                          className="text-kloven-ash hover:text-kloven-red transition-colors"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                      <p className="text-kloven-ash text-[10px] mt-1 uppercase tracking-wider">
-                        Talle: {item.variant.size} | Color: {item.variant.color}
-                      </p>
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <div className="flex items-center border border-kloven-smoke rounded-sm">
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.variant.id, item.quantity - 1)
-                          }
-                          className="px-2 py-1 hover:bg-kloven-carbon transition-colors disabled:opacity-50 text-kloven-white"
-                          disabled={item.quantity <= 1}
-                        >
-                          <Minus className="w-3 h-3" />
-                        </button>
-                        <span className="px-2 text-sm font-medium w-8 text-center text-kloven-white">
-                          {item.quantity}
+              {items.map((item, index) => {
+                const key = getItemKey(item);
+                const maxQty = getMaxQuantity(item);
+
+                return (
+                  <motion.div
+                    key={key}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, x: 100 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="flex gap-4"
+                  >
+                    <div className="w-24 h-32 bg-kloven-carbon flex-shrink-0 overflow-hidden relative border border-kloven-smoke">
+                      <Image
+                        src={item.product.image_url}
+                        alt={item.product.name}
+                        fill
+                        className="object-cover"
+                        sizes="96px"
+                      />
+                      {item.type === "combo" && (
+                        <span className="absolute top-1 left-1 bg-purple-600 text-white text-[8px] font-bold px-1 py-0.5 rounded flex items-center gap-0.5">
+                          <Package className="w-2.5 h-2.5" />
+                          COMBO
                         </span>
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.variant.id, item.quantity + 1)
-                          }
-                          className="px-2 py-1 hover:bg-kloven-carbon transition-colors disabled:opacity-50 text-kloven-white"
-                          disabled={item.quantity >= item.variant.stock}
-                        >
-                          <Plus className="w-3 h-3" />
-                        </button>
-                      </div>
-                      <span className="font-bold text-sm text-kloven-white">
-                        ${(item.product.price * item.quantity).toLocaleString("es-AR")}
-                      </span>
+                      )}
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                    <div className="flex-1 flex flex-col justify-between py-1">
+                      <div>
+                        <div className="flex justify-between items-start">
+                          <h3 className="font-bold text-sm pr-4 text-kloven-white">
+                            {item.product.name}
+                          </h3>
+                          <button
+                            onClick={() => removeFromCart(key)}
+                            className="text-kloven-ash hover:text-kloven-red transition-colors"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                        {item.type === "regular" ? (
+                          <p className="text-kloven-ash text-[10px] mt-1 uppercase tracking-wider">
+                            Talle: {item.variant.size} | Color: {item.variant.color}
+                          </p>
+                        ) : (
+                          <div className="mt-1 space-y-0.5">
+                            {item.comboSelections.map((sel) => (
+                              <p
+                                key={sel.variant_id}
+                                className="text-kloven-ash text-[10px] uppercase tracking-wider"
+                              >
+                                {sel.product_name}: {sel.size} / {sel.color}
+                              </p>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center border border-kloven-smoke rounded-sm">
+                          <button
+                            onClick={() =>
+                              updateQuantity(key, item.quantity - 1)
+                            }
+                            className="px-2 py-1 hover:bg-kloven-carbon transition-colors disabled:opacity-50 text-kloven-white"
+                            disabled={item.quantity <= 1}
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="px-2 text-sm font-medium w-8 text-center text-kloven-white">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() =>
+                              updateQuantity(key, item.quantity + 1)
+                            }
+                            className="px-2 py-1 hover:bg-kloven-carbon transition-colors disabled:opacity-50 text-kloven-white"
+                            disabled={item.quantity >= maxQty}
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+                        <span className="font-bold text-sm text-kloven-white">
+                          ${(item.product.price * item.quantity).toLocaleString("es-AR")}
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
           )}
         </div>

@@ -42,8 +42,20 @@ CREATE TABLE products (
   on_sale BOOLEAN DEFAULT false,
   tags TEXT[] DEFAULT '{}',
   created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now()
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  is_combo BOOLEAN DEFAULT false
 );
+
+-- Combo Items (links combo product to its included products)
+CREATE TABLE combo_items (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  combo_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  product_id UUID NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
+  quantity INTEGER NOT NULL DEFAULT 1,
+  sort_order INTEGER DEFAULT 0,
+  UNIQUE(combo_id, product_id)
+);
+CREATE INDEX idx_combo_items_combo ON combo_items(combo_id);
 
 -- Product Variants (size/color/stock)
 CREATE TABLE product_variants (
@@ -101,7 +113,8 @@ CREATE TABLE order_items (
   size TEXT DEFAULT '',
   color TEXT DEFAULT '',
   quantity INTEGER NOT NULL DEFAULT 1,
-  unit_price INTEGER NOT NULL DEFAULT 0
+  unit_price INTEGER NOT NULL DEFAULT 0,
+  combo_variant_selections JSONB DEFAULT NULL
 );
 
 -- ============================================
@@ -109,6 +122,7 @@ CREATE TABLE order_items (
 -- ============================================
 
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE combo_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE product_variants ENABLE ROW LEVEL SECURITY;
 ALTER TABLE promo_codes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
@@ -118,6 +132,11 @@ ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public can read active products"
   ON products FOR SELECT
   USING (active = true);
+
+-- Combo items: public read
+CREATE POLICY "Public read combo_items"
+  ON combo_items FOR SELECT
+  USING (true);
 
 -- Product Variants: public read for active
 CREATE POLICY "Public can read active variants"

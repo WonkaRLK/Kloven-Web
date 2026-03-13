@@ -4,8 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/context/AdminAuthContext";
-import { Loader2, Plus, Trash2, Upload, ChevronLeft, ChevronRight, X } from "lucide-react";
-import type { Category, ProductWithVariants } from "@/lib/types";
+import { Loader2, Plus, Trash2, Upload, ChevronLeft, ChevronRight, X, Package } from "lucide-react";
+import type { Category, ProductWithVariants, Product } from "@/lib/types";
 import { getSizesForType, CLOTHING_SIZES, generateNumericSizes, detectSizeMode } from "@/lib/sizes";
 
 interface Variant {
@@ -13,6 +13,14 @@ interface Variant {
   color: string;
   stock: number;
   sku: string;
+}
+
+interface ComboItemForm {
+  product_id: string;
+  product_name: string;
+  product_image: string;
+  product_price: number;
+  quantity: number;
 }
 
 interface ProductFormProps {
@@ -63,6 +71,47 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [onSale, setOnSale] = useState(product?.on_sale || false);
   const [tags, setTags] = useState<string[]>(product?.tags || []);
   const [tagInput, setTagInput] = useState("");
+
+  // Combo state
+  const [isCombo, setIsCombo] = useState(product?.is_combo || false);
+  const [comboItems, setComboItems] = useState<ComboItemForm[]>(() => {
+    if (product?.combo_items?.length) {
+      return product.combo_items.map((ci) => ({
+        product_id: ci.product.id,
+        product_name: ci.product.name,
+        product_image: ci.product.image_url,
+        product_price: ci.product.price,
+        quantity: ci.quantity,
+      }));
+    }
+    return [];
+  });
+  const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
+  const [selectedProductToAdd, setSelectedProductToAdd] = useState("");
+
+  // Fetch non-combo products for combo selector
+  useEffect(() => {
+    if (!isCombo || !token) return;
+    fetch("/api/admin/products", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setAvailableProducts(
+            data.filter((p: Product & { is_combo?: boolean }) =>
+              !p.is_combo && p.active && p.id !== product?.id
+            )
+          );
+        }
+      })
+      .catch(() => {});
+  }, [isCombo, token, product?.id]);
+
+  const comboTotalPrice = comboItems.reduce(
+    (sum, ci) => sum + ci.product_price * ci.quantity,
+    0
+  );
 
   const existingVariantSizes = product?.product_variants?.map((v) => v.size) || [];
   const detectedMode = detectSizeMode(existingVariantSizes);
@@ -253,6 +302,45 @@ export default function ProductForm({ product }: ProductFormProps) {
     );
   };
 
+  // Combo helpers
+  const handleAddComboProduct = () => {
+    if (!selectedProductToAdd) return;
+    const prod = availableProducts.find((p) => p.id === selectedProductToAdd);
+    if (!prod) return;
+    if (comboItems.some((ci) => ci.product_id === prod.id)) return;
+
+    setComboItems([
+      ...comboItems,
+      {
+        product_id: prod.id,
+        product_name: prod.name,
+        product_image: prod.image_url,
+        product_price: prod.price,
+        quantity: 1,
+      },
+    ]);
+    setSelectedProductToAdd("");
+  };
+
+  const removeComboItem = (productId: string) => {
+    setComboItems(comboItems.filter((ci) => ci.product_id !== productId));
+  };
+
+  const updateComboItemQuantity = (productId: string, quantity: number) => {
+    setComboItems(
+      comboItems.map((ci) =>
+        ci.product_id === productId ? { ...ci, quantity: Math.max(1, quantity) } : ci
+      )
+    );
+  };
+
+  // Auto-set compare_at_price when combo items change
+  useEffect(() => {
+    if (isCombo && comboItems.length > 0) {
+      setCompareAtPrice(comboTotalPrice.toString());
+    }
+  }, [isCombo, comboTotalPrice, comboItems.length]);
+
   // Save
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -260,7 +348,7 @@ export default function ProductForm({ product }: ProductFormProps) {
     setError("");
 
     try {
-      const payload = {
+      const payload: Record<string, unknown> = {
         name,
         slug,
         description,
@@ -275,8 +363,17 @@ export default function ProductForm({ product }: ProductFormProps) {
         active,
         on_sale: onSale,
         tags,
-        variants,
+        is_combo: isCombo,
       };
+
+      if (isCombo) {
+        payload.combo_items = comboItems.map((ci) => ({
+          product_id: ci.product_id,
+          quantity: ci.quantity,
+        }));
+      } else {
+        payload.variants = variants;
+      }
 
       const url = isEdit
         ? `/api/admin/products/${product!.id}`
@@ -309,6 +406,28 @@ export default function ProductForm({ product }: ProductFormProps) {
           {error}
         </div>
       )}
+
+      {/* Combo toggle */}
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={isCombo}
+            onChange={(e) => setIsCombo(e.target.checked)}
+            className="accent-kloven-red w-5 h-5"
+            disabled={isEdit && product?.is_combo !== isCombo && false}
+          />
+          <div className="flex items-center gap-2">
+            <Package className="w-5 h-5 text-kloven-red" />
+            <span className="font-bold text-sm uppercase tracking-wide">Es un Combo</span>
+          </div>
+        </label>
+        {isCombo && (
+          <p className="text-xs text-gray-500 mt-2 ml-8">
+            Un combo es un paquete de productos vendidos como unidad. El cliente elige talle/color para cada producto.
+          </p>
+        )}
+      </div>
 
       {/* Basic info */}
       <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
@@ -358,7 +477,7 @@ export default function ProductForm({ product }: ProductFormProps) {
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div>
             <label className="block text-[10px] font-bold uppercase mb-1 tracking-widest">
-              Precio (ARS)
+              Precio {isCombo ? "del combo" : ""} (ARS)
             </label>
             <input
               required
@@ -376,7 +495,7 @@ export default function ProductForm({ product }: ProductFormProps) {
               type="number"
               value={compareAtPrice}
               onChange={(e) => setCompareAtPrice(e.target.value)}
-              placeholder="Opcional"
+              placeholder={isCombo ? "Auto: suma individual" : "Opcional"}
               className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black transition-colors"
             />
           </div>
@@ -582,167 +701,282 @@ export default function ProductForm({ product }: ProductFormProps) {
         </div>
       </div>
 
-      {/* Variants */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-black uppercase tracking-wide text-sm">
-            Variantes ({variants.length})
+      {/* Combo products selector */}
+      {isCombo && (
+        <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
+          <h2 className="font-black uppercase tracking-wide text-sm flex items-center gap-2">
+            <Package className="w-4 h-4 text-kloven-red" />
+            Productos del Combo ({comboItems.length})
           </h2>
-          <button
-            type="button"
-            onClick={addVariant}
-            className="flex items-center gap-1 text-sm font-medium text-kloven-red hover:underline"
-          >
-            <Plus className="w-4 h-4" />
-            Agregar
-          </button>
-        </div>
 
-        {/* Size mode selector */}
-        <div className="bg-gray-50 border border-gray-200 rounded p-4 space-y-3">
-          <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500">
-            Tipo de talle
-          </label>
-          <div className="flex gap-4">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="sizeMode"
-                checked={sizeMode === "letters"}
-                onChange={() => setSizeMode("letters")}
-                className="accent-kloven-red w-4 h-4"
-              />
-              <span className="text-sm font-medium">Letras (S, M, L, XL...)</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="sizeMode"
-                checked={sizeMode === "numeric"}
-                onChange={() => setSizeMode("numeric")}
-                className="accent-kloven-red w-4 h-4"
-              />
-              <span className="text-sm font-medium">Numerico (35, 36, 37...)</span>
-            </label>
+          {/* Add product selector */}
+          <div className="flex gap-2">
+            <select
+              value={selectedProductToAdd}
+              onChange={(e) => setSelectedProductToAdd(e.target.value)}
+              className="flex-1 bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black transition-colors"
+            >
+              <option value="">Seleccionar producto para agregar...</option>
+              {availableProducts
+                .filter((p) => !comboItems.some((ci) => ci.product_id === p.id))
+                .map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} - ${p.price.toLocaleString("es-AR")}
+                  </option>
+                ))}
+            </select>
+            <button
+              type="button"
+              onClick={handleAddComboProduct}
+              disabled={!selectedProductToAdd}
+              className="flex items-center gap-1 px-4 py-2 bg-black text-white text-sm font-bold uppercase tracking-widest hover:bg-kloven-red transition-colors disabled:opacity-50"
+            >
+              <Plus className="w-4 h-4" />
+              Agregar
+            </button>
           </div>
-          {sizeMode === "numeric" && (
-            <div className="flex items-center gap-3">
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1">
-                  Desde
-                </label>
-                <input
-                  type="number"
-                  value={sizeMin}
-                  onChange={(e) => setSizeMin(parseInt(e.target.value) || 0)}
-                  className="bg-white border border-gray-200 p-2 text-sm w-20 focus:outline-none focus:border-black transition-colors"
-                />
+
+          {/* Combo items list */}
+          {comboItems.length > 0 && (
+            <div className="space-y-3">
+              {comboItems.map((ci) => (
+                <div
+                  key={ci.product_id}
+                  className="flex items-center gap-4 bg-gray-50 border border-gray-200 rounded p-3"
+                >
+                  {ci.product_image && (
+                    <div className="w-12 h-16 bg-gray-100 rounded overflow-hidden relative flex-shrink-0">
+                      <Image
+                        src={ci.product_image}
+                        alt={ci.product_name}
+                        fill
+                        className="object-cover"
+                        sizes="48px"
+                      />
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <p className="font-bold text-sm">{ci.product_name}</p>
+                    <p className="text-xs text-gray-500">
+                      ${ci.product_price.toLocaleString("es-AR")} c/u
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-gray-500">
+                      Cant.
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      value={ci.quantity}
+                      onChange={(e) =>
+                        updateComboItemQuantity(ci.product_id, parseInt(e.target.value) || 1)
+                      }
+                      className="bg-white border border-gray-200 p-2 text-sm w-16 focus:outline-none focus:border-black transition-colors"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeComboItem(ci.product_id)}
+                    className="text-red-400 hover:text-red-600 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+
+              {/* Price reference */}
+              <div className="bg-gray-100 border border-gray-200 rounded p-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Precio individual total:</span>
+                  <span className="font-bold">${comboTotalPrice.toLocaleString("es-AR")}</span>
+                </div>
+                {price && (
+                  <div className="flex justify-between mt-1">
+                    <span className="text-gray-500">Precio combo:</span>
+                    <span className="font-bold text-kloven-red">
+                      ${parseInt(price, 10).toLocaleString("es-AR")}
+                    </span>
+                  </div>
+                )}
+                {price && parseInt(price, 10) < comboTotalPrice && (
+                  <div className="flex justify-between mt-1">
+                    <span className="text-green-600 font-medium">Ahorro cliente:</span>
+                    <span className="text-green-600 font-bold">
+                      ${(comboTotalPrice - parseInt(price, 10)).toLocaleString("es-AR")} (
+                      {Math.round((1 - parseInt(price, 10) / comboTotalPrice) * 100)}%)
+                    </span>
+                  </div>
+                )}
               </div>
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1">
-                  Hasta
-                </label>
-                <input
-                  type="number"
-                  value={sizeMax}
-                  onChange={(e) => setSizeMax(parseInt(e.target.value) || 0)}
-                  className="bg-white border border-gray-200 p-2 text-sm w-20 focus:outline-none focus:border-black transition-colors"
-                />
-              </div>
-              <span className="text-xs text-gray-400 self-end pb-2">
-                {sizes.length} talles disponibles
-              </span>
             </div>
           )}
         </div>
+      )}
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left p-2 font-bold uppercase text-[10px] tracking-widest text-gray-500">
-                  Talle
-                </th>
-                <th className="text-left p-2 font-bold uppercase text-[10px] tracking-widest text-gray-500">
-                  Color
-                </th>
-                <th className="text-left p-2 font-bold uppercase text-[10px] tracking-widest text-gray-500">
-                  Stock
-                </th>
-                <th className="text-left p-2 font-bold uppercase text-[10px] tracking-widest text-gray-500">
-                  SKU
-                </th>
-                <th className="w-10" />
-              </tr>
-            </thead>
-            <tbody>
-              {variants.map((v, i) => (
-                <tr key={i} className="border-b border-gray-100">
-                  <td className="p-2">
-                    <select
-                      value={v.size}
-                      onChange={(e) =>
-                        updateVariant(i, "size", e.target.value)
-                      }
-                      className="bg-gray-50 border border-gray-200 p-2 text-sm w-20"
-                    >
-                      {sizes.map((s) => (
-                        <option key={s} value={s}>
-                          {s}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="p-2">
-                    <input
-                      type="text"
-                      value={v.color}
-                      onChange={(e) =>
-                        updateVariant(i, "color", e.target.value)
-                      }
-                      className="bg-gray-50 border border-gray-200 p-2 text-sm w-28"
-                      placeholder="Color"
-                    />
-                  </td>
-                  <td className="p-2">
-                    <input
-                      type="number"
-                      value={v.stock}
-                      onChange={(e) =>
-                        updateVariant(i, "stock", parseInt(e.target.value) || 0)
-                      }
-                      className="bg-gray-50 border border-gray-200 p-2 text-sm w-20"
-                      min={0}
-                    />
-                  </td>
-                  <td className="p-2">
-                    <input
-                      type="text"
-                      value={v.sku}
-                      onChange={(e) =>
-                        updateVariant(i, "sku", e.target.value)
-                      }
-                      className="bg-gray-50 border border-gray-200 p-2 text-sm w-28"
-                      placeholder="Opcional"
-                    />
-                  </td>
-                  <td className="p-2">
-                    {variants.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeVariant(i)}
-                        className="text-red-400 hover:text-red-600 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    )}
-                  </td>
+      {/* Variants - only for non-combo products */}
+      {!isCombo && (
+        <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-black uppercase tracking-wide text-sm">
+              Variantes ({variants.length})
+            </h2>
+            <button
+              type="button"
+              onClick={addVariant}
+              className="flex items-center gap-1 text-sm font-medium text-kloven-red hover:underline"
+            >
+              <Plus className="w-4 h-4" />
+              Agregar
+            </button>
+          </div>
+
+          {/* Size mode selector */}
+          <div className="bg-gray-50 border border-gray-200 rounded p-4 space-y-3">
+            <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500">
+              Tipo de talle
+            </label>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="sizeMode"
+                  checked={sizeMode === "letters"}
+                  onChange={() => setSizeMode("letters")}
+                  className="accent-kloven-red w-4 h-4"
+                />
+                <span className="text-sm font-medium">Letras (S, M, L, XL...)</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="sizeMode"
+                  checked={sizeMode === "numeric"}
+                  onChange={() => setSizeMode("numeric")}
+                  className="accent-kloven-red w-4 h-4"
+                />
+                <span className="text-sm font-medium">Numerico (35, 36, 37...)</span>
+              </label>
+            </div>
+            {sizeMode === "numeric" && (
+              <div className="flex items-center gap-3">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1">
+                    Desde
+                  </label>
+                  <input
+                    type="number"
+                    value={sizeMin}
+                    onChange={(e) => setSizeMin(parseInt(e.target.value) || 0)}
+                    className="bg-white border border-gray-200 p-2 text-sm w-20 focus:outline-none focus:border-black transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1">
+                    Hasta
+                  </label>
+                  <input
+                    type="number"
+                    value={sizeMax}
+                    onChange={(e) => setSizeMax(parseInt(e.target.value) || 0)}
+                    className="bg-white border border-gray-200 p-2 text-sm w-20 focus:outline-none focus:border-black transition-colors"
+                  />
+                </div>
+                <span className="text-xs text-gray-400 self-end pb-2">
+                  {sizes.length} talles disponibles
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left p-2 font-bold uppercase text-[10px] tracking-widest text-gray-500">
+                    Talle
+                  </th>
+                  <th className="text-left p-2 font-bold uppercase text-[10px] tracking-widest text-gray-500">
+                    Color
+                  </th>
+                  <th className="text-left p-2 font-bold uppercase text-[10px] tracking-widest text-gray-500">
+                    Stock
+                  </th>
+                  <th className="text-left p-2 font-bold uppercase text-[10px] tracking-widest text-gray-500">
+                    SKU
+                  </th>
+                  <th className="w-10" />
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {variants.map((v, i) => (
+                  <tr key={i} className="border-b border-gray-100">
+                    <td className="p-2">
+                      <select
+                        value={v.size}
+                        onChange={(e) =>
+                          updateVariant(i, "size", e.target.value)
+                        }
+                        className="bg-gray-50 border border-gray-200 p-2 text-sm w-20"
+                      >
+                        {sizes.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="p-2">
+                      <input
+                        type="text"
+                        value={v.color}
+                        onChange={(e) =>
+                          updateVariant(i, "color", e.target.value)
+                        }
+                        className="bg-gray-50 border border-gray-200 p-2 text-sm w-28"
+                        placeholder="Color"
+                      />
+                    </td>
+                    <td className="p-2">
+                      <input
+                        type="number"
+                        value={v.stock}
+                        onChange={(e) =>
+                          updateVariant(i, "stock", parseInt(e.target.value) || 0)
+                        }
+                        className="bg-gray-50 border border-gray-200 p-2 text-sm w-20"
+                        min={0}
+                      />
+                    </td>
+                    <td className="p-2">
+                      <input
+                        type="text"
+                        value={v.sku}
+                        onChange={(e) =>
+                          updateVariant(i, "sku", e.target.value)
+                        }
+                        className="bg-gray-50 border border-gray-200 p-2 text-sm w-28"
+                        placeholder="Opcional"
+                      />
+                    </td>
+                    <td className="p-2">
+                      {variants.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeVariant(i)}
+                          className="text-red-400 hover:text-red-600 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Submit */}
       <button

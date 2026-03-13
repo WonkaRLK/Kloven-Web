@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { MercadoPagoConfig, Payment } from "mercadopago";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { sendOrderConfirmationEmail } from "@/lib/email";
+import { verifyMPWebhook } from "@/lib/mp-verify";
 
 const client = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN || "",
@@ -18,6 +19,14 @@ export async function POST(req: NextRequest) {
     const paymentId = body.data?.id;
     if (!paymentId) {
       return NextResponse.json({ error: "No payment ID" }, { status: 400 });
+    }
+
+    // Verify webhook signature
+    const xSignature = req.headers.get("x-signature");
+    const xRequestId = req.headers.get("x-request-id");
+    if (!verifyMPWebhook(xSignature, xRequestId, String(paymentId))) {
+      console.error("Webhook: invalid signature");
+      return NextResponse.json({ error: "Firma invalida" }, { status: 403 });
     }
 
     const payment = new Payment(client);
@@ -96,7 +105,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // If rejected/cancelled: restore stock
+    // If rejected/cancelled: restore stock atomically
     if (
       paymentData.status === "rejected" ||
       paymentData.status === "cancelled"
@@ -104,22 +113,29 @@ export async function POST(req: NextRequest) {
       try {
         const { data: orderItems } = await supabase
           .from("order_items")
-          .select("variant_id, quantity")
+          .select("variant_id, quantity, combo_variant_selections")
           .eq("order_id", orderId);
 
         if (orderItems) {
           for (const item of orderItems) {
-            const { data: variant } = await supabase
-              .from("product_variants")
-              .select("stock")
-              .eq("id", item.variant_id)
-              .single();
-
-            if (variant) {
-              await supabase
-                .from("product_variants")
-                .update({ stock: variant.stock + item.quantity })
-                .eq("id", item.variant_id);
+            if (item.combo_variant_selections) {
+              // Combo item — restore stock for each sub-product variant
+              const selections = item.combo_variant_selections as {
+                variant_id: string;
+                quantity: number;
+              }[];
+              for (const sel of selections) {
+                await supabase.rpc("restore_stock", {
+                  p_variant_id: sel.variant_id,
+                  p_quantity: sel.quantity * item.quantity,
+                });
+              }
+            } else if (item.variant_id) {
+              // Regular item
+              await supabase.rpc("restore_stock", {
+                p_variant_id: item.variant_id,
+                p_quantity: item.quantity,
+              });
             }
           }
           console.log(`Webhook: stock restored for order ${orderId}`);

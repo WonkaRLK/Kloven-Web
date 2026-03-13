@@ -22,6 +22,17 @@ export async function GET(
     return NextResponse.json({ error: error.message }, { status: 404 });
   }
 
+  // If combo, fetch combo_items with product details
+  if (data.is_combo) {
+    const { data: comboItems } = await supabase
+      .from("combo_items")
+      .select("*, product:product_id(id, name, slug, image_url, price)")
+      .eq("combo_id", id)
+      .order("sort_order");
+
+    data.combo_items = comboItems || [];
+  }
+
   return NextResponse.json(data);
 }
 
@@ -54,6 +65,7 @@ export async function PUT(
       active: body.active,
       on_sale: body.on_sale || false,
       tags: body.tags || [],
+      is_combo: body.is_combo || false,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)
@@ -64,8 +76,27 @@ export async function PUT(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // Update variants: delete existing and re-insert
-  if (body.variants) {
+  if (body.is_combo) {
+    // Delete existing combo_items and re-insert
+    await supabase.from("combo_items").delete().eq("combo_id", id);
+
+    if (body.combo_items?.length) {
+      const comboItems = body.combo_items.map(
+        (ci: { product_id: string; quantity: number }, idx: number) => ({
+          combo_id: id,
+          product_id: ci.product_id,
+          quantity: ci.quantity || 1,
+          sort_order: idx,
+        })
+      );
+
+      await supabase.from("combo_items").insert(comboItems);
+    }
+
+    // Clean up any leftover variants
+    await supabase.from("product_variants").delete().eq("product_id", id);
+  } else if (body.variants) {
+    // Update variants: delete existing and re-insert
     await supabase.from("product_variants").delete().eq("product_id", id);
 
     if (body.variants.length > 0) {
@@ -82,6 +113,9 @@ export async function PUT(
 
       await supabase.from("product_variants").insert(variants);
     }
+
+    // Clean up any leftover combo items
+    await supabase.from("combo_items").delete().eq("combo_id", id);
   }
 
   return NextResponse.json(data);
@@ -97,14 +131,11 @@ export async function DELETE(
   const { id } = await params;
   const supabase = getSupabaseAdmin();
 
-  // Delete order_items referencing this product first
-  await supabase.from("order_items").delete().eq("product_id", id);
-
-  // Delete variants
-  await supabase.from("product_variants").delete().eq("product_id", id);
-
-  // Delete product
-  const { error } = await supabase.from("products").delete().eq("id", id);
+  // Soft delete: mark as inactive instead of destroying data
+  const { error } = await supabase
+    .from("products")
+    .update({ active: false, updated_at: new Date().toISOString() })
+    .eq("id", id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

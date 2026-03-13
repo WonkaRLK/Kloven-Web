@@ -3,10 +3,15 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Check, Loader2 } from "lucide-react";
+import { ArrowLeft, Check, Loader2, Package } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { getShippingInfo } from "@/lib/shipping";
+import type { CartItem } from "@/lib/types";
+
+function getItemKey(item: CartItem): string {
+  return item.type === "combo" ? item.comboId : item.variant.id;
+}
 
 export default function CheckoutPage() {
   const { items, subtotal } = useCart();
@@ -67,15 +72,31 @@ export default function CheckoutPage() {
     setError("");
 
     try {
+      const checkoutItems = items.map((item) => {
+        if (item.type === "combo") {
+          return {
+            product_id: item.product.id,
+            is_combo: true,
+            combo_selections: item.comboSelections.map((s) => ({
+              product_id: s.product_id,
+              variant_id: s.variant_id,
+              quantity: s.quantity,
+            })),
+            quantity: item.quantity,
+          };
+        }
+        return {
+          product_id: item.product.id,
+          variant_id: item.variant.id,
+          quantity: item.quantity,
+        };
+      });
+
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map((i) => ({
-            product_id: i.product.id,
-            variant_id: i.variant.id,
-            quantity: i.quantity,
-          })),
+          items: checkoutItems,
           name,
           email,
           phone,
@@ -97,6 +118,7 @@ export default function CheckoutPage() {
 
       if (data.init_point) {
         sessionStorage.setItem("kloven_order_id", data.order_id);
+        sessionStorage.setItem("kloven_order_email", email.trim());
         window.location.href = data.init_point;
       } else {
         setError("No se pudo iniciar el pago");
@@ -302,31 +324,55 @@ export default function CheckoutPage() {
               </h2>
 
               <div className="space-y-4 mb-6">
-                {items.map((item) => (
-                  <div key={item.variant.id} className="flex gap-3">
-                    <div className="w-16 h-20 bg-kloven-carbon flex-shrink-0 overflow-hidden relative border border-kloven-smoke">
-                      <Image
-                        src={item.product.image_url}
-                        alt={item.product.name}
-                        fill
-                        className="object-cover"
-                        sizes="64px"
-                      />
+                {items.map((item) => {
+                  const key = getItemKey(item);
+                  return (
+                    <div key={key} className="flex gap-3">
+                      <div className="w-16 h-20 bg-kloven-carbon flex-shrink-0 overflow-hidden relative border border-kloven-smoke">
+                        <Image
+                          src={item.product.image_url}
+                          alt={item.product.name}
+                          fill
+                          className="object-cover"
+                          sizes="64px"
+                        />
+                        {item.type === "combo" && (
+                          <span className="absolute top-0.5 left-0.5 bg-purple-600 text-white text-[7px] font-bold px-1 py-0.5 rounded flex items-center gap-0.5">
+                            <Package className="w-2 h-2" />
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex-1 text-sm">
+                        <p className="font-bold text-kloven-white">
+                          {item.product.name}
+                        </p>
+                        {item.type === "regular" ? (
+                          <p className="text-kloven-ash text-xs">
+                            {item.variant.size} / {item.variant.color} x{" "}
+                            {item.quantity}
+                          </p>
+                        ) : (
+                          <div className="space-y-0.5">
+                            {item.comboSelections.map((sel) => (
+                              <p
+                                key={sel.variant_id}
+                                className="text-kloven-ash text-xs"
+                              >
+                                {sel.product_name}: {sel.size}/{sel.color}
+                              </p>
+                            ))}
+                            <p className="text-kloven-ash text-xs">
+                              x {item.quantity}
+                            </p>
+                          </div>
+                        )}
+                        <p className="font-bold mt-1 text-kloven-white">
+                          ${(item.product.price * item.quantity).toLocaleString("es-AR")}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1 text-sm">
-                      <p className="font-bold text-kloven-white">
-                        {item.product.name}
-                      </p>
-                      <p className="text-kloven-ash text-xs">
-                        {item.variant.size} / {item.variant.color} x{" "}
-                        {item.quantity}
-                      </p>
-                      <p className="font-bold mt-1 text-kloven-white">
-                        ${(item.product.price * item.quantity).toLocaleString("es-AR")}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className="space-y-2 text-sm border-t border-kloven-smoke pt-4">

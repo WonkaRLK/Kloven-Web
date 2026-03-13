@@ -26,6 +26,19 @@ export interface Product {
   tags: string[];
   created_at: string;
   updated_at: string;
+  is_combo?: boolean;
+}
+
+export interface ComboItem {
+  id: string;
+  combo_id: string;
+  product_id: string;
+  quantity: number;
+  sort_order: number;
+}
+
+export interface ComboItemWithProduct extends ComboItem {
+  product: ProductWithVariants;
 }
 
 export interface ProductVariant {
@@ -40,6 +53,7 @@ export interface ProductVariant {
 
 export interface ProductWithVariants extends Product {
   product_variants: ProductVariant[];
+  combo_items?: ComboItemWithProduct[];
 }
 
 export type TiendaSortOption = "newest" | "price_asc" | "price_desc" | "name_asc";
@@ -84,6 +98,17 @@ export interface Order {
   updated_at: string;
 }
 
+export interface ComboVariantSelection {
+  product_id: string;
+  product_name: string;
+  variant_id: string;
+  size: string;
+  color: string;
+  quantity: number;
+  stock: number;
+  image_url: string;
+}
+
 export interface OrderItem {
   id: string;
   order_id: string;
@@ -94,6 +119,7 @@ export interface OrderItem {
   color: string;
   quantity: number;
   unit_price: number;
+  combo_variant_selections?: ComboVariantSelection[] | null;
 }
 
 export interface OrderWithItems extends Order {
@@ -110,11 +136,22 @@ export interface PromoCode {
   active: boolean;
 }
 
-export interface CartItem {
+export interface RegularCartItem {
+  type: "regular";
   product: Product;
   variant: ProductVariant;
   quantity: number;
 }
+
+export interface ComboCartItem {
+  type: "combo";
+  product: Product;
+  comboSelections: ComboVariantSelection[];
+  quantity: number;
+  comboId: string; // unique key per combo instance in cart
+}
+
+export type CartItem = RegularCartItem | ComboCartItem;
 
 // Points system types
 

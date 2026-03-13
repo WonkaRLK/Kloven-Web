@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Package } from "lucide-react";
 import type { Product } from "@/lib/types";
 
 interface ProductCardProps {
@@ -23,6 +23,14 @@ export default function ProductCard({ product }: ProductCardProps) {
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
+
+        {/* Combo badge */}
+        {product.is_combo && (
+          <span className="absolute top-2 right-2 bg-purple-600 text-white text-[10px] sm:text-xs font-bold px-2 py-1 uppercase tracking-wider z-10 flex items-center gap-1">
+            <Package className="w-3 h-3" />
+            COMBO
+          </span>
+        )}
 
         {/* Discount badge */}
         {product.compare_at_price && product.compare_at_price > product.price && (

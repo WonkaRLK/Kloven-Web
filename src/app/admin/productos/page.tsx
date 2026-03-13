@@ -111,7 +111,14 @@ export default function AdminProductosPage() {
                         </div>
                       )}
                       <div>
-                        <p className="font-bold">{p.name}</p>
+                        <p className="font-bold">
+                          {p.name}
+                          {(p as ProductWithVariants & { is_combo?: boolean }).is_combo && (
+                            <span className="ml-2 bg-purple-100 text-purple-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">
+                              COMBO
+                            </span>
+                          )}
+                        </p>
                         <p className="text-gray-400 text-xs">{p.slug}</p>
                       </div>
                     </div>
@@ -123,7 +130,9 @@ export default function AdminProductosPage() {
                     ${p.price.toLocaleString("es-AR")}
                   </td>
                   <td className="p-4 hidden md:table-cell">
-                    {p.product_variants?.length || 0}
+                    {(p as ProductWithVariants & { is_combo?: boolean; combo_items_count?: number }).is_combo
+                      ? `${(p as ProductWithVariants & { combo_items_count?: number }).combo_items_count || 0} productos`
+                      : p.product_variants?.length || 0}
                   </td>
                   <td className="p-4 hidden md:table-cell">
                     <span

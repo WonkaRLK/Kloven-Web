@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Package } from "lucide-react";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 import type { OrderWithItems, OrderStatus } from "@/lib/types";
 
@@ -165,9 +165,34 @@ export default function AdminPedidoDetailPage() {
           <tbody>
             {order.order_items.map((item) => (
               <tr key={item.id} className="border-b border-gray-100">
-                <td className="py-3 font-medium">{item.product_name}</td>
+                <td className="py-3">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">{item.product_name}</span>
+                    {item.combo_variant_selections && (
+                      <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase flex items-center gap-0.5">
+                        <Package className="w-2.5 h-2.5" />
+                        COMBO
+                      </span>
+                    )}
+                  </div>
+                  {/* Show sub-products for combos */}
+                  {item.combo_variant_selections && (
+                    <div className="mt-1 ml-4 space-y-0.5">
+                      {(item.combo_variant_selections as { product_name: string; size: string; color: string; quantity: number }[]).map(
+                        (sel, idx) => (
+                          <p key={idx} className="text-xs text-gray-500">
+                            {sel.product_name}: {sel.size} / {sel.color}
+                            {sel.quantity > 1 && ` x${sel.quantity}`}
+                          </p>
+                        )
+                      )}
+                    </div>
+                  )}
+                </td>
                 <td className="py-3 text-gray-500">
-                  {item.size} / {item.color}
+                  {item.combo_variant_selections
+                    ? "Ver detalle"
+                    : `${item.size} / ${item.color}`}
                 </td>
                 <td className="py-3 text-right">{item.quantity}</td>
                 <td className="py-3 text-right font-bold">

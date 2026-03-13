@@ -2,19 +2,34 @@ import { NextRequest, NextResponse } from "next/server";
 import { MercadoPagoConfig, Preference } from "mercadopago";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { calculateShipping } from "@/lib/shipping";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { safeError } from "@/lib/api-utils";
 
 const client = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN || "",
 });
 
-interface CheckoutItem {
+interface ComboSelection {
   product_id: string;
   variant_id: string;
   quantity: number;
 }
 
+interface CheckoutItem {
+  product_id: string;
+  variant_id?: string;
+  quantity: number;
+  is_combo?: boolean;
+  combo_selections?: ComboSelection[];
+}
+
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req.headers);
+    if (!rateLimit(`checkout:${ip}`, { maxTokens: 5, refillRate: 5 / 60 })) {
+      return safeError(429, "Demasiados intentos. Intenta de nuevo en un minuto.");
+    }
+
     const body = await req.json();
     const {
       items: cartItems,
@@ -52,24 +67,57 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Carrito vacio" }, { status: 400 });
     }
 
+    // Validate quantities
+    for (const item of cartItems) {
+      if (!Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 99) {
+        return NextResponse.json(
+          { error: "Cantidad invalida" },
+          { status: 400 }
+        );
+      }
+    }
+
     const supabase = getSupabaseAdmin();
 
-    // Fetch real product data from DB
-    const productIds = [...new Set(cartItems.map((i) => i.product_id))];
-    const variantIds = cartItems.map((i) => i.variant_id);
+    // Validate user_id against auth session if provided
+    let validUserId: string | null = null;
+    if (user_id) {
+      const { data: { user } } = await supabase.auth.admin.getUserById(user_id);
+      if (user) {
+        validUserId = user.id;
+      }
+    }
+
+    // Collect all product_ids and variant_ids across regular and combo items
+    const allProductIds = new Set<string>();
+    const allVariantIds = new Set<string>();
+
+    for (const item of cartItems) {
+      allProductIds.add(item.product_id);
+      if (item.is_combo && item.combo_selections) {
+        for (const sel of item.combo_selections) {
+          allProductIds.add(sel.product_id);
+          allVariantIds.add(sel.variant_id);
+        }
+      } else if (item.variant_id) {
+        allVariantIds.add(item.variant_id);
+      }
+    }
 
     const [{ data: products }, { data: variants }] = await Promise.all([
       supabase
         .from("products")
-        .select("id, name, price, image_url")
-        .in("id", productIds),
-      supabase
-        .from("product_variants")
-        .select("id, product_id, size, color, stock")
-        .in("id", variantIds),
+        .select("id, name, price, image_url, is_combo")
+        .in("id", [...allProductIds]),
+      allVariantIds.size > 0
+        ? supabase
+            .from("product_variants")
+            .select("id, product_id, size, color, stock")
+            .in("id", [...allVariantIds])
+        : Promise.resolve({ data: [] as { id: string; product_id: string; size: string; color: string; stock: number }[] }),
     ]);
 
-    if (!products?.length || !variants?.length) {
+    if (!products?.length) {
       return NextResponse.json(
         { error: "Productos no encontrados" },
         { status: 400 }
@@ -77,25 +125,67 @@ export async function POST(req: NextRequest) {
     }
 
     const productMap = new Map(products.map((p) => [p.id, p]));
-    const variantMap = new Map(variants.map((v) => [v.id, v]));
+    const variantMap = new Map((variants || []).map((v) => [v.id, v]));
 
-    // Validate stock for each item
+    // Validate all cart items and build stock decrement list
+    const stockDecrements: { variant_id: string; quantity: number }[] = [];
+
     for (const item of cartItems) {
-      const variant = variantMap.get(item.variant_id);
-      if (!variant) {
+      const product = productMap.get(item.product_id);
+      if (!product) {
         return NextResponse.json(
-          { error: `Variante no encontrada` },
+          { error: "Producto no encontrado" },
           { status: 400 }
         );
       }
-      if (variant.stock < item.quantity) {
-        const product = productMap.get(item.product_id);
-        return NextResponse.json(
-          {
-            error: `Sin stock suficiente para ${product?.name || "producto"} (${variant.size}/${variant.color})`,
-          },
-          { status: 400 }
-        );
+
+      if (item.is_combo && item.combo_selections) {
+        // Validate combo
+        if (!product.is_combo) {
+          return NextResponse.json(
+            { error: `${product.name} no es un combo` },
+            { status: 400 }
+          );
+        }
+
+        for (const sel of item.combo_selections) {
+          const variant = variantMap.get(sel.variant_id);
+          if (!variant) {
+            return NextResponse.json(
+              { error: "Variante de combo no encontrada" },
+              { status: 400 }
+            );
+          }
+          const totalQty = sel.quantity * item.quantity;
+          if (variant.stock < totalQty) {
+            const subProduct = productMap.get(sel.product_id);
+            return NextResponse.json(
+              {
+                error: `Sin stock suficiente para ${subProduct?.name || "producto"} (${variant.size}/${variant.color})`,
+              },
+              { status: 400 }
+            );
+          }
+          stockDecrements.push({ variant_id: sel.variant_id, quantity: totalQty });
+        }
+      } else {
+        // Regular item
+        const variant = variantMap.get(item.variant_id!);
+        if (!variant) {
+          return NextResponse.json(
+            { error: "Variante no encontrada" },
+            { status: 400 }
+          );
+        }
+        if (variant.stock < item.quantity) {
+          return NextResponse.json(
+            {
+              error: `Sin stock suficiente para ${product.name} (${variant.size}/${variant.color})`,
+            },
+            { status: 400 }
+          );
+        }
+        stockDecrements.push({ variant_id: item.variant_id!, quantity: item.quantity });
       }
     }
 
@@ -140,7 +230,7 @@ export async function POST(req: NextRequest) {
       .from("orders")
       .insert({
         status: "pending",
-        user_id: user_id || null,
+        user_id: validUserId,
         payer_name: name,
         payer_email: email,
         payer_phone: phone || "",
@@ -157,17 +247,43 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (orderError || !order) {
-      console.error("Order creation error:", orderError);
-      return NextResponse.json(
-        { error: "No se pudo crear la orden" },
-        { status: 500 }
-      );
+      return safeError(500, "No se pudo crear la orden", orderError);
     }
 
     // Create order items
     const orderItems = cartItems.map((item) => {
       const product = productMap.get(item.product_id)!;
-      const variant = variantMap.get(item.variant_id)!;
+
+      if (item.is_combo && item.combo_selections) {
+        // Combo order item — store selections as JSONB
+        const comboVariantSelections = item.combo_selections.map((sel) => {
+          const variant = variantMap.get(sel.variant_id)!;
+          const subProduct = productMap.get(sel.product_id);
+          return {
+            product_id: sel.product_id,
+            product_name: subProduct?.name || "",
+            variant_id: sel.variant_id,
+            size: variant.size,
+            color: variant.color,
+            quantity: sel.quantity,
+          };
+        });
+
+        return {
+          order_id: order.id,
+          product_id: item.product_id,
+          variant_id: null,
+          product_name: product.name,
+          size: "",
+          color: "",
+          quantity: item.quantity,
+          unit_price: product.price,
+          combo_variant_selections: comboVariantSelections,
+        };
+      }
+
+      // Regular order item
+      const variant = variantMap.get(item.variant_id!)!;
       return {
         order_id: order.id,
         product_id: item.product_id,
@@ -177,6 +293,7 @@ export async function POST(req: NextRequest) {
         color: variant.color,
         quantity: item.quantity,
         unit_price: product.price,
+        combo_variant_selections: null,
       };
     });
 
@@ -185,21 +302,19 @@ export async function POST(req: NextRequest) {
       .insert(orderItems);
 
     if (itemsError) {
-      console.error("Order items error:", itemsError);
       await supabase.from("orders").delete().eq("id", order.id);
-      return NextResponse.json(
-        { error: "No se pudieron crear los items" },
-        { status: 500 }
-      );
+      return safeError(500, "No se pudieron crear los items", itemsError);
     }
 
-    // Decrement stock for each variant
-    for (const item of cartItems) {
-      const variant = variantMap.get(item.variant_id)!;
-      await supabase
-        .from("product_variants")
-        .update({ stock: variant.stock - item.quantity })
-        .eq("id", item.variant_id);
+    // Atomic stock decrement via DB function
+    const { error: stockError } = await supabase.rpc("decrement_stock_batch", {
+      p_items: stockDecrements,
+    });
+
+    if (stockError) {
+      await supabase.from("order_items").delete().eq("order_id", order.id);
+      await supabase.from("orders").delete().eq("id", order.id);
+      return safeError(400, "No se pudo reservar el stock", stockError);
     }
 
     // Increment promo code uses
@@ -212,18 +327,42 @@ export async function POST(req: NextRequest) {
     const isHttps = baseUrl.startsWith("https://");
 
     const preference = new Preference(client);
-    const result = await preference.create({
-      body: {
-        items: cartItems.map((item) => {
+
+    // If promo discount, send consolidated item with net price
+    const mpItems = discountPercent > 0
+      ? [{
+          id: order.id,
+          title: `Pedido Kloven (${cartItems.length} producto${cartItems.length > 1 ? "s" : ""})`,
+          quantity: 1,
+          unit_price: afterDiscount,
+          currency_id: "ARS" as const,
+        }]
+      : cartItems.map((item) => {
           const product = productMap.get(item.product_id)!;
-          const variant = variantMap.get(item.variant_id)!;
+          if (item.is_combo) {
+            return {
+              id: item.product_id,
+              title: `${product.name} (Combo)`,
+              quantity: item.quantity,
+              unit_price: product.price,
+              currency_id: "ARS" as const,
+            };
+          }
+          const variant = variantMap.get(item.variant_id!)!;
           return {
-            id: item.variant_id,
+            id: item.variant_id!,
             title: `${product.name} (${variant.size}/${variant.color})`,
             quantity: item.quantity,
             unit_price: product.price,
-            currency_id: "ARS",
+            currency_id: "ARS" as const,
           };
+        });
+
+    const result = await preference.create({
+      body: {
+        items: mpItems,
+        ...(shippingCost > 0 && {
+          shipments: { cost: shippingCost, mode: "not_specified" },
         }),
         payer: { email, name },
         external_reference: order.id,
@@ -243,15 +382,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ init_point: result.init_point, order_id: order.id });
     }
 
-    return NextResponse.json(
-      { error: "No se pudo crear la preferencia de pago" },
-      { status: 500 }
-    );
+    return safeError(500, "No se pudo crear la preferencia de pago");
   } catch (error) {
-    console.error("Checkout error:", error);
-    return NextResponse.json(
-      { error: "Error interno del servidor" },
-      { status: 500 }
-    );
+    return safeError(500, "Error interno del servidor", error);
   }
 }
