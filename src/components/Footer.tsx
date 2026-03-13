@@ -79,13 +79,22 @@ export default function Footer() {
         </div>
         <div className="border-t border-kloven-smoke pt-10 flex flex-col md:flex-row justify-between items-center text-xs text-kloven-ash font-medium">
           <p>&copy; 2026 Kloven Argentina. Todos los derechos reservados.</p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
+          <div className="flex items-center space-x-6 mt-4 md:mt-0">
             <span className="cursor-pointer hover:text-kloven-red">
               Privacidad
             </span>
             <span className="cursor-pointer hover:text-kloven-red">
               Terminos
             </span>
+            <a
+              href="https://wonkadev.online"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 hover:text-kloven-red transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              WonkaDev
+            </a>
           </div>
         </div>
       </div>
