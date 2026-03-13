@@ -86,16 +86,21 @@ export default function Footer() {
             <span className="cursor-pointer hover:text-kloven-red">
               Terminos
             </span>
-            <a
-              href="https://wonkadev.online"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 hover:text-kloven-red transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-              WonkaDev
-            </a>
           </div>
+        </div>
+
+        {/* WonkaDev credit */}
+        <div className="mt-8 flex justify-center">
+          <a
+            href="https://wonkadev.online"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 px-5 py-2.5 rounded-full border border-kloven-smoke hover:border-kloven-red/50 transition-all duration-300"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-kloven-ash group-hover:text-kloven-red transition-colors"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <span className="text-sm text-kloven-ash group-hover:text-kloven-white transition-colors">Desarrollado por</span>
+            <span style={{ fontFamily: "WillyWonka, cursive" }} className="text-lg text-kloven-white group-hover:text-kloven-red transition-colors">Wonka</span>
+          </a>
         </div>
       </div>
     </footer>

@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "WillyWonka";
+  src: url("/fonts/willy-wonka.ttf") format("truetype");
+  font-display: swap;
+}
+
 :root {
   --background: #0A0A0A;
   --foreground: #F5F5F5;
