@@ -63,8 +63,9 @@ export function useSpinWheel() {
     }
   }, []);
 
-  // Auto-popup: 5 sec delay on first visit
+  // Auto-popup: 5 sec delay on first visit (not on post-purchase pages)
   useEffect(() => {
+    if (window.location.pathname.startsWith("/compra")) return;
     const stored = getStoredState();
     if (stored.hasSpun) return;
     if (
