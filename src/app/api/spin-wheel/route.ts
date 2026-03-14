@@ -7,7 +7,7 @@ const SEGMENTS = [
   { discount: 0, probability: 0.30 },
   { discount: 10, probability: 0.25 },
   { discount: 20, probability: 0.12 },
-  { discount: 0, probability: 0.05 },
+  { discount: 5, probability: 0.05 },
   { discount: 15, probability: 0.23 },
 ];
 
@@ -74,18 +74,19 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Check if this IP already spun (prevent multi-email abuse)
-  const { data: existingIp } = await supabase
+  // Check IP abuse: max 10 spins per IP per day (CGNAT-friendly)
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const { count: ipSpinCount } = await supabase
     .from("promo_codes")
-    .select("id")
+    .select("id", { count: "exact", head: true })
     .eq("client_ip", ip)
     .eq("source", "spin_wheel")
-    .limit(1);
+    .gte("created_at", oneDayAgo);
 
-  if (existingIp && existingIp.length > 0) {
+  if (ipSpinCount !== null && ipSpinCount >= 13) {
     return NextResponse.json(
-      { error: "Ya giraste la ruleta desde este dispositivo." },
-      { status: 409 }
+      { error: "Se alcanz\u00f3 el l\u00edmite de giros desde esta conexi\u00f3n. Prob\u00e1 ma\u00f1ana." },
+      { status: 429 }
     );
   }
 

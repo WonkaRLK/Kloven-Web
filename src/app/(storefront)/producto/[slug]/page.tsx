@@ -378,7 +378,10 @@ export default function ProductoPage() {
                 {product.name}
               </h1>
               <div className="flex items-baseline gap-3 mb-6">
-                <p className="font-heading text-4xl text-kloven-red tracking-wider">
+                <p
+                  className="font-heading text-4xl text-kloven-red tracking-wider"
+                  style={{ textShadow: "0 0 15px rgba(217, 4, 41, 0.6), 0 0 40px rgba(217, 4, 41, 0.35)" }}
+                >
                   ${product.price.toLocaleString("es-AR")}
                 </p>
                 {product.compare_at_price && product.compare_at_price > product.price && (
