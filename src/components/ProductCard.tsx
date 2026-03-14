@@ -56,7 +56,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.name}
         </h3>
         <div className="flex items-center justify-center gap-1.5">
-          <span className="font-heading text-lg sm:text-xl text-kloven-white tracking-wider">
+          <span className="text-sm sm:text-base font-light text-kloven-white/80 tracking-wider">
             ${product.price.toLocaleString("es-AR")}
           </span>
           {product.compare_at_price && product.compare_at_price > product.price && (
