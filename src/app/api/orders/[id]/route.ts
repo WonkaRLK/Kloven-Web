@@ -25,7 +25,7 @@ export async function GET(
   const { data: order, error } = await supabase
     .from("orders")
     .select(
-      "id, status, payer_name, payer_email, subtotal, shipping_cost, discount_amount, total, created_at, order_items(id, product_name, size, color, quantity, unit_price)"
+      "id, status, payer_name, payer_email, subtotal, shipping_cost, discount_amount, total, tracking_token, created_at, order_items(id, product_name, size, color, quantity, unit_price)"
     )
     .eq("id", id)
     .eq("payer_email", email)

@@ -97,7 +97,7 @@ export interface Order {
   discount_amount: number;
   promo_code_used: string | null;
   total: number;
-  tracking_token: string;
+  tracking_token?: string;
   created_at: string;
   updated_at: string;
 }

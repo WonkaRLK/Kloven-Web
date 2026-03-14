@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY || "");
 
 interface OrderData {
   id: string;
-  tracking_token: string;
+  tracking_token?: string;
   payer_name: string;
   payer_email: string;
   shipping_address: string;
@@ -100,11 +100,13 @@ export async function sendOrderConfirmationEmail(order: OrderData) {
           <p style="margin:0;font-size:14px;color:#0a0a0a;">${safeAddress}, ${safeCity} (${safeZip})</p>
         </div>
 
+        ${order.tracking_token ? `
         <div style="margin-top:24px;text-align:center;">
           <a href="${baseUrl}/mi-pedido/${order.tracking_token}" style="display:inline-block;background:#D90429;color:#ffffff;font-weight:bold;text-transform:uppercase;letter-spacing:1px;font-size:13px;padding:14px 32px;text-decoration:none;border-radius:2px;">
             Ver estado de mi pedido
           </a>
         </div>
+        ` : ""}
 
         <p style="color:#aaa;font-size:12px;margin:32px 0 0;text-align:center;">
           Kloven Argentina &mdash; Streetwear Redefined

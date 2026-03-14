@@ -16,6 +16,7 @@ interface OrderData {
   shipping_cost: number;
   discount_amount: number;
   total: number;
+  tracking_token?: string;
   order_items: {
     product_name: string;
     size: string;
@@ -64,6 +65,9 @@ function CompraExitoContent() {
         if (res.ok) {
           const data = await res.json();
           setOrder(data);
+          if (data.tracking_token && !trackingToken) {
+            setTrackingToken(data.tracking_token);
+          }
           if (data.status === "approved" || attempts >= maxAttempts) {
             setLoading(false);
             return;
