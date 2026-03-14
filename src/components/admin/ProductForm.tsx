@@ -531,32 +531,36 @@ export default function ProductForm({ product }: ProductFormProps) {
               </select>
             )}
           </div>
+          {!isCombo && (
+            <div>
+              <label className="block text-[10px] font-bold uppercase mb-1 tracking-widest">
+                Fit
+              </label>
+              <input
+                type="text"
+                value={fit}
+                onChange={(e) => setFit(e.target.value)}
+                placeholder="Ej: Oversize"
+                className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black transition-colors"
+              />
+            </div>
+          )}
+        </div>
+
+        {!isCombo && (
           <div>
             <label className="block text-[10px] font-bold uppercase mb-1 tracking-widest">
-              Fit
+              Material
             </label>
             <input
               type="text"
-              value={fit}
-              onChange={(e) => setFit(e.target.value)}
-              placeholder="Ej: Oversize"
+              value={material}
+              onChange={(e) => setMaterial(e.target.value)}
+              placeholder="Ej: Algodon 24/1 peinado"
               className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black transition-colors"
             />
           </div>
-        </div>
-
-        <div>
-          <label className="block text-[10px] font-bold uppercase mb-1 tracking-widest">
-            Material
-          </label>
-          <input
-            type="text"
-            value={material}
-            onChange={(e) => setMaterial(e.target.value)}
-            placeholder="Ej: Algodon 24/1 peinado"
-            className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black transition-colors"
-          />
-        </div>
+        )}
 
         <div>
           <label className="block text-[10px] font-bold uppercase mb-1 tracking-widest">
