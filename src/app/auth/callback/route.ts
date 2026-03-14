@@ -5,7 +5,12 @@ import { cookies } from "next/headers";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/";
+  let next = searchParams.get("next") ?? "/";
+
+  // Prevent open redirect: only allow relative paths, block protocol-relative URLs
+  if (!next.startsWith("/") || next.startsWith("//")) {
+    next = "/";
+  }
 
   if (code) {
     const cookieStore = await cookies();

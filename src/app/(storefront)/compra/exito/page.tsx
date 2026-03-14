@@ -37,6 +37,7 @@ function CompraExitoContent() {
     const externalRef =
       searchParams.get("external_reference") ||
       sessionStorage.getItem("kloven_order_id");
+    const orderEmail = sessionStorage.getItem("kloven_order_email") || "";
 
     if (!externalRef) {
       setLoading(false);
@@ -47,6 +48,7 @@ function CompraExitoContent() {
       clearCart();
       setCleared(true);
       sessionStorage.removeItem("kloven_order_id");
+      sessionStorage.removeItem("kloven_order_email");
     }
 
     let attempts = 0;
@@ -54,7 +56,7 @@ function CompraExitoContent() {
 
     const poll = async () => {
       try {
-        const res = await fetch(`/api/orders/${externalRef}`);
+        const res = await fetch(`/api/orders/${externalRef}?email=${encodeURIComponent(orderEmail)}`);
         if (res.ok) {
           const data = await res.json();
           setOrder(data);

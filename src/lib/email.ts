@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { escapeHtml } from "@/lib/sanitize";
 
 const resend = new Resend(process.env.RESEND_API_KEY || "");
 
@@ -23,13 +24,18 @@ interface OrderData {
 }
 
 export async function sendOrderConfirmationEmail(order: OrderData) {
+  const safeName = escapeHtml(order.payer_name);
+  const safeAddress = escapeHtml(order.shipping_address);
+  const safeCity = escapeHtml(order.shipping_city);
+  const safeZip = escapeHtml(order.shipping_zip);
+
   const itemRows = order.order_items
     .map(
       (item) => `
       <tr>
         <td style="padding:12px 16px;border-bottom:1px solid #eee;">
-          <strong style="color:#0a0a0a;">${item.product_name}</strong><br/>
-          <span style="color:#888;font-size:13px;">Talle: ${item.size} | Color: ${item.color}</span><br/>
+          <strong style="color:#0a0a0a;">${escapeHtml(item.product_name)}</strong><br/>
+          <span style="color:#888;font-size:13px;">Talle: ${escapeHtml(item.size)} | Color: ${escapeHtml(item.color)}</span><br/>
           <span style="color:#888;font-size:13px;">${item.quantity} x $${item.unit_price.toLocaleString("es-AR")}</span>
         </td>
         <td style="padding:12px 16px;border-bottom:1px solid #eee;text-align:right;font-weight:bold;">
@@ -48,7 +54,7 @@ export async function sendOrderConfirmationEmail(order: OrderData) {
         <p style="color:#888;font-size:13px;margin:0 0 24px;">Confirmacion de pedido</p>
 
         <p style="color:#0a0a0a;font-size:15px;margin:0 0 24px;line-height:1.5;">
-          Hola <strong>${order.payer_name}</strong>, gracias por tu compra! Tu pedido esta confirmado.
+          Hola <strong>${safeName}</strong>, gracias por tu compra! Tu pedido esta confirmado.
         </p>
 
         <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
@@ -88,7 +94,7 @@ export async function sendOrderConfirmationEmail(order: OrderData) {
 
         <div style="margin-top:24px;padding:16px;background:#f9f9f9;border:1px solid #eee;border-radius:4px;">
           <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#888;font-weight:bold;">Direccion de envio</p>
-          <p style="margin:0;font-size:14px;color:#0a0a0a;">${order.shipping_address}, ${order.shipping_city} (${order.shipping_zip})</p>
+          <p style="margin:0;font-size:14px;color:#0a0a0a;">${safeAddress}, ${safeCity} (${safeZip})</p>
         </div>
 
         <p style="color:#aaa;font-size:12px;margin:32px 0 0;text-align:center;">

@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req.headers);
+    if (!rateLimit(`promo:${ip}`, { maxTokens: 10, refillRate: 10 / 60 })) {
+      return NextResponse.json({ valid: false });
+    }
+
     const { code } = await req.json();
     if (!code) {
       return NextResponse.json({ valid: false });
