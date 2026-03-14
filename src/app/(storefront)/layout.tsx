@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import CartDrawer from "@/components/CartDrawer";
 import Footer from "@/components/Footer";
 import SmokeBackground from "@/components/SmokeBackground";
+import SpinWheelContainer from "@/components/SpinWheel/SpinWheelContainer";
 
 export default function StorefrontLayout({
   children,
@@ -19,6 +20,7 @@ export default function StorefrontLayout({
           <CartDrawer />
           <main className="flex-grow relative z-[1]">{children}</main>
           <Footer />
+          <SpinWheelContainer />
           {/* WhatsApp floating button */}
           <a
             href="https://wa.me/5493442319968"
