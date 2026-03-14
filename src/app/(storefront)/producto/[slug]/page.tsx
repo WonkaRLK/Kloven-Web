@@ -235,7 +235,7 @@ export default function ProductoPage() {
     return (
       <div className="pt-28 container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 animate-pulse">
-          <div className="aspect-[3/4] bg-kloven-dark" />
+          <div className="aspect-[4/5] max-h-[75vh] bg-kloven-dark" />
           <div className="space-y-4 py-8">
             <div className="h-4 bg-kloven-dark w-1/4" />
             <div className="h-8 bg-kloven-dark w-3/4" />
@@ -308,7 +308,7 @@ export default function ProductoPage() {
                   onMouseMove={handleMouseMove}
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
-                  className="aspect-[3/4] bg-kloven-dark overflow-hidden relative border border-kloven-smoke cursor-crosshair"
+                  className="aspect-[4/5] max-h-[75vh] bg-kloven-dark overflow-hidden relative border border-kloven-smoke cursor-crosshair"
                 >
                   <Image
                     src={
