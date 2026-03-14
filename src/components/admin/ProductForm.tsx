@@ -29,7 +29,7 @@ interface ProductFormProps {
 
 export default function ProductForm({ product }: ProductFormProps) {
   const router = useRouter();
-  const { token } = useAdminAuth();
+  const { token, logout } = useAdminAuth();
   const isEdit = !!product;
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -95,7 +95,10 @@ export default function ProductForm({ product }: ProductFormProps) {
     fetch("/api/admin/products", {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((r) => r.json())
+      .then((r) => {
+        if (r.status === 401) { logout(); return []; }
+        return r.json();
+      })
       .then((data) => {
         if (Array.isArray(data)) {
           setAvailableProducts(
