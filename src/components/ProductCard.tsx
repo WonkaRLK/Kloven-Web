@@ -49,9 +49,6 @@ export default function ProductCard({ product }: ProductCardProps) {
       </Link>
 
       <div className="text-center w-full px-1">
-        <p className="text-[10px] text-kloven-ash uppercase tracking-widest mb-0.5">
-          {product.category}
-        </p>
         <h3 className="font-bold text-sm sm:text-base leading-tight mb-1 truncate text-kloven-white">
           {product.name}
         </h3>
