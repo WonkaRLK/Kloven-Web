@@ -416,7 +416,7 @@ export default function ProductForm({ product }: ProductFormProps) {
           <input
             type="checkbox"
             checked={isCombo}
-            onChange={(e) => setIsCombo(e.target.checked)}
+            onChange={(e) => { setIsCombo(e.target.checked); setCategory(e.target.checked ? "combos" : ""); }}
             className="accent-kloven-red w-5 h-5"
             disabled={isEdit && product?.is_combo !== isCombo && false}
           />
@@ -506,21 +506,30 @@ export default function ProductForm({ product }: ProductFormProps) {
             <label className="block text-[10px] font-bold uppercase mb-1 tracking-widest">
               Categoria
             </label>
-            <select
-              required
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black transition-colors"
-            >
-              <option value="" disabled>
-                Seleccionar...
-              </option>
-              {categories.map((c) => (
-                <option key={c.slug} value={c.slug}>
-                  {c.name}
+            {isCombo ? (
+              <input
+                type="text"
+                value="Combo"
+                disabled
+                className="w-full bg-gray-100 border border-gray-200 p-3 text-sm text-gray-500 cursor-not-allowed"
+              />
+            ) : (
+              <select
+                required
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black transition-colors"
+              >
+                <option value="" disabled>
+                  Seleccionar...
                 </option>
-              ))}
-            </select>
+                {categories.map((c) => (
+                  <option key={c.slug} value={c.slug}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
           <div>
             <label className="block text-[10px] font-bold uppercase mb-1 tracking-widest">
