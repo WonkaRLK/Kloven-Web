@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAdminAuth } from "@/context/AdminAuthContext";
-import { Loader2, Link2, Unlink, CheckCircle, AlertCircle, Copy, Check, Save } from "lucide-react";
+import { Loader2, Link2, Unlink, CheckCircle, AlertCircle, Copy, Check } from "lucide-react";
 
 function MpConnectContent() {
   const { token } = useAdminAuth();
@@ -13,9 +13,6 @@ function MpConnectContent() {
   const [feePercent, setFeePercent] = useState(0);
   const [appIdConfigured, setAppIdConfigured] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
-  const [editFee, setEditFee] = useState("");
-  const [savingFee, setSavingFee] = useState(false);
-  const [feeSaved, setFeeSaved] = useState(false);
 
   // OAuth callback params
   const success = searchParams.get("success");
@@ -36,7 +33,6 @@ function MpConnectContent() {
       .then((data) => {
         setConnected(data.connected);
         setFeePercent(data.fee_percent);
-        setEditFee(String(data.fee_percent));
         setAppIdConfigured(data.app_id_configured);
       })
       .finally(() => setLoading(false));
@@ -46,30 +42,6 @@ function MpConnectContent() {
     navigator.clipboard.writeText(text);
     setCopied(label);
     setTimeout(() => setCopied(null), 2000);
-  };
-
-  const handleSaveFee = async () => {
-    const val = parseFloat(editFee);
-    if (isNaN(val) || val < 0 || val > 100) return;
-    setSavingFee(true);
-    try {
-      const res = await fetch("/api/admin/mp-config", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ fee_percent: val }),
-      });
-      if (res.ok) {
-        setFeePercent(val);
-        setFeeSaved(true);
-        setTimeout(() => setFeeSaved(false), 2000);
-      }
-    } catch {
-      // ignore
-    }
-    setSavingFee(false);
   };
 
   const errorMessages: Record<string, string> = {
@@ -183,40 +155,17 @@ function MpConnectContent() {
           </span>
         </div>
 
-        {/* Fee editor */}
+        {/* Fee info (read-only) */}
         {connected && (
           <div className="border-t border-gray-100 pt-4">
-            <p className="text-sm font-medium mb-1">Comision proveedor</p>
-            <p className="text-xs text-gray-500 mb-3">
-              Porcentaje que recibe el proveedor de cada venta. Se aplica en tiempo real.
-            </p>
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.1"
-                  value={editFee}
-                  onChange={(e) => setEditFee(e.target.value)}
-                  className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-lg font-bold text-center pr-8 focus:outline-none focus:ring-2 focus:ring-black"
-                />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold">%</span>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium">Comision proveedor</p>
+                <p className="text-xs text-gray-500">
+                  Porcentaje que recibe el proveedor de cada venta
+                </p>
               </div>
-              <button
-                onClick={handleSaveFee}
-                disabled={savingFee || parseFloat(editFee) === feePercent}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {savingFee ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : feeSaved ? (
-                  <Check className="w-4 h-4" />
-                ) : (
-                  <Save className="w-4 h-4" />
-                )}
-                {feeSaved ? "Guardado" : "Guardar"}
-              </button>
+              <span className="text-2xl font-bold">{feePercent}%</span>
             </div>
           </div>
         )}
