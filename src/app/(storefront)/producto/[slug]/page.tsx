@@ -379,8 +379,8 @@ export default function ProductoPage() {
               </h1>
               <div className="flex items-baseline gap-3 mb-6">
                 <p
-                  className="font-heading text-4xl text-kloven-red tracking-wider"
-                  style={{ textShadow: "0 0 15px rgba(217, 4, 41, 0.6), 0 0 40px rgba(217, 4, 41, 0.35)" }}
+                  className="font-heading text-4xl text-kloven-white tracking-wider"
+                  style={{ textShadow: "0 0 20px rgba(217, 4, 41, 0.8), 0 2px 30px rgba(217, 4, 41, 0.5)", WebkitTextStroke: "1px rgba(217, 4, 41, 0.6)" }}
                 >
                   ${product.price.toLocaleString("es-AR")}
                 </p>
@@ -390,6 +390,10 @@ export default function ProductoPage() {
                   </p>
                 )}
               </div>
+              <p className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 text-green-400 text-sm font-bold uppercase tracking-wider px-4 py-2 mb-6">
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                Envio gratis a todo el pais
+              </p>
               <p className="text-kloven-ash leading-relaxed mb-8">
                 {product.description}
               </p>
