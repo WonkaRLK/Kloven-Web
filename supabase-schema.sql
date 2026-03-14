@@ -99,6 +99,7 @@ CREATE TABLE orders (
   discount_amount INTEGER DEFAULT 0,
   promo_code_used TEXT,
   total INTEGER DEFAULT 0,
+  tracking_token UUID DEFAULT gen_random_uuid() NOT NULL,
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
@@ -199,4 +200,9 @@ CREATE INDEX idx_products_category ON products(category);
 CREATE INDEX idx_products_featured ON products(featured) WHERE featured = true;
 CREATE INDEX idx_product_variants_product ON product_variants(product_id);
 CREATE INDEX idx_orders_status ON orders(status);
+CREATE UNIQUE INDEX idx_orders_tracking_token ON orders(tracking_token);
 CREATE INDEX idx_order_items_order ON order_items(order_id);
+
+-- Order tracking token (run as migration if table already exists):
+-- ALTER TABLE orders ADD COLUMN tracking_token UUID DEFAULT gen_random_uuid() NOT NULL;
+-- CREATE UNIQUE INDEX idx_orders_tracking_token ON orders(tracking_token);

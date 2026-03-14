@@ -10,6 +10,9 @@ const STATUS_LABELS: Record<OrderStatus, { label: string; classes: string }> = {
   pending: { label: "Pendiente", classes: "bg-yellow-50 text-yellow-700" },
   approved: { label: "Aprobado", classes: "bg-green-50 text-green-700" },
   in_process: { label: "En proceso", classes: "bg-blue-50 text-blue-700" },
+  preparing: { label: "En preparacion", classes: "bg-orange-50 text-orange-700" },
+  shipped: { label: "En camino", classes: "bg-cyan-50 text-cyan-700" },
+  delivered: { label: "Entregado", classes: "bg-emerald-50 text-emerald-700" },
   rejected: { label: "Rechazado", classes: "bg-red-50 text-red-700" },
   cancelled: { label: "Cancelado", classes: "bg-gray-100 text-gray-500" },
   refunded: { label: "Reembolsado", classes: "bg-purple-50 text-purple-700" },
@@ -52,6 +55,9 @@ export default function AdminPedidosPage() {
           { id: "all", label: "Todos" },
           { id: "pending", label: "Pendientes" },
           { id: "approved", label: "Aprobados" },
+          { id: "preparing", label: "En preparacion" },
+          { id: "shipped", label: "En camino" },
+          { id: "delivered", label: "Entregados" },
           { id: "rejected", label: "Rechazados" },
         ].map((f) => (
           <button

@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, Package } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { motion } from "framer-motion";
 
@@ -32,6 +32,7 @@ function CompraExitoContent() {
   const [order, setOrder] = useState<OrderData | null>(null);
   const [loading, setLoading] = useState(true);
   const [cleared, setCleared] = useState(false);
+  const [trackingToken, setTrackingToken] = useState<string | null>(null);
 
   useEffect(() => {
     const externalRef =
@@ -47,8 +48,11 @@ function CompraExitoContent() {
     if (!cleared) {
       clearCart();
       setCleared(true);
+      const storedToken = sessionStorage.getItem("kloven_tracking_token");
+      if (storedToken) setTrackingToken(storedToken);
       sessionStorage.removeItem("kloven_order_id");
       sessionStorage.removeItem("kloven_order_email");
+      sessionStorage.removeItem("kloven_tracking_token");
     }
 
     let attempts = 0;
@@ -156,6 +160,16 @@ function CompraExitoContent() {
           </div>
         </div>
       ) : null}
+
+      {trackingToken && (
+        <Link
+          href={`/mi-pedido/${trackingToken}`}
+          className="inline-flex items-center gap-2 bg-kloven-dark border border-kloven-smoke text-kloven-white px-6 py-3 sm:px-10 sm:py-4 font-bold uppercase tracking-widest hover:border-kloven-red transition-colors mb-4"
+        >
+          <Package className="w-5 h-5" />
+          Seguir mi pedido
+        </Link>
+      )}
 
       <Link
         href="/tienda"

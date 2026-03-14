@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingBag, Menu, X, User, LogOut, Star, Mail, Lock, Loader2 } from "lucide-react";
+import { ShoppingBag, Menu, X, User, LogOut, Star, Mail, Lock, Loader2, Package } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import KlovenLogo from "@/components/KlovenLogo";
@@ -143,6 +143,15 @@ export default function Navbar() {
 
         {/* Right section */}
         <div className="flex items-center space-x-4">
+          {/* Mi Pedido */}
+          <Link
+            href="/mi-pedido"
+            className="hidden md:flex text-kloven-ash hover:text-kloven-white transition-colors"
+            title="Mi Pedido"
+          >
+            <Package className="w-5 h-5" />
+          </Link>
+
           {/* Auth section */}
           {!loading && (
             <>
@@ -380,6 +389,14 @@ export default function Navbar() {
                 {cat.label}
               </Link>
             ))}
+            <Link
+              href="/mi-pedido"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-red hover:bg-kloven-carbon flex items-center gap-2"
+            >
+              <Package className="w-4 h-4" />
+              Mi Pedido
+            </Link>
             {!loading && (
               <>
                 {user ? (

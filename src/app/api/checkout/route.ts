@@ -230,6 +230,7 @@ export async function POST(req: NextRequest) {
     const total = afterDiscount + shippingCost;
 
     // Create order
+    const trackingToken = crypto.randomUUID();
     const { data: order, error: orderError } = await supabase
       .from("orders")
       .insert({
@@ -246,8 +247,9 @@ export async function POST(req: NextRequest) {
         discount_amount: discountAmount,
         promo_code_used: promoCodeUsed,
         total,
+        tracking_token: trackingToken,
       })
-      .select("id")
+      .select("id, tracking_token")
       .single();
 
     if (orderError || !order) {
@@ -400,7 +402,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (result.init_point) {
-      return NextResponse.json({ init_point: result.init_point, order_id: order.id });
+      return NextResponse.json({ init_point: result.init_point, order_id: order.id, tracking_token: order.tracking_token });
     }
 
     return safeError(500, "No se pudo crear la preferencia de pago");

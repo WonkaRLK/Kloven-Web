@@ -146,6 +146,9 @@ export default function CheckoutPage() {
       if (data.init_point) {
         sessionStorage.setItem("kloven_order_id", data.order_id);
         sessionStorage.setItem("kloven_order_email", email.trim());
+        if (data.tracking_token) {
+          sessionStorage.setItem("kloven_tracking_token", data.tracking_token);
+        }
         window.location.href = data.init_point;
       } else {
         setError("No se pudo iniciar el pago");
