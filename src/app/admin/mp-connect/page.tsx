@@ -25,7 +25,10 @@ function MpConnectContent() {
   const error = searchParams.get("error");
 
   useEffect(() => {
-    if (!token) return;
+    if (!token) {
+      setLoading(false);
+      return;
+    }
     fetch("/api/admin/mp-config", {
       headers: { Authorization: `Bearer ${token}` },
     })
