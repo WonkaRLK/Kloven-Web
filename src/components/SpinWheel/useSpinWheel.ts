@@ -15,6 +15,7 @@ interface StoredState {
   hasSpun: boolean;
   result: SpinResult | null;
   dismissedAt: number | null;
+  email?: string;
 }
 
 function getStoredState(): StoredState {
@@ -148,6 +149,7 @@ export function useSpinWheel() {
           hasSpun: true,
           result: spinResult,
           dismissedAt: null,
+          email,
         });
         setPhase("result");
       }, 5200);

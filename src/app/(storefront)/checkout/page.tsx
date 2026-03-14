@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Check, Loader2, Package } from "lucide-react";
@@ -30,6 +30,33 @@ export default function CheckoutPage() {
   const [validatingPromo, setValidatingPromo] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const promoAutoApplied = useRef(false);
+
+  // Auto-fill promo code and email from spin wheel
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("kloven_spin_wheel");
+      if (!raw) return;
+      const stored = JSON.parse(raw);
+      if (stored.email && !email) {
+        setEmail(stored.email);
+      }
+      if (stored.result?.code && !promoCode && !promoAutoApplied.current) {
+        setPromoCode(stored.result.code);
+        promoAutoApplied.current = true;
+      }
+    } catch {
+      // ignore
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-apply promo code once it's been auto-filled
+  useEffect(() => {
+    if (promoAutoApplied.current && promoCode && !discount && !validatingPromo) {
+      promoAutoApplied.current = false;
+      handleApplyPromo();
+    }
+  }, [promoCode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const discountAmount = Math.round(subtotal * discount);
   const afterDiscount = subtotal - discountAmount;
