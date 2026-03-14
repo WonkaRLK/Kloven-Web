@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
-  const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+  const baseUrl = (process.env.NEXT_PUBLIC_URL || "http://localhost:3000").trim();
   const redirectUri = `${baseUrl}/api/mp/oauth/callback`;
 
   if (!code) {

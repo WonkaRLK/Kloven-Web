@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const appId = process.env.MP_APP_ID;
-  const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+  const baseUrl = (process.env.NEXT_PUBLIC_URL || "http://localhost:3000").trim();
   const redirectUri = `${baseUrl}/api/mp/oauth/callback`;
 
   if (!appId) {
