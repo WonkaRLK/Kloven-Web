@@ -379,8 +379,8 @@ export default function ProductoPage() {
               </h1>
               <div className="flex items-baseline gap-3 mb-6">
                 <p
-                  className="font-heading text-4xl text-kloven-white tracking-wider"
-                  style={{ textShadow: "0 0 20px rgba(217, 4, 41, 0.8), 0 2px 30px rgba(217, 4, 41, 0.5)", WebkitTextStroke: "1px rgba(217, 4, 41, 0.6)" }}
+                  className="font-heading text-4xl text-kloven-red tracking-wider"
+                  style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.8), 0 4px 15px rgba(0, 0, 0, 0.5)" }}
                 >
                   ${product.price.toLocaleString("es-AR")}
                 </p>
