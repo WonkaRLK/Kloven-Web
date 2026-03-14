@@ -27,6 +27,16 @@ interface ProductFormProps {
   product?: ProductWithVariants;
 }
 
+function formatPrice(value: string): string {
+  const digits = value.replace(/\D/g, "");
+  if (!digits) return "";
+  return Number(digits).toLocaleString("es-AR");
+}
+
+function rawPrice(value: string): number {
+  return parseInt(value.replace(/\D/g, ""), 10) || 0;
+}
+
 export default function ProductForm({ product }: ProductFormProps) {
   const router = useRouter();
   const { token, logout } = useAdminAuth();
@@ -46,9 +56,9 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [name, setName] = useState(product?.name || "");
   const [slug, setSlug] = useState(product?.slug || "");
   const [description, setDescription] = useState(product?.description || "");
-  const [price, setPrice] = useState(product?.price?.toString() || "");
+  const [price, setPrice] = useState(product?.price ? formatPrice(product.price.toString()) : "");
   const [compareAtPrice, setCompareAtPrice] = useState(
-    product?.compare_at_price?.toString() || ""
+    product?.compare_at_price ? formatPrice(product.compare_at_price.toString()) : ""
   );
   const [category, setCategory] = useState(
     product?.category || ""
@@ -340,7 +350,7 @@ export default function ProductForm({ product }: ProductFormProps) {
   // Auto-set compare_at_price when combo items change
   useEffect(() => {
     if (isCombo && comboItems.length > 0) {
-      setCompareAtPrice(comboTotalPrice.toString());
+      setCompareAtPrice(formatPrice(comboTotalPrice.toString()));
     }
   }, [isCombo, comboTotalPrice, comboItems.length]);
 
@@ -355,8 +365,8 @@ export default function ProductForm({ product }: ProductFormProps) {
         name,
         slug,
         description,
-        price: parseInt(price, 10),
-        compare_at_price: compareAtPrice ? parseInt(compareAtPrice, 10) : null,
+        price: rawPrice(price),
+        compare_at_price: compareAtPrice ? rawPrice(compareAtPrice) : null,
         category,
         images,
         image_url: images[0] || "",
@@ -484,9 +494,11 @@ export default function ProductForm({ product }: ProductFormProps) {
             </label>
             <input
               required
-              type="number"
+              type="text"
+              inputMode="numeric"
               value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              onChange={(e) => setPrice(formatPrice(e.target.value))}
+              placeholder="Ej: 15.000"
               className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black transition-colors"
             />
           </div>
@@ -495,9 +507,10 @@ export default function ProductForm({ product }: ProductFormProps) {
               Precio sin descuento
             </label>
             <input
-              type="number"
+              type="text"
+              inputMode="numeric"
               value={compareAtPrice}
-              onChange={(e) => setCompareAtPrice(e.target.value)}
+              onChange={(e) => setCompareAtPrice(formatPrice(e.target.value))}
               placeholder={isCombo ? "Auto: suma individual" : "Opcional"}
               className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black transition-colors"
             />
@@ -811,16 +824,16 @@ export default function ProductForm({ product }: ProductFormProps) {
                   <div className="flex justify-between mt-1">
                     <span className="text-gray-500">Precio combo:</span>
                     <span className="font-bold text-kloven-red">
-                      ${parseInt(price, 10).toLocaleString("es-AR")}
+                      ${rawPrice(price).toLocaleString("es-AR")}
                     </span>
                   </div>
                 )}
-                {price && parseInt(price, 10) < comboTotalPrice && (
+                {price && rawPrice(price) < comboTotalPrice && (
                   <div className="flex justify-between mt-1">
                     <span className="text-green-600 font-medium">Ahorro cliente:</span>
                     <span className="text-green-600 font-bold">
-                      ${(comboTotalPrice - parseInt(price, 10)).toLocaleString("es-AR")} (
-                      {Math.round((1 - parseInt(price, 10) / comboTotalPrice) * 100)}%)
+                      ${(comboTotalPrice - rawPrice(price)).toLocaleString("es-AR")} (
+                      {Math.round((1 - rawPrice(price) / comboTotalPrice) * 100)}%)
                     </span>
                   </div>
                 )}
