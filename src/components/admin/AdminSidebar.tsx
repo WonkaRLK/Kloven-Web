@@ -15,6 +15,7 @@ import {
   Menu,
   X,
   ExternalLink,
+  Link2,
 } from "lucide-react";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 
@@ -25,6 +26,7 @@ const NAV_ITEMS = [
   { href: "/admin/pedidos", label: "Pedidos", icon: ShoppingCart },
   { href: "/admin/promos", label: "Promos", icon: Tag },
   { href: "/admin/recompensas", label: "Recompensas", icon: Gift },
+  { href: "/admin/mp-connect", label: "Split Pagos", icon: Link2 },
 ];
 
 export default function AdminSidebar() {

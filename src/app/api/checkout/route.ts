@@ -5,8 +5,12 @@ import { calculateShipping } from "@/lib/shipping";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { safeError } from "@/lib/api-utils";
 
+// Use seller token for split payments if configured, otherwise use Kloven's own token
+const sellerToken = process.env.MP_SELLER_ACCESS_TOKEN;
+const isSplitMode = !!sellerToken;
+
 const client = new MercadoPagoConfig({
-  accessToken: process.env.MP_ACCESS_TOKEN || "",
+  accessToken: isSplitMode ? sellerToken! : (process.env.MP_ACCESS_TOKEN || ""),
 });
 
 interface ComboSelection {
@@ -358,6 +362,20 @@ export async function POST(req: NextRequest) {
           };
         });
 
+    // Calculate marketplace fee for split payments (read % from DB, fallback to env)
+    let feePercent = 0;
+    if (isSplitMode) {
+      const { data: feeSetting } = await supabase
+        .from("app_settings")
+        .select("value")
+        .eq("key", "mp_marketplace_fee_percent")
+        .single();
+      feePercent = parseFloat(feeSetting?.value || process.env.MP_MARKETPLACE_FEE_PERCENT || "0");
+    }
+    const marketplaceFee = isSplitMode && feePercent > 0
+      ? Math.round(total * feePercent / 100)
+      : 0;
+
     const result = await preference.create({
       body: {
         items: mpItems,
@@ -375,6 +393,9 @@ export async function POST(req: NextRequest) {
           pending: `${baseUrl}/compra/pendiente`,
         },
         ...(isHttps && { auto_return: "approved" as const }),
+        ...(isSplitMode && marketplaceFee > 0 && {
+          marketplace_fee: marketplaceFee,
+        }),
       },
     });
 

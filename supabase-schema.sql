@@ -161,6 +161,22 @@ CREATE POLICY "Service role full access promo_codes"
   USING (true)
   WITH CHECK (true);
 
+-- App Settings (key-value config, e.g. marketplace fee %)
+CREATE TABLE app_settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE app_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Service role full access app_settings"
+  ON app_settings FOR ALL
+  USING (true)
+  WITH CHECK (true);
+
+INSERT INTO app_settings (key, value) VALUES
+  ('mp_marketplace_fee_percent', '10');
+
 -- ============================================
 -- Function to increment promo uses (called from checkout)
 -- ============================================
