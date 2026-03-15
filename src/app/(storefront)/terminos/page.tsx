@@ -83,7 +83,7 @@ export default function Terminos() {
               sección de{" "}
               <a
                 href="/envios-y-devoluciones"
-                className="text-kloven-red hover:underline"
+                className="text-kloven-gold hover:underline"
               >
                 Envíos y Devoluciones
               </a>
@@ -113,7 +113,7 @@ export default function Terminos() {
                 href="https://wa.me/5493442319968"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-kloven-red hover:underline"
+                className="text-kloven-gold hover:underline"
               >
                 WhatsApp
               </a>

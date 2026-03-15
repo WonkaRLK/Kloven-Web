@@ -166,7 +166,7 @@ export default function CheckoutPage() {
         <p className="text-kloven-ash text-lg mb-4">Tu carrito esta vacio</p>
         <Link
           href="/tienda"
-          className="text-kloven-white font-bold border-b-2 border-kloven-red pb-1"
+          className="text-kloven-white font-bold border-b-2 border-kloven-gold pb-1"
         >
           Ir a la tienda
         </Link>
@@ -175,7 +175,7 @@ export default function CheckoutPage() {
   }
 
   const inputClasses =
-    "w-full bg-kloven-carbon border border-kloven-smoke p-3 text-sm text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-red transition-colors";
+    "w-full bg-kloven-carbon border border-kloven-smoke p-3 text-sm text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-gold transition-colors";
 
   return (
     <div className="pt-28 pb-20">
@@ -301,13 +301,13 @@ export default function CheckoutPage() {
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value)}
                   placeholder="EJ: KLOVEN10"
-                  className="flex-1 bg-kloven-carbon border border-kloven-smoke px-3 py-2 text-sm uppercase text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-red transition-colors"
+                  className="flex-1 bg-kloven-carbon border border-kloven-smoke px-3 py-2 text-sm uppercase text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-gold transition-colors"
                 />
                 <button
                   type="button"
                   onClick={handleApplyPromo}
                   disabled={validatingPromo}
-                  className="bg-kloven-red text-white px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-kloven-red-dark transition-colors disabled:opacity-50"
+                  className="bg-kloven-gold text-white px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-kloven-gold/80 transition-colors disabled:opacity-50"
                 >
                   {validatingPromo ? "..." : "Aplicar"}
                 </button>
@@ -333,7 +333,7 @@ export default function CheckoutPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full bg-kloven-red text-white py-4 font-bold uppercase tracking-widest hover:bg-kloven-red-dark transition-colors flex items-center justify-center gap-2 disabled:opacity-50 glow-red"
+              className="w-full bg-kloven-gold text-white py-4 font-bold uppercase tracking-widest hover:bg-kloven-gold/80 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-[0_0_30px_rgba(166,124,46,0.3)]"
             >
               {submitting ? (
                 <>

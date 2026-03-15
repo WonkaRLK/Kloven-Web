@@ -26,7 +26,7 @@ export default function CompraPendientePage() {
 
       <Link
         href="/tienda"
-        className="inline-block bg-kloven-red text-white px-6 py-3 sm:px-10 sm:py-4 font-bold uppercase tracking-widest hover:bg-kloven-red-dark transition-colors glow-red"
+        className="inline-block bg-kloven-gold text-white px-6 py-3 sm:px-10 sm:py-4 font-bold uppercase tracking-widest hover:bg-kloven-gold/80 transition-colors shadow-[0_0_30px_rgba(166,124,46,0.3)]"
       >
         Volver a la tienda
       </Link>

@@ -16,7 +16,7 @@ export default function NewsletterSection() {
           <p className="text-kloven-ash mb-10 text-base sm:text-lg">
             Acceso anticipado a drops +{" "}
             <span className="text-kloven-white font-bold">10% OFF</span> con el codigo{" "}
-            <span className="bg-kloven-red text-white px-2 py-0.5 font-bold">
+            <span className="bg-kloven-gold text-white px-2 py-0.5 font-bold">
               KLOVEN10
             </span>
           </p>
@@ -24,9 +24,9 @@ export default function NewsletterSection() {
             <input
               type="email"
               placeholder="TU EMAIL"
-              className="flex-1 bg-kloven-carbon border-2 border-kloven-smoke p-3 sm:p-5 text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-red"
+              className="flex-1 bg-kloven-carbon border-2 border-kloven-smoke p-3 sm:p-5 text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-gold"
             />
-            <button className="bg-kloven-red text-white px-6 py-3 sm:px-10 sm:py-5 font-bold uppercase tracking-widest hover:bg-kloven-red-dark hover:animate-[cardShake_0.3s_steps(4)_infinite]">
+            <button className="bg-kloven-gold text-white px-6 py-3 sm:px-10 sm:py-5 font-bold uppercase tracking-widest hover:bg-kloven-gold/80 hover:animate-[cardShake_0.3s_steps(4)_infinite]">
               Suscribirse
             </button>
           </div>

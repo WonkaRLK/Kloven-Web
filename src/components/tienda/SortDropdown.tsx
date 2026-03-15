@@ -68,7 +68,7 @@ export default function SortDropdown({ value, onChange }: SortDropdownProps) {
                 }}
                 className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
                   option.value === value
-                    ? "text-kloven-red font-medium bg-kloven-dark"
+                    ? "text-kloven-gold font-medium bg-kloven-dark"
                     : "text-kloven-ash hover:text-kloven-white hover:bg-kloven-dark"
                 }`}
               >

@@ -17,6 +17,8 @@
   --kloven-white: #F5F5F5;
   --kloven-red: #D90429;
   --kloven-red-dark: #A30320;
+  --kloven-gold: #a67c2e;
+  --kloven-gold-light: #c9a84c;
   --kloven-cream: #E8E4D9;
   --card-bg: #111111;
   --card-border: #2A2A2A;
@@ -34,6 +36,8 @@
   --color-kloven-white: var(--kloven-white);
   --color-kloven-red: var(--kloven-red);
   --color-kloven-red-dark: var(--kloven-red-dark);
+  --color-kloven-gold: var(--kloven-gold);
+  --color-kloven-gold-light: var(--kloven-gold-light);
   --color-kloven-cream: var(--kloven-cream);
   --color-card-bg: var(--card-bg);
   --color-card-border: var(--card-border);
@@ -357,6 +361,20 @@ body {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Gold background gradient shift */
+@keyframes bgGoldShift {
+  0% { transform: scale(1) translate(0, 0); }
+  50% { transform: scale(1.1) translate(2%, -2%); }
+  100% { transform: scale(1) translate(-2%, 2%); }
+}
+
+/* Gold shimmer for product cards */
+@keyframes goldShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* Font heading class */

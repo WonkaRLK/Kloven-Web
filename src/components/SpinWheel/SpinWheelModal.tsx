@@ -100,7 +100,7 @@ export default function SpinWheelModal({
             <div className="p-6 flex flex-col justify-center min-h-[inherit]">
               {/* Header */}
               <div className="text-center mb-4">
-                <Gift className="w-8 h-8 text-kloven-red mx-auto mb-2" />
+                <Gift className="w-8 h-8 text-kloven-gold mx-auto mb-2" />
                 <h2 className="font-heading text-xl tracking-wider text-kloven-white uppercase">
                   Gir&aacute; para ganar
                 </h2>
@@ -121,7 +121,7 @@ export default function SpinWheelModal({
                   <div className="mb-4">
                     <RouletteWheel rotation={0} spinning={false} />
                   </div>
-                  <div className="space-y-3 bg-white/5 border border-kloven-red/30 p-4 rounded-sm">
+                  <div className="space-y-3 bg-white/5 border border-kloven-gold/30 p-4 rounded-sm">
                     <p className="text-center text-sm text-kloven-white font-heading uppercase tracking-wider">
                       Ingres&aacute; tu email para girar
                     </p>
@@ -133,7 +133,7 @@ export default function SpinWheelModal({
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && isValidEmail && !loading) onSpin();
                       }}
-                      className="w-full bg-black/40 border-2 border-kloven-red/50 px-4 py-3 text-kloven-white placeholder:text-kloven-ash/50 focus:outline-none focus:border-kloven-red transition-colors text-center text-lg"
+                      className="w-full bg-black/40 border-2 border-kloven-gold/50 px-4 py-3 text-kloven-white placeholder:text-kloven-ash/50 focus:outline-none focus:border-kloven-gold transition-colors text-center text-lg"
                     />
                     {error && (
                       <p className="text-kloven-red text-sm">{error}</p>
@@ -141,7 +141,7 @@ export default function SpinWheelModal({
                     <button
                       onClick={onSpin}
                       disabled={!isValidEmail || loading}
-                      className="w-full bg-kloven-red text-white py-3.5 font-heading uppercase tracking-wider text-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-[0_0_20px_rgba(217,4,41,0.3)]"
+                      className="w-full bg-kloven-gold text-white py-3.5 font-heading uppercase tracking-wider text-lg hover:bg-kloven-gold/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-[0_0_20px_rgba(166,124,46,0.3)]"
                     >
                       {loading ? "Cargando..." : "Girar la ruleta"}
                     </button>
@@ -167,7 +167,7 @@ export default function SpinWheelModal({
                 >
                   {result.discount > 0 ? (
                     <>
-                      <p className="text-3xl font-heading text-kloven-red uppercase tracking-wider mb-2">
+                      <p className="text-3xl font-heading text-kloven-gold uppercase tracking-wider mb-2">
                         &iexcl;{result.discount}% OFF!
                       </p>
                       <p className="text-sm text-kloven-ash mb-3">
@@ -179,7 +179,7 @@ export default function SpinWheelModal({
                         </span>
                         <button
                           onClick={onCopy}
-                          className="text-kloven-ash hover:text-kloven-red transition-colors"
+                          className="text-kloven-ash hover:text-kloven-gold transition-colors"
                           title="Copiar c&oacute;digo"
                         >
                           {copied ? (

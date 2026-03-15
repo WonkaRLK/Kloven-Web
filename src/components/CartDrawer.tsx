@@ -125,7 +125,7 @@ export default function CartDrawer() {
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-kloven-white font-bold border-b-2 border-kloven-red pb-1 hover:text-kloven-red transition-colors"
+                className="text-kloven-white font-bold border-b-2 border-kloven-gold pb-1 hover:text-kloven-gold transition-colors"
               >
                 Volver a la tienda
               </button>
@@ -168,7 +168,7 @@ export default function CartDrawer() {
                           </h3>
                           <button
                             onClick={() => removeFromCart(key)}
-                            className="text-kloven-ash hover:text-kloven-red transition-colors"
+                            className="text-kloven-ash hover:text-kloven-gold transition-colors"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -239,12 +239,12 @@ export default function CartDrawer() {
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value)}
                   placeholder="EJ: KLOVEN10"
-                  className="flex-1 bg-kloven-dark border border-kloven-smoke px-3 py-2 text-sm uppercase text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-red transition-colors"
+                  className="flex-1 bg-kloven-dark border border-kloven-smoke px-3 py-2 text-sm uppercase text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-gold transition-colors"
                 />
                 <button
                   onClick={handleApplyPromo}
                   disabled={validatingPromo}
-                  className="bg-kloven-red text-white px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-kloven-red-dark transition-colors disabled:opacity-50"
+                  className="bg-kloven-gold text-white px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-kloven-gold/80 transition-colors disabled:opacity-50"
                 >
                   {validatingPromo ? "..." : "Aplicar"}
                 </button>
@@ -298,7 +298,7 @@ export default function CartDrawer() {
             <Link
               href="/checkout"
               onClick={() => setIsOpen(false)}
-              className="w-full bg-kloven-red text-white py-4 font-bold uppercase tracking-widest hover:bg-kloven-red-dark transition-all glow-red block text-center"
+              className="w-full bg-kloven-gold text-white py-4 font-bold uppercase tracking-widest hover:bg-kloven-gold/80 transition-all shadow-[0_0_30px_rgba(166,124,46,0.3)] block text-center"
             >
               Iniciar Compra
             </Link>

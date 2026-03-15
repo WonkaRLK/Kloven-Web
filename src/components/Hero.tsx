@@ -17,23 +17,22 @@ const HERO_COLUMNS = [
 export default function Hero() {
   const [showTitle, setShowTitle] = useState(true);
   const [glitchPhase, setGlitchPhase] = useState(0);
-  const [overlayGlitch, setOverlayGlitch] = useState(false);
+  const [goldShimmer, setGoldShimmer] = useState(false);
 
   useEffect(() => {
-    // Glitch timeline: appear → glitch → settle → fade out
-    const t1 = setTimeout(() => setGlitchPhase(1), 100);   // appear
-    const t2 = setTimeout(() => setGlitchPhase(2), 350);   // glitch burst
-    const t3 = setTimeout(() => setGlitchPhase(3), 550);   // settle
-    const t4 = setTimeout(() => setShowTitle(false), 900);  // fade out & show content
+    const t1 = setTimeout(() => setGlitchPhase(1), 100);
+    const t2 = setTimeout(() => setGlitchPhase(2), 350);
+    const t3 = setTimeout(() => setGlitchPhase(3), 550);
+    const t4 = setTimeout(() => setShowTitle(false), 900);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
   }, []);
 
   useEffect(() => {
     if (showTitle) return;
     const interval = setInterval(() => {
-      setOverlayGlitch(true);
-      setTimeout(() => setOverlayGlitch(false), 500);
-    }, 3000);
+      setGoldShimmer(true);
+      setTimeout(() => setGoldShimmer(false), 800);
+    }, 4000);
     return () => clearInterval(interval);
   }, [showTitle]);
 
@@ -64,59 +63,105 @@ export default function Hero() {
           text-align: center;
         }
         .hero-glitch-active::before {
-          color: #D90429;
+          color: #c9a84c;
           animation: glitchSlice1 0.15s steps(2) 3;
         }
         .hero-glitch-active::after {
           color: #F5F5F5;
           animation: glitchSlice2 0.15s steps(2) 3;
         }
-        @keyframes overlayGlitch1 {
-          0%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
-          10% { clip-path: inset(20% 0 60% 0); transform: translateX(-6px) skewX(-2deg); }
-          20% { clip-path: inset(50% 0 20% 0); transform: translateX(4px) skewX(1deg); }
-          30% { clip-path: inset(10% 0 70% 0); transform: translateX(-3px); }
-          40% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+
+        .hero-overlay-logo-wrap {
+          position: relative;
+          display: inline-block;
+          filter: drop-shadow(0 6px 20px rgba(0,0,0,0.6));
         }
-        @keyframes overlayGlitch2 {
-          0%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
-          10% { clip-path: inset(60% 0 10% 0); transform: translateX(5px) skewX(1deg); }
-          20% { clip-path: inset(15% 0 55% 0); transform: translateX(-8px) skewX(-2deg); }
-          30% { clip-path: inset(40% 0 30% 0); transform: translateX(6px); }
-          40% { clip-path: inset(0 0 100% 0); transform: translate(0); }
-        }
-        .hero-overlay-logo {
-          opacity: 0.35;
-          text-shadow: 0 0 40px rgba(0,0,0,0.6);
-          transition: opacity 1s ease-out;
-        }
-        @media (min-width: 768px) {
-          .hero-overlay-logo {
-            opacity: 0.12;
-            text-shadow: none;
-          }
-        }
-        .hero-overlay-logo.glitch-burst {
-          opacity: 0.7;
-          transition: opacity 0.15s ease-in;
-        }
-        .hero-overlay-logo.glitch-burst::before,
-        .hero-overlay-logo.glitch-burst::after {
-          content: 'KLOVEN';
+
+        .hero-3d-shadow,
+        .hero-3d-shadow2 {
           position: absolute;
           top: 0;
           left: 0;
           right: 0;
           text-align: center;
-          opacity: 0.6;
+          -webkit-text-stroke: 0;
         }
-        .hero-overlay-logo.glitch-burst::before {
-          color: #D90429;
-          animation: overlayGlitch1 0.4s steps(2) 1;
+        .hero-3d-shadow {
+          color: #000;
+          transform: translate(4px, 8px);
+          opacity: 0.7;
+          filter: blur(2px);
         }
-        .hero-overlay-logo.glitch-burst::after {
+        .hero-3d-shadow2 {
+          color: #000;
+          transform: translate(2px, 4px);
+          opacity: 0.9;
+        }
+
+        .hero-overlay-logo {
+          position: relative;
           color: #F5F5F5;
-          animation: overlayGlitch2 0.4s steps(2) 1;
+          -webkit-text-stroke: 0;
+        }
+
+        .hero-overlay-logo-wrap {
+          opacity: 0.75;
+          transition: opacity 1s ease-out;
+        }
+        @media (min-width: 768px) {
+          .hero-overlay-logo-wrap {
+            opacity: 0.4;
+          }
+        }
+
+        @keyframes goldSweep {
+          0% { background-position: 100% 0; }
+          100% { background-position: -100% 0; }
+        }
+
+        .hero-overlay-logo.gold-shimmer {
+          animation: goldTextColor 1s ease-in-out 1;
+        }
+        .hero-overlay-logo.gold-shimmer span {
+          animation: goldTextColor 1s ease-in-out 1;
+        }
+
+        @keyframes goldTextColor {
+          0% { color: #F5F5F5; }
+          30% { color: #a67c2e; }
+          50% { color: #c9a84c; }
+          70% { color: #a67c2e; }
+          100% { color: #F5F5F5; }
+        }
+        .hero-overlay-logo-wrap:has(.gold-shimmer) {
+          opacity: 0.85;
+        }
+        @media (min-width: 768px) {
+          .hero-overlay-logo-wrap:has(.gold-shimmer) {
+            opacity: 0.6;
+          }
+        }
+
+        @keyframes bounceO {
+          0%, 20%, 100% { transform: translateY(0); }
+          4% { transform: translateY(-12%); }
+          9% { transform: translateY(0); }
+          12% { transform: translateY(-4%); }
+          17% { transform: translateY(0); }
+        }
+
+        @keyframes spinN {
+          0% { transform: rotateY(0deg); }
+          100% { transform: rotateY(360deg); }
+        }
+
+        @keyframes heroScrollUp {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-50%); }
+        }
+        @keyframes heroScrollDown {
+          0% { transform: translateY(-50%); }
+          100% { transform: translateY(0); }
         }
       `}</style>
 
@@ -148,67 +193,90 @@ export default function Hero() {
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center w-full md:min-h-screen"
           >
-              {/* 3-column vertical scroll gallery */}
-              <div className="flex flex-col justify-center px-2 pt-20 pb-10 md:pt-24 md:pb-0 w-full md:px-4">
-                <style>{`
-                  @keyframes heroScrollUp {
-                    0% { transform: translateY(0); }
-                    100% { transform: translateY(-50%); }
-                  }
-                  @keyframes heroScrollDown {
-                    0% { transform: translateY(-50%); }
-                    100% { transform: translateY(0); }
-                  }
-                `}</style>
-                <div className="relative w-full h-[55vh] md:h-[75vh] overflow-hidden rounded-lg">
-                  {/* Logo overlay */}
-                  <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+            <div className="flex flex-col justify-center px-2 pt-20 pb-10 md:pt-24 md:pb-0 w-full md:px-4">
+              {/* Gallery with gold border and overlay */}
+              <div
+                className="relative w-full h-[55vh] md:h-[75vh] overflow-hidden rounded-lg border-4 border-[#a67c2e]/60"
+                style={{
+                  boxShadow: "inset 0 0 60px rgba(0,0,0,0.5), 0 0 30px rgba(166,124,46,0.1)",
+                }}
+              >
+                {/* Gold overlay on photos */}
+                <div
+                  className="absolute inset-0 z-[5] pointer-events-none"
+                  style={{
+                    background: "linear-gradient(180deg, rgba(166,124,46,0.08) 0%, rgba(139,105,20,0.12) 50%, rgba(166,124,46,0.08) 100%)",
+                    mixBlendMode: "color",
+                  }}
+                />
+                {/* Vignette */}
+                <div
+                  className="absolute inset-0 z-[6] pointer-events-none"
+                  style={{
+                    background: "radial-gradient(ellipse at center, transparent 40%, rgba(10,10,10,0.6) 100%)",
+                  }}
+                />
+
+                {/* Dark vignette overlay */}
+                <div
+                  className="absolute inset-0 z-[7] pointer-events-none"
+                  style={{ background: "radial-gradient(ellipse at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%)" }}
+                />
+
+                {/* Logo overlay — 3D gold */}
+                <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+                  <span className="font-heading text-[13vw] md:text-[14vw] leading-none tracking-[0.15em] select-none relative hero-overlay-logo-wrap">
+                    {/* Shadow/depth layers */}
+                    <span className="hero-3d-shadow" aria-hidden="true"><span style={{ display: "inline-block", animation: "spinN 3s linear infinite" }}>K</span>L<span style={{ display: "inline-block", animation: "bounceO 3s ease-in-out infinite" }}>O</span>VEN</span>
+                    <span className="hero-3d-shadow2" aria-hidden="true"><span style={{ display: "inline-block", animation: "spinN 3s linear infinite" }}>K</span>L<span style={{ display: "inline-block", animation: "bounceO 3s ease-in-out infinite" }}>O</span>VEN</span>
+                    {/* Main text */}
                     <span
-                      className={`font-heading text-[13vw] md:text-[14vw] leading-none tracking-[0.15em] select-none text-kloven-white relative hero-overlay-logo ${overlayGlitch ? "glitch-burst" : ""}`}
+                      className={`hero-overlay-logo ${goldShimmer ? "gold-shimmer" : ""}`}
                     >
-                      KLOVEN
+                      <span style={{ display: "inline-block", animation: "spinN 3s linear infinite" }}>K</span>L<span style={{ display: "inline-block", animation: "bounceO 3s ease-in-out infinite" }}>O</span>VEN
                     </span>
-                  </div>
-                  <div className="grid grid-cols-5 gap-2 h-full">
-                    {HERO_COLUMNS.map((col, colIndex) => (
-                      <div key={colIndex} className="relative overflow-hidden h-full">
-                        <div
-                          className="flex flex-col gap-2"
-                          style={{
-                            animation: `${colIndex % 2 === 0 ? "heroScrollUp" : "heroScrollDown"} ${18 + colIndex * 2}s linear infinite`,
-                          }}
-                        >
-                          {[...col, ...col].map((src, i) => (
-                            <div key={i} className="relative aspect-[3/4] w-full shrink-0">
-                              <Image
-                                src={src}
-                                alt="Kloven"
-                                fill
-                                className="object-cover rounded-sm"
-                                sizes="(max-width: 768px) 20vw, 11vw"
-                                priority={i < 3}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  </span>
                 </div>
 
-                <div className="h-[2px] w-12 bg-kloven-red mt-5 mb-4 md:mt-8 md:mb-6" />
-
-                <Link
-                  href="/tienda"
-                  className="inline-flex items-center gap-3 text-sm uppercase tracking-[0.3em] text-kloven-white font-bold hover:text-kloven-red group w-fit"
-                >
-                  Ver Catalogo
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
+                <div className="grid grid-cols-5 gap-2 h-full">
+                  {HERO_COLUMNS.map((col, colIndex) => (
+                    <div key={colIndex} className="relative overflow-hidden h-full">
+                      <div
+                        className="flex flex-col gap-2"
+                        style={{
+                          animation: `${colIndex % 2 === 0 ? "heroScrollUp" : "heroScrollDown"} ${18 + colIndex * 2}s linear infinite`,
+                        }}
+                      >
+                        {[...col, ...col].map((src, i) => (
+                          <div key={i} className="relative aspect-[3/4] w-full shrink-0">
+                            <Image
+                              src={src}
+                              alt="Kloven"
+                              fill
+                              className="object-cover rounded-sm"
+                              sizes="(max-width: 768px) 20vw, 11vw"
+                              priority={i < 3}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-            </motion.div>
-          )}
+              <div className="h-[2px] w-12 bg-kloven-gold mt-5 mb-4 md:mt-8 md:mb-6" />
+
+              <Link
+                href="/tienda"
+                className="inline-flex items-center gap-3 text-sm uppercase tracking-[0.3em] text-kloven-white font-bold hover:text-kloven-gold group w-fit"
+              >
+                Ver Catalogo
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </motion.div>
+        )}
       </div>
 
       {/* Scroll indicator */}

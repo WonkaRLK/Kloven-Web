@@ -134,7 +134,7 @@ export default function Navbar() {
             <Link
               key={cat.id}
               href={cat.id === "all" ? "/tienda" : `/tienda?cat=${cat.id}`}
-              className="text-sm font-bold uppercase tracking-widest text-kloven-ash hover:text-kloven-red"
+              className="text-sm font-bold uppercase tracking-widest text-kloven-ash hover:text-kloven-gold"
             >
               {cat.label}
             </Link>
@@ -173,7 +173,7 @@ export default function Navbar() {
                       <User className="w-5 h-5" />
                     )}
                     {profile && profile.points_balance > 0 && (
-                      <span className="hidden sm:flex items-center gap-1 text-xs font-bold text-kloven-red">
+                      <span className="hidden sm:flex items-center gap-1 text-xs font-bold text-kloven-gold">
                         <Star className="w-3 h-3" fill="currentColor" />
                         {profile.points_balance}
                       </span>
@@ -193,7 +193,7 @@ export default function Navbar() {
                             {user.user_metadata?.full_name || user.email}
                           </p>
                           {profile && (
-                            <p className="text-xs text-kloven-red flex items-center gap-1 mt-1">
+                            <p className="text-xs text-kloven-gold flex items-center gap-1 mt-1">
                               <Star className="w-3 h-3" fill="currentColor" />
                               {profile.points_balance} puntos
                             </p>
@@ -268,7 +268,7 @@ export default function Navbar() {
                                   value={loginEmail}
                                   onChange={(e) => setLoginEmail(e.target.value)}
                                   required
-                                  className="w-full bg-kloven-carbon border border-kloven-smoke pl-10 pr-3 py-2.5 text-sm text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-red transition-colors"
+                                  className="w-full bg-kloven-carbon border border-kloven-smoke pl-10 pr-3 py-2.5 text-sm text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-gold transition-colors"
                                 />
                               </div>
                               <div className="relative">
@@ -280,7 +280,7 @@ export default function Navbar() {
                                   onChange={(e) => setLoginPassword(e.target.value)}
                                   required
                                   minLength={6}
-                                  className="w-full bg-kloven-carbon border border-kloven-smoke pl-10 pr-3 py-2.5 text-sm text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-red transition-colors"
+                                  className="w-full bg-kloven-carbon border border-kloven-smoke pl-10 pr-3 py-2.5 text-sm text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-gold transition-colors"
                                 />
                               </div>
 
@@ -350,7 +350,7 @@ export default function Navbar() {
 
           {/* Cart */}
           <button
-            className="relative text-kloven-white hover:text-kloven-red"
+            className="relative text-kloven-white hover:text-kloven-gold"
             onClick={() => setIsOpen(true)}
           >
             <ShoppingBag className="w-6 h-6" />
@@ -360,7 +360,7 @@ export default function Navbar() {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
-                  className="absolute -top-1 -right-1 bg-kloven-red text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center"
+                  className="absolute -top-1 -right-1 bg-kloven-gold text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center"
                 >
                   {totalItems}
                 </motion.span>
@@ -384,7 +384,7 @@ export default function Navbar() {
                 key={cat.id}
                 href={cat.id === "all" ? "/tienda" : `/tienda?cat=${cat.id}`}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-red hover:bg-kloven-carbon"
+                className="text-left font-bold uppercase tracking-widest p-3 text-kloven-ash hover:text-kloven-gold hover:bg-kloven-carbon"
               >
                 {cat.label}
               </Link>
@@ -409,7 +409,7 @@ export default function Navbar() {
                       <User className="w-4 h-4" />
                       Mi Perfil
                       {profile && profile.points_balance > 0 && (
-                        <span className="text-kloven-red text-xs flex items-center gap-1 ml-auto">
+                        <span className="text-kloven-gold text-xs flex items-center gap-1 ml-auto">
                           <Star className="w-3 h-3" fill="currentColor" />
                           {profile.points_balance}
                         </span>

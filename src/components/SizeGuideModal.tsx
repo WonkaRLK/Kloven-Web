@@ -57,15 +57,15 @@ function TShirtIllustration() {
         strokeWidth="2"
       />
       {/* Width arrow */}
-      <line x1="50" y1="115" x2="150" y2="115" stroke="var(--color-kloven-red)" strokeWidth="1.5" strokeDasharray="4 3" />
-      <polygon points="50,112 55,115 50,118" fill="var(--color-kloven-red)" />
-      <polygon points="150,112 145,115 150,118" fill="var(--color-kloven-red)" />
-      <text x="100" y="110" textAnchor="middle" fill="var(--color-kloven-red)" fontSize="11" fontWeight="bold">Ancho</text>
+      <line x1="50" y1="115" x2="150" y2="115" stroke="var(--color-kloven-gold)" strokeWidth="1.5" strokeDasharray="4 3" />
+      <polygon points="50,112 55,115 50,118" fill="var(--color-kloven-gold)" />
+      <polygon points="150,112 145,115 150,118" fill="var(--color-kloven-gold)" />
+      <text x="100" y="110" textAnchor="middle" fill="var(--color-kloven-gold)" fontSize="11" fontWeight="bold">Ancho</text>
       {/* Length arrow */}
-      <line x1="165" y1="35" x2="165" y2="200" stroke="var(--color-kloven-red)" strokeWidth="1.5" strokeDasharray="4 3" />
-      <polygon points="162,35 165,30 168,35" fill="var(--color-kloven-red)" />
-      <polygon points="162,200 165,205 168,200" fill="var(--color-kloven-red)" />
-      <text x="180" y="120" textAnchor="middle" fill="var(--color-kloven-red)" fontSize="11" fontWeight="bold" transform="rotate(90 180 120)">Largo</text>
+      <line x1="165" y1="35" x2="165" y2="200" stroke="var(--color-kloven-gold)" strokeWidth="1.5" strokeDasharray="4 3" />
+      <polygon points="162,35 165,30 168,35" fill="var(--color-kloven-gold)" />
+      <polygon points="162,200 165,205 168,200" fill="var(--color-kloven-gold)" />
+      <text x="180" y="120" textAnchor="middle" fill="var(--color-kloven-gold)" fontSize="11" fontWeight="bold" transform="rotate(90 180 120)">Largo</text>
     </svg>
   );
 }
@@ -81,15 +81,15 @@ function PantsIllustration() {
         strokeWidth="2"
       />
       {/* Waist arrow */}
-      <line x1="40" y1="20" x2="140" y2="20" stroke="var(--color-kloven-red)" strokeWidth="1.5" strokeDasharray="4 3" />
-      <polygon points="40,17 45,20 40,23" fill="var(--color-kloven-red)" />
-      <polygon points="140,17 135,20 140,23" fill="var(--color-kloven-red)" />
-      <text x="90" y="15" textAnchor="middle" fill="var(--color-kloven-red)" fontSize="11" fontWeight="bold">Cintura</text>
+      <line x1="40" y1="20" x2="140" y2="20" stroke="var(--color-kloven-gold)" strokeWidth="1.5" strokeDasharray="4 3" />
+      <polygon points="40,17 45,20 40,23" fill="var(--color-kloven-gold)" />
+      <polygon points="140,17 135,20 140,23" fill="var(--color-kloven-gold)" />
+      <text x="90" y="15" textAnchor="middle" fill="var(--color-kloven-gold)" fontSize="11" fontWeight="bold">Cintura</text>
       {/* Length arrow */}
-      <line x1="160" y1="10" x2="160" y2="250" stroke="var(--color-kloven-red)" strokeWidth="1.5" strokeDasharray="4 3" />
-      <polygon points="157,10 160,5 163,10" fill="var(--color-kloven-red)" />
-      <polygon points="157,250 160,255 163,250" fill="var(--color-kloven-red)" />
-      <text x="170" y="130" textAnchor="middle" fill="var(--color-kloven-red)" fontSize="11" fontWeight="bold" transform="rotate(90 170 130)">Largo</text>
+      <line x1="160" y1="10" x2="160" y2="250" stroke="var(--color-kloven-gold)" strokeWidth="1.5" strokeDasharray="4 3" />
+      <polygon points="157,10 160,5 163,10" fill="var(--color-kloven-gold)" />
+      <polygon points="157,250 160,255 163,250" fill="var(--color-kloven-gold)" />
+      <text x="170" y="130" textAnchor="middle" fill="var(--color-kloven-gold)" fontSize="11" fontWeight="bold" transform="rotate(90 170 130)">Largo</text>
     </svg>
   );
 }
@@ -112,10 +112,10 @@ function ShoeIllustration() {
         strokeWidth="2"
       />
       {/* Length arrow */}
-      <line x1="30" y1="110" x2="200" y2="110" stroke="var(--color-kloven-red)" strokeWidth="1.5" strokeDasharray="4 3" />
-      <polygon points="30,107 35,110 30,113" fill="var(--color-kloven-red)" />
-      <polygon points="200,107 195,110 200,113" fill="var(--color-kloven-red)" />
-      <text x="115" y="108" textAnchor="middle" fill="var(--color-kloven-red)" fontSize="11" fontWeight="bold">cm</text>
+      <line x1="30" y1="110" x2="200" y2="110" stroke="var(--color-kloven-gold)" strokeWidth="1.5" strokeDasharray="4 3" />
+      <polygon points="30,107 35,110 30,113" fill="var(--color-kloven-gold)" />
+      <polygon points="200,107 195,110 200,113" fill="var(--color-kloven-gold)" />
+      <text x="115" y="108" textAnchor="middle" fill="var(--color-kloven-gold)" fontSize="11" fontWeight="bold">cm</text>
     </svg>
   );
 }

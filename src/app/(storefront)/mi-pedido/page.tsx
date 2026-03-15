@@ -77,7 +77,7 @@ export default function MiPedidoPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu@email.com"
-                className="w-full bg-kloven-carbon border border-kloven-smoke pl-10 pr-3 py-3 text-sm text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-red transition-colors"
+                className="w-full bg-kloven-carbon border border-kloven-smoke pl-10 pr-3 py-3 text-sm text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-gold transition-colors"
               />
             </div>
           </div>
@@ -89,7 +89,7 @@ export default function MiPedidoPage() {
           <button
             type="submit"
             disabled={sending}
-            className="w-full bg-kloven-red text-white py-3 font-bold uppercase tracking-widest hover:bg-kloven-red-dark transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
+            className="w-full bg-kloven-gold text-white py-3 font-bold uppercase tracking-widest hover:bg-kloven-gold/80 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
           >
             {sending ? (
               <>

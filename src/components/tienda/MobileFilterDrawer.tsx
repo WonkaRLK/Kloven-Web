@@ -83,7 +83,7 @@ export default function MobileFilterDrawer({
         <div className="p-6 border-t border-kloven-smoke">
           <button
             onClick={onClose}
-            className="w-full bg-kloven-red text-white py-3.5 font-bold uppercase tracking-widest text-sm hover:bg-kloven-red-dark transition-colors"
+            className="w-full bg-kloven-gold text-white py-3.5 font-bold uppercase tracking-widest text-sm hover:bg-kloven-gold/80 transition-colors"
           >
             Ver {resultCount} {resultCount === 1 ? "producto" : "productos"}
           </button>

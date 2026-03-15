@@ -127,7 +127,7 @@ export default function FeaturedProducts() {
                 onClick={() => scrollTo(category.slug)}
                 className={`shrink-0 px-4 py-2 text-xs font-bold uppercase tracking-widest border transition-all duration-200 ${
                   activeSlug === category.slug
-                    ? "bg-kloven-red border-kloven-red text-white"
+                    ? "bg-kloven-gold border-kloven-gold text-white"
                     : "border-kloven-smoke text-kloven-ash hover:text-kloven-white hover:border-kloven-white"
                 }`}
               >

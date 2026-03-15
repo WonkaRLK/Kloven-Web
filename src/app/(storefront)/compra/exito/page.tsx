@@ -168,7 +168,7 @@ function CompraExitoContent() {
       {trackingToken && (
         <Link
           href={`/mi-pedido/${trackingToken}`}
-          className="inline-flex items-center gap-2 bg-kloven-dark border border-kloven-smoke text-kloven-white px-6 py-3 sm:px-10 sm:py-4 font-bold uppercase tracking-widest hover:border-kloven-red transition-colors mb-4"
+          className="inline-flex items-center gap-2 bg-kloven-dark border border-kloven-smoke text-kloven-white px-6 py-3 sm:px-10 sm:py-4 font-bold uppercase tracking-widest hover:border-kloven-gold transition-colors mb-4"
         >
           <Package className="w-5 h-5" />
           Seguir mi pedido
@@ -177,7 +177,7 @@ function CompraExitoContent() {
 
       <Link
         href="/tienda"
-        className="inline-block bg-kloven-red text-white px-6 py-3 sm:px-10 sm:py-4 font-bold uppercase tracking-widest hover:bg-kloven-red-dark transition-colors glow-red"
+        className="inline-block bg-kloven-gold text-white px-6 py-3 sm:px-10 sm:py-4 font-bold uppercase tracking-widest hover:bg-kloven-gold/80 transition-colors shadow-[0_0_30px_rgba(166,124,46,0.3)]"
       >
         Seguir comprando
       </Link>

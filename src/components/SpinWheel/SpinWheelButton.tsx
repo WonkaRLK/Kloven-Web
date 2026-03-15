@@ -15,7 +15,7 @@ export default function SpinWheelButton({
   return (
     <motion.button
       onClick={onClick}
-      className="fixed bottom-6 left-6 z-50 w-14 h-14 bg-kloven-red rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+      className="fixed bottom-6 left-6 z-50 w-14 h-14 bg-kloven-gold rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 1, type: "spring", stiffness: 200, damping: 15 }}

@@ -253,7 +253,7 @@ export default function ProductoPage() {
         <p className="text-kloven-ash text-lg mb-4">Producto no encontrado</p>
         <Link
           href="/tienda"
-          className="text-kloven-white font-bold border-b-2 border-kloven-red pb-1"
+          className="text-kloven-white font-bold border-b-2 border-kloven-gold pb-1"
         >
           Volver a la tienda
         </Link>
@@ -268,7 +268,7 @@ export default function ProductoPage() {
       <div className="container mx-auto px-4">
         <Link
           href="/tienda"
-          className="inline-flex items-center gap-2 text-sm text-kloven-ash hover:text-kloven-red mb-8"
+          className="inline-flex items-center gap-2 text-sm text-kloven-ash hover:text-kloven-gold mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver al catalogo
@@ -286,7 +286,7 @@ export default function ProductoPage() {
                       onClick={() => setActiveImage(i)}
                       className={`relative aspect-square overflow-hidden border-2 transition-colors ${
                         activeImage === i
-                          ? "border-kloven-red"
+                          ? "border-kloven-gold"
                           : "border-kloven-smoke hover:border-kloven-ash"
                       }`}
                     >
@@ -346,7 +346,7 @@ export default function ProductoPage() {
                         onClick={() => setActiveImage(i)}
                         className={`relative aspect-square overflow-hidden border-2 transition-colors ${
                           activeImage === i
-                            ? "border-kloven-red"
+                            ? "border-kloven-gold"
                             : "border-kloven-smoke hover:border-kloven-ash"
                         }`}
                       >
@@ -379,7 +379,7 @@ export default function ProductoPage() {
               </h1>
               <div className="flex items-baseline gap-3 mb-6">
                 <p
-                  className="font-heading text-4xl text-kloven-red tracking-wider"
+                  className="font-heading text-4xl text-kloven-gold tracking-wider"
                   style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.8), 0 4px 15px rgba(0, 0, 0, 0.5)" }}
                 >
                   ${product.price.toLocaleString("es-AR")}
@@ -529,8 +529,8 @@ export default function ProductoPage() {
                                       }
                                       className={`px-3 py-1.5 text-xs font-bold border-2 ${
                                         sel?.selectedColor === color
-                                          ? "border-kloven-red bg-kloven-red text-white"
-                                          : "border-kloven-smoke text-kloven-white hover:border-kloven-red"
+                                          ? "border-kloven-gold bg-kloven-gold text-white"
+                                          : "border-kloven-smoke text-kloven-white hover:border-kloven-gold"
                                       }`}
                                     >
                                       {color}
@@ -569,9 +569,9 @@ export default function ProductoPage() {
                                       disabled={!hasStock}
                                       className={`w-10 h-10 text-xs font-bold border-2 ${
                                         sel?.selectedSize === size
-                                          ? "border-kloven-red bg-kloven-red text-white"
+                                          ? "border-kloven-gold bg-kloven-gold text-white"
                                           : hasStock
-                                          ? "border-kloven-smoke text-kloven-white hover:border-kloven-red"
+                                          ? "border-kloven-smoke text-kloven-white hover:border-kloven-gold"
                                           : "border-kloven-smoke/50 text-kloven-smoke cursor-not-allowed line-through"
                                       }`}
                                     >
@@ -615,7 +615,7 @@ export default function ProductoPage() {
                       added
                         ? "bg-green-600 text-white"
                         : allComboSelectionsComplete
-                        ? "bg-kloven-red text-white hover:bg-kloven-red-dark hover:animate-[cardShake_0.3s_steps(4)_infinite]"
+                        ? "bg-kloven-gold text-white hover:bg-kloven-gold/80 hover:animate-[cardShake_0.3s_steps(4)_infinite]"
                         : "bg-kloven-smoke text-kloven-ash cursor-not-allowed"
                     }`}
                   >
@@ -650,8 +650,8 @@ export default function ProductoPage() {
                             onClick={() => setSelectedColor(color)}
                             className={`px-4 py-2 text-sm font-bold border-2 ${
                               selectedColor === color
-                                ? "border-kloven-red bg-kloven-red text-white"
-                                : "border-kloven-smoke text-kloven-white hover:border-kloven-red"
+                                ? "border-kloven-gold bg-kloven-gold text-white"
+                                : "border-kloven-smoke text-kloven-white hover:border-kloven-gold"
                             }`}
                           >
                             {color}
@@ -669,7 +669,7 @@ export default function ProductoPage() {
                       </span>
                       <button
                         onClick={() => setSizeGuideOpen(true)}
-                        className="text-xs text-kloven-ash underline underline-offset-2 hover:text-kloven-red transition-colors"
+                        className="text-xs text-kloven-ash underline underline-offset-2 hover:text-kloven-gold transition-colors"
                       >
                         Guia de talles
                       </button>
@@ -688,9 +688,9 @@ export default function ProductoPage() {
                             disabled={!hasStock}
                             className={`w-11 h-11 sm:w-14 sm:h-14 text-sm font-bold border-2 ${
                               selectedSize === size
-                                ? "border-kloven-red bg-kloven-red text-white"
+                                ? "border-kloven-gold bg-kloven-gold text-white"
                                 : hasStock
-                                ? "border-kloven-smoke text-kloven-white hover:border-kloven-red"
+                                ? "border-kloven-smoke text-kloven-white hover:border-kloven-gold"
                                 : "border-kloven-smoke/50 text-kloven-smoke cursor-not-allowed line-through"
                             }`}
                           >
@@ -728,7 +728,7 @@ export default function ProductoPage() {
                       added
                         ? "bg-green-600 text-white"
                         : selectedVariant && selectedVariant.stock > 0
-                        ? "bg-kloven-red text-white hover:bg-kloven-red-dark hover:animate-[cardShake_0.3s_steps(4)_infinite]"
+                        ? "bg-kloven-gold text-white hover:bg-kloven-gold/80 hover:animate-[cardShake_0.3s_steps(4)_infinite]"
                         : "bg-kloven-smoke text-kloven-ash cursor-not-allowed"
                     }`}
                   >

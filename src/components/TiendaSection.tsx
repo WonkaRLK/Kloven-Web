@@ -156,7 +156,7 @@ export default function TiendaSection({
                   {hasActiveFilters && (
                     <button
                       onClick={clearFilters}
-                      className="inline-flex items-center gap-2 text-kloven-red hover:text-kloven-red-dark transition-colors font-bold text-sm uppercase tracking-widest"
+                      className="inline-flex items-center gap-2 text-kloven-gold hover:text-kloven-gold/80 transition-colors font-bold text-sm uppercase tracking-widest"
                     >
                       <XCircle className="w-4 h-4" />
                       Limpiar filtros

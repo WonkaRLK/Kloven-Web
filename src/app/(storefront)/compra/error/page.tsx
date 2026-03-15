@@ -28,7 +28,7 @@ export default function CompraErrorPage() {
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Link
           href="/checkout"
-          className="inline-block bg-kloven-red text-white px-6 py-3 sm:px-10 sm:py-4 font-bold uppercase tracking-widest hover:bg-kloven-red-dark transition-colors"
+          className="inline-block bg-kloven-gold text-white px-6 py-3 sm:px-10 sm:py-4 font-bold uppercase tracking-widest hover:bg-kloven-gold/80 transition-colors"
         >
           Reintentar
         </Link>

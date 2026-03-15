@@ -96,7 +96,7 @@ export default function TrackingPage() {
         </p>
         <Link
           href="/mi-pedido"
-          className="text-kloven-red font-bold text-sm underline"
+          className="text-kloven-gold font-bold text-sm underline"
         >
           Reenviar link de seguimiento
         </Link>
@@ -126,7 +126,7 @@ export default function TrackingPage() {
       {!isFulfillment && nonFulfillmentInfo && (
         <div className="bg-kloven-dark border border-kloven-smoke p-6 mb-8">
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-kloven-red flex-shrink-0 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-kloven-gold flex-shrink-0 mt-0.5" />
             <div>
               <h2 className="font-bold text-kloven-white mb-1">{nonFulfillmentInfo.title}</h2>
               <p className="text-kloven-ash text-sm">{nonFulfillmentInfo.desc}</p>
@@ -142,7 +142,7 @@ export default function TrackingPage() {
             {/* Connector line */}
             <div className="absolute top-6 left-6 right-6 h-0.5 bg-kloven-smoke" />
             <div
-              className="absolute top-6 left-6 h-0.5 bg-kloven-red transition-all duration-700"
+              className="absolute top-6 left-6 h-0.5 bg-kloven-gold transition-all duration-700"
               style={{
                 width: `calc(${(Math.min(currentStepIndex, 3) / 3) * 100}% - 48px)`,
               }}
@@ -159,9 +159,9 @@ export default function TrackingPage() {
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 ${
                       isCompleted
-                        ? "bg-kloven-red text-white"
+                        ? "bg-kloven-gold text-white"
                         : isCurrent
-                        ? "bg-kloven-red text-white animate-pulse"
+                        ? "bg-kloven-gold text-white animate-pulse"
                         : "bg-kloven-carbon border-2 border-kloven-smoke text-kloven-ash"
                     }`}
                   >
@@ -244,7 +244,7 @@ export default function TrackingPage() {
       <div className="text-center">
         <Link
           href="/tienda"
-          className="inline-block bg-kloven-red text-white px-8 py-3 font-bold uppercase tracking-widest hover:bg-kloven-red-dark transition-colors text-sm"
+          className="inline-block bg-kloven-gold text-white px-8 py-3 font-bold uppercase tracking-widest hover:bg-kloven-gold/80 transition-colors text-sm"
         >
           Seguir comprando
         </Link>

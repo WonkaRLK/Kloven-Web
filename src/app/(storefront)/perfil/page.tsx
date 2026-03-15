@@ -83,7 +83,7 @@ export default function PerfilPage() {
       <div className="pt-28 pb-20 container mx-auto px-4 text-center max-w-lg">
         <ScrollReveal>
           <div className="bg-kloven-dark border border-kloven-smoke p-8 sm:p-12">
-            <LogIn className="w-12 h-12 text-kloven-red mx-auto mb-6" />
+            <LogIn className="w-12 h-12 text-kloven-gold mx-auto mb-6" />
             <h1 className="font-heading text-4xl uppercase tracking-wider mb-4 text-kloven-white">
               Mi Cuenta
             </h1>
@@ -93,7 +93,7 @@ export default function PerfilPage() {
             </p>
             <button
               onClick={signInWithGoogle}
-              className="bg-kloven-red text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-kloven-red-dark transition-colors glow-red inline-flex items-center gap-2"
+              className="bg-kloven-gold text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-kloven-gold/80 transition-colors shadow-[0_0_30px_rgba(166,124,46,0.3)] inline-flex items-center gap-2"
             >
               Iniciar sesion con Google
               <ArrowRight className="w-5 h-5" />
@@ -125,8 +125,8 @@ export default function PerfilPage() {
             <p className="text-kloven-ash text-sm">{user.email}</p>
           </div>
           <div className="sm:ml-auto text-center bg-kloven-carbon border border-kloven-smoke p-4 min-w-[120px]">
-            <Star className="w-6 h-6 text-kloven-red mx-auto mb-1" fill="currentColor" />
-            <p className="font-heading text-3xl text-kloven-red tracking-wider">
+            <Star className="w-6 h-6 text-kloven-gold mx-auto mb-1" fill="currentColor" />
+            <p className="font-heading text-3xl text-kloven-gold tracking-wider">
               {profile?.points_balance || 0}
             </p>
             <p className="text-[10px] uppercase tracking-widest text-kloven-ash">
@@ -141,7 +141,7 @@ export default function PerfilPage() {
         <ScrollReveal>
           <div className="bg-kloven-dark border border-kloven-smoke p-6">
             <h2 className="font-heading text-2xl uppercase tracking-wider mb-6 text-kloven-white flex items-center gap-2">
-              <Gift className="w-5 h-5 text-kloven-red" />
+              <Gift className="w-5 h-5 text-kloven-gold" />
               Recompensas
             </h2>
 
@@ -184,7 +184,7 @@ export default function PerfilPage() {
                             {reward.description}
                           </p>
                         )}
-                        <p className="text-kloven-red text-xs mt-1 font-bold flex items-center gap-1">
+                        <p className="text-kloven-gold text-xs mt-1 font-bold flex items-center gap-1">
                           <Star className="w-3 h-3" fill="currentColor" />
                           {reward.points_cost} puntos
                         </p>
@@ -198,7 +198,7 @@ export default function PerfilPage() {
                         }
                         className={`px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors ${
                           canAfford && !soldOut
-                            ? "bg-kloven-red text-white hover:bg-kloven-red-dark"
+                            ? "bg-kloven-gold text-white hover:bg-kloven-gold/80"
                             : "bg-kloven-smoke text-kloven-ash cursor-not-allowed"
                         }`}
                       >
@@ -224,7 +224,7 @@ export default function PerfilPage() {
         <ScrollReveal delay={0.1}>
           <div className="bg-kloven-dark border border-kloven-smoke p-6">
             <h2 className="font-heading text-2xl uppercase tracking-wider mb-6 text-kloven-white flex items-center gap-2">
-              <Clock className="w-5 h-5 text-kloven-red" />
+              <Clock className="w-5 h-5 text-kloven-gold" />
               Historial
             </h2>
 

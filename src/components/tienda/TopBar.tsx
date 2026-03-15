@@ -88,7 +88,7 @@ export default function TopBar({
               Filtros
             </span>
             {hasActiveFilters && (
-              <span className="w-2 h-2 rounded-full bg-kloven-red" />
+              <span className="w-2 h-2 rounded-full bg-kloven-gold" />
             )}
           </button>
           <span className="text-sm text-kloven-ash font-mono tabular-nums">
@@ -108,10 +108,10 @@ export default function TopBar({
             <button
               key={tag.key}
               onClick={tag.onRemove}
-              className="flex items-center gap-1.5 bg-kloven-carbon border border-kloven-smoke px-2.5 py-1 text-xs text-kloven-ash hover:text-kloven-white hover:border-kloven-red transition-colors group"
+              className="flex items-center gap-1.5 bg-kloven-carbon border border-kloven-smoke px-2.5 py-1 text-xs text-kloven-ash hover:text-kloven-white hover:border-kloven-gold transition-colors group"
             >
               {tag.label}
-              <X className="w-3 h-3 group-hover:text-kloven-red" />
+              <X className="w-3 h-3 group-hover:text-kloven-gold" />
             </button>
           ))}
         </div>

@@ -76,7 +76,7 @@ export default function PreguntasFrecuentes() {
               href="https://wa.me/5493442319968"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-kloven-red hover:underline"
+              className="text-kloven-gold hover:underline"
             >
               WhatsApp
             </a>{" "}

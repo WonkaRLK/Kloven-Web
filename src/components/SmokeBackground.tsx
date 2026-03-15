@@ -1,73 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 export default function SmokeBackground() {
   const [visible, setVisible] = useState(false);
-  const videoA = useRef<HTMLVideoElement>(null);
-  const videoB = useRef<HTMLVideoElement>(null);
-  const [opacityA, setOpacityA] = useState(1);
-  const [opacityB, setOpacityB] = useState(0);
-  const activeRef = useRef<"A" | "B">("A");
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 900);
     return () => clearTimeout(timer);
   }, []);
-
-  const crossfade = useCallback(() => {
-    if (activeRef.current === "A") {
-      // B starts playing, fades in; A fades out then resets
-      videoB.current?.play();
-      setOpacityA(0);
-      setOpacityB(1);
-      activeRef.current = "B";
-      setTimeout(() => {
-        if (videoA.current) {
-          videoA.current.currentTime = 0;
-        }
-      }, 2000);
-    } else {
-      videoA.current?.play();
-      setOpacityB(0);
-      setOpacityA(1);
-      activeRef.current = "A";
-      setTimeout(() => {
-        if (videoB.current) {
-          videoB.current.currentTime = 0;
-        }
-      }, 2000);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!visible) return;
-
-    const vA = videoA.current;
-    const vB = videoB.current;
-    if (!vA || !vB) return;
-
-    const handleTimeUpdate = () => {
-      const active = activeRef.current === "A" ? vA : vB;
-      // Start crossfade 2s before end
-      if (active.duration && active.currentTime >= active.duration - 2) {
-        active.removeEventListener("timeupdate", handleTimeUpdate);
-        crossfade();
-        // Re-attach to the new active video after crossfade
-        setTimeout(() => {
-          const newActive = activeRef.current === "A" ? vA : vB;
-          newActive.addEventListener("timeupdate", handleTimeUpdate);
-        }, 2500);
-      }
-    };
-
-    vA.addEventListener("timeupdate", handleTimeUpdate);
-
-    return () => {
-      vA.removeEventListener("timeupdate", handleTimeUpdate);
-      vB.removeEventListener("timeupdate", handleTimeUpdate);
-    };
-  }, [visible, crossfade]);
 
   return (
     <div
@@ -77,34 +18,27 @@ export default function SmokeBackground() {
         transition: "opacity 2s ease-in",
       }}
     >
-      <video
-        ref={videoA}
-        autoPlay
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+      <div
+        className="absolute inset-0"
         style={{
-          mixBlendMode: "screen",
-          opacity: opacityA * 0.4,
-          transition: "opacity 2s ease-in-out",
+          background: `
+            radial-gradient(ellipse 80% 50% at 20% 30%, rgba(166,124,46,0.12) 0%, transparent 60%),
+            radial-gradient(ellipse 60% 40% at 80% 70%, rgba(201,168,76,0.09) 0%, transparent 50%),
+            radial-gradient(ellipse 90% 60% at 50% 50%, rgba(139,105,20,0.06) 0%, transparent 70%)
+          `,
+          animation: "bgGoldShift 12s ease-in-out infinite alternate",
         }}
-      >
-        <source src="/smoke.mp4" type="video/mp4" />
-      </video>
-      <video
-        ref={videoB}
-        muted
-        playsInline
-        preload="auto"
-        className="absolute inset-0 w-full h-full object-cover"
+      />
+      <div
+        className="absolute inset-0"
         style={{
-          mixBlendMode: "screen",
-          opacity: opacityB * 0.4,
-          transition: "opacity 2s ease-in-out",
+          background: `
+            radial-gradient(ellipse 70% 50% at 70% 20%, rgba(201,168,76,0.09) 0%, transparent 50%),
+            radial-gradient(ellipse 50% 40% at 30% 80%, rgba(166,124,46,0.07) 0%, transparent 50%)
+          `,
+          animation: "bgGoldShift 15s ease-in-out infinite alternate-reverse",
         }}
-      >
-        <source src="/smoke.mp4" type="video/mp4" />
-      </video>
+      />
     </div>
   );
 }

@@ -66,7 +66,7 @@ function CheckboxItem({
       <div
         className={`w-4 h-4 border flex-shrink-0 flex items-center justify-center transition-all ${
           checked
-            ? "bg-kloven-red border-kloven-red"
+            ? "bg-kloven-gold border-kloven-gold"
             : "border-kloven-smoke group-hover:border-kloven-ash"
         }`}
       >
@@ -150,7 +150,7 @@ export default function FilterSidebar({
         {hasActiveFilters && (
           <button
             onClick={onClear}
-            className="text-[11px] text-kloven-red hover:text-kloven-red-dark transition-colors font-medium flex items-center gap-1"
+            className="text-[11px] text-kloven-gold hover:text-kloven-gold/80 transition-colors font-medium flex items-center gap-1"
           >
             <X className="w-3 h-3" />
             Limpiar
@@ -169,8 +169,8 @@ export default function FilterSidebar({
             <div
               className={`w-4 h-4 border flex-shrink-0 flex items-center justify-center transition-all ${
                 filters.onSale
-                  ? "bg-kloven-red border-kloven-red"
-                  : "border-kloven-red/50 group-hover:border-kloven-red"
+                  ? "bg-kloven-gold border-kloven-gold"
+                  : "border-kloven-gold/50 group-hover:border-kloven-gold"
               }`}
             >
               {filters.onSale && (
@@ -191,12 +191,12 @@ export default function FilterSidebar({
             </div>
             <span
               className={`text-sm font-bold flex-1 transition-colors ${
-                filters.onSale ? "text-kloven-red" : "text-kloven-red/80 group-hover:text-kloven-red"
+                filters.onSale ? "text-kloven-gold" : "text-kloven-gold/80 group-hover:text-kloven-gold"
               }`}
             >
               OFERTAS
             </span>
-            <span className="text-xs font-medium text-kloven-red/70 tabular-nums">
+            <span className="text-xs font-medium text-kloven-gold/70 tabular-nums">
               {facets.onSaleCount}
             </span>
           </button>
@@ -273,7 +273,7 @@ export default function FilterSidebar({
             placeholder="Desde"
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
-            className="w-full bg-kloven-carbon border border-kloven-smoke px-3 py-2 text-sm text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-red transition-colors"
+            className="w-full bg-kloven-carbon border border-kloven-smoke px-3 py-2 text-sm text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-gold transition-colors"
           />
           <span className="text-kloven-ash text-xs">-</span>
           <input
@@ -281,12 +281,12 @@ export default function FilterSidebar({
             placeholder="Hasta"
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
-            className="w-full bg-kloven-carbon border border-kloven-smoke px-3 py-2 text-sm text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-red transition-colors"
+            className="w-full bg-kloven-carbon border border-kloven-smoke px-3 py-2 text-sm text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-gold transition-colors"
           />
         </div>
         <button
           onClick={handleApplyPrice}
-          className="w-full mt-2 bg-kloven-carbon border border-kloven-smoke text-kloven-white text-xs font-bold uppercase tracking-widest py-2 hover:border-kloven-red hover:text-kloven-red transition-colors"
+          className="w-full mt-2 bg-kloven-carbon border border-kloven-smoke text-kloven-white text-xs font-bold uppercase tracking-widest py-2 hover:border-kloven-gold hover:text-kloven-gold transition-colors"
         >
           Aplicar
         </button>
