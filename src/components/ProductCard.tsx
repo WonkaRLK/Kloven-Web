@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag, Package } from "lucide-react";
@@ -10,11 +11,56 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const cardRef = useRef<HTMLAnchorElement>(null);
+  const glareRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    const card = cardRef.current;
+    const glare = glareRef.current;
+    if (!card || !glare) return;
+
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = ((y - centerY) / centerY) * -8;
+    const rotateY = ((x - centerX) / centerX) * 8;
+
+    card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
+    glare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.15) 0%, transparent 60%)`;
+    glare.style.opacity = "1";
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    const card = cardRef.current;
+    const glare = glareRef.current;
+    if (!card || !glare) return;
+
+    card.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px)";
+    glare.style.opacity = "0";
+  }, []);
+
   return (
     <Link
+      ref={cardRef}
       href={`/producto/${product.slug}`}
-      className="group block rounded-2xl overflow-hidden bg-kloven-dark/60 border border-white/10 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:border-white/20"
+      className="group relative block rounded-2xl overflow-hidden bg-kloven-dark/60 border border-white/10 shadow-lg hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:border-white/20 will-change-transform"
+      style={{
+        transition: "transform 0.15s ease-out, box-shadow 0.3s ease-out, border-color 0.3s ease-out",
+        transformStyle: "preserve-3d",
+      }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
+      {/* Glare overlay */}
+      <div
+        ref={glareRef}
+        className="pointer-events-none absolute inset-0 z-20 rounded-2xl"
+        style={{ opacity: 0, transition: "opacity 0.3s ease-out" }}
+      />
+
       {/* Image */}
       <div className="relative aspect-[3/4] w-full overflow-hidden">
         <Image
