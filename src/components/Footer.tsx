@@ -45,19 +45,28 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3 text-sm text-kloven-ash font-medium">
               <li>
-                <span className="hover:text-kloven-red inline-block cursor-pointer">
+                <Link
+                  href="/tabla-de-talles"
+                  className="hover:text-kloven-red inline-block"
+                >
                   Tabla de Talles
-                </span>
+                </Link>
               </li>
               <li>
-                <span className="hover:text-kloven-red inline-block cursor-pointer">
+                <Link
+                  href="/envios-y-devoluciones"
+                  className="hover:text-kloven-red inline-block"
+                >
                   Envios y Devoluciones
-                </span>
+                </Link>
               </li>
               <li>
-                <span className="hover:text-kloven-red inline-block cursor-pointer">
+                <Link
+                  href="/preguntas-frecuentes"
+                  className="hover:text-kloven-red inline-block"
+                >
                   Preguntas Frecuentes
-                </span>
+                </Link>
               </li>
             </ul>
           </div>
@@ -80,12 +89,12 @@ export default function Footer() {
         <div className="border-t border-kloven-smoke pt-10 flex flex-col md:flex-row justify-between items-center text-xs text-kloven-ash font-medium">
           <p>&copy; 2026 Kloven Argentina. Todos los derechos reservados.</p>
           <div className="flex items-center space-x-6 mt-4 md:mt-0">
-            <span className="cursor-pointer hover:text-kloven-red">
+            <Link href="/privacidad" className="hover:text-kloven-red">
               Privacidad
-            </span>
-            <span className="cursor-pointer hover:text-kloven-red">
+            </Link>
+            <Link href="/terminos" className="hover:text-kloven-red">
               Terminos
-            </span>
+            </Link>
           </div>
         </div>
 
