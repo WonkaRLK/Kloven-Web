@@ -196,9 +196,9 @@ export default function Hero() {
             <div className="flex flex-col justify-center px-2 pt-20 pb-10 md:pt-24 md:pb-0 w-full md:px-4">
               {/* Gallery with gold border and overlay */}
               <div
-                className="relative w-full h-[55vh] md:h-[75vh] overflow-hidden rounded-lg border-4 border-[#a67c2e]/60"
+                className="relative w-full h-[55vh] md:h-[75vh] overflow-hidden rounded-lg"
                 style={{
-                  boxShadow: "inset 0 0 60px rgba(0,0,0,0.5), 0 0 30px rgba(166,124,46,0.1)",
+                  boxShadow: "inset 0 0 60px rgba(0,0,0,0.5)",
                 }}
               >
                 {/* Gold overlay on photos */}
