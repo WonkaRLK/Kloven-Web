@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronDown, X } from "lucide-react";
 import type { TiendaFilters } from "@/lib/types";
 import type { FacetCounts } from "@/hooks/useTiendaFilters";
@@ -107,19 +107,37 @@ export default function FilterSidebar({
   onClear,
   categoryMap,
 }: FilterSidebarProps) {
+  const formatPrice = (val: string) => {
+    const num = val.replace(/\D/g, "");
+    if (!num) return "";
+    return Number(num).toLocaleString("es-AR");
+  };
+
+  const parsePrice = (val: string) => {
+    const num = val.replace(/\D/g, "");
+    return num ? Number(num) : null;
+  };
+
   const [minPrice, setMinPrice] = useState(
-    filters.minPrice !== null ? String(filters.minPrice) : ""
+    filters.minPrice !== null ? formatPrice(String(filters.minPrice)) : ""
   );
   const [maxPrice, setMaxPrice] = useState(
-    filters.maxPrice !== null ? String(filters.maxPrice) : ""
+    filters.maxPrice !== null ? formatPrice(String(filters.maxPrice)) : ""
   );
 
-  const handleApplyPrice = () => {
-    onSetFilters({
-      minPrice: minPrice ? Number(minPrice) : null,
-      maxPrice: maxPrice ? Number(maxPrice) : null,
-    });
-  };
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      const min = parsePrice(minPrice);
+      const max = parsePrice(maxPrice);
+      if (min !== filters.minPrice || max !== filters.maxPrice) {
+        onSetFilters({ minPrice: min, maxPrice: max });
+      }
+    }, 500);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [minPrice, maxPrice]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Sort sizes in a logical order
   const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
@@ -269,27 +287,23 @@ export default function FilterSidebar({
       <FilterSection title="Precio">
         <div className="flex items-center gap-2">
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
             placeholder="Desde"
             value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value)}
+            onChange={(e) => setMinPrice(formatPrice(e.target.value))}
             className="w-full bg-kloven-carbon border border-kloven-smoke px-3 py-2 text-sm text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-gold transition-colors"
           />
           <span className="text-kloven-ash text-xs">-</span>
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
             placeholder="Hasta"
             value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
+            onChange={(e) => setMaxPrice(formatPrice(e.target.value))}
             className="w-full bg-kloven-carbon border border-kloven-smoke px-3 py-2 text-sm text-kloven-white placeholder-kloven-ash focus:outline-none focus:border-kloven-gold transition-colors"
           />
         </div>
-        <button
-          onClick={handleApplyPrice}
-          className="w-full mt-2 bg-kloven-carbon border border-kloven-smoke text-kloven-white text-xs font-bold uppercase tracking-widest py-2 hover:border-kloven-gold hover:text-kloven-gold transition-colors"
-        >
-          Aplicar
-        </button>
       </FilterSection>
     </div>
   );

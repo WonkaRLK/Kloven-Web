@@ -140,7 +140,10 @@ export default function TiendaSection({
               />
 
               {filtered.length > 0 ? (
-                <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 sm:gap-x-5 lg:gap-x-6 gap-y-8 sm:gap-y-10">
+                <StaggerContainer
+                key={filtered.map((p) => p.id).join(",")}
+                className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 sm:gap-x-5 lg:gap-x-6 gap-y-8 sm:gap-y-10"
+              >
                   {filtered.map((product) => (
                     <StaggerItem key={product.id}>
                       <ProductCard product={product} />

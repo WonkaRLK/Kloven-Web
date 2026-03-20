@@ -7,6 +7,7 @@ import { ShoppingBag, Menu, X, User, LogOut, Star, Mail, Lock, Loader2, Package 
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import KlovenLogo from "@/components/KlovenLogo";
+import ThemeToggle from "@/components/ThemeToggle";
 import type { Category } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -348,6 +349,9 @@ export default function Navbar() {
             </>
           )}
 
+          {/* Theme Toggle */}
+          <ThemeToggle />
+
           {/* Cart */}
           <button
             className="relative text-kloven-white hover:text-kloven-gold"
@@ -443,6 +447,10 @@ export default function Navbar() {
                 )}
               </>
             )}
+            <div className="flex items-center gap-2 p-3 text-kloven-ash">
+              <ThemeToggle />
+              <span className="text-xs uppercase tracking-widest font-bold">Modo</span>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

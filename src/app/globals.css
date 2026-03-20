@@ -25,6 +25,19 @@
   --muted: #666666;
 }
 
+[data-theme="light"] {
+  --background: #FFFFFF;
+  --foreground: #0A0A0A;
+  --kloven-black: #FFFFFF;
+  --kloven-dark: #F5F5F5;
+  --kloven-carbon: #EEEEEE;
+  --kloven-smoke: #D4D4D4;
+  --kloven-ash: #666666;
+  --kloven-white: #0A0A0A;
+  --card-bg: #F5F5F5;
+  --card-border: #D4D4D4;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

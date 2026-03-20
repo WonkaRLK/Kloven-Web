@@ -1,14 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function SmokeBackground() {
   const [visible, setVisible] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 });
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 900);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    setMousePos({ x: e.clientX, y: e.clientY });
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [handleMouseMove]);
 
   return (
     <div
@@ -18,25 +28,28 @@ export default function SmokeBackground() {
         transition: "opacity 2s ease-in",
       }}
     >
+      {/* Grid lines — base (always visible, low opacity) */}
       <div
         className="absolute inset-0"
         style={{
-          background: `
-            radial-gradient(ellipse 80% 50% at 20% 30%, rgba(166,124,46,0.12) 0%, transparent 60%),
-            radial-gradient(ellipse 60% 40% at 80% 70%, rgba(201,168,76,0.09) 0%, transparent 50%),
-            radial-gradient(ellipse 90% 60% at 50% 50%, rgba(139,105,20,0.06) 0%, transparent 70%)
+          backgroundImage: `
+            linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px)
           `,
-          animation: "bgGoldShift 12s ease-in-out infinite alternate",
+          backgroundSize: "60px 60px",
         }}
       />
+      {/* Grid lines — bright layer revealed by mouse */}
       <div
         className="absolute inset-0"
         style={{
-          background: `
-            radial-gradient(ellipse 70% 50% at 70% 20%, rgba(201,168,76,0.09) 0%, transparent 50%),
-            radial-gradient(ellipse 50% 40% at 30% 80%, rgba(166,124,46,0.07) 0%, transparent 50%)
+          backgroundImage: `
+            linear-gradient(rgba(201,168,76,0.2) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(201,168,76,0.2) 1px, transparent 1px)
           `,
-          animation: "bgGoldShift 15s ease-in-out infinite alternate-reverse",
+          backgroundSize: "60px 60px",
+          maskImage: `radial-gradient(circle 350px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 80%)`,
+          WebkitMaskImage: `radial-gradient(circle 350px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 80%)`,
         }}
       />
     </div>

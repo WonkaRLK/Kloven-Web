@@ -43,10 +43,11 @@ export default function ProductCard({ product }: ProductCardProps) {
   }, []);
 
   return (
+    <>
     <Link
       ref={cardRef}
       href={`/producto/${product.slug}`}
-      className="group relative block rounded-2xl overflow-hidden bg-kloven-dark/60 border-4 border-[#a67c2e]/70 shadow-lg hover:shadow-[0_8px_30px_rgba(201,168,76,0.15)] hover:border-[#c9a84c]/70 will-change-transform"
+      className="group relative block rounded-2xl overflow-hidden bg-kloven-dark/60 shadow-lg hover:shadow-[0_8px_30px_rgba(201,168,76,0.15)] will-change-transform"
       style={{
         transition: "transform 0.15s ease-out, box-shadow 0.3s ease-out, border-color 0.3s ease-out",
         transformStyle: "preserve-3d",
@@ -95,25 +96,24 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
       </div>
 
-      {/* Info */}
-      <div
-        className="px-3 py-2 sm:px-4 sm:py-2.5"
-        style={{ background: "linear-gradient(135deg, #462a00 0%, #8b6914 15%, #d4a84b 30%, #ffd700 45%, #d4a84b 55%, #8b6914 70%, #462a00 85%, #8b6914 100%)", backgroundSize: "200% 200%", animation: "goldShimmer 4s ease-in-out infinite" }}
-      >
-        <h3 className="font-bold text-sm sm:text-base leading-tight truncate text-kloven-black">
-          {product.name}
-        </h3>
-        <div className="flex items-center gap-1.5 mt-1">
-          <span className="text-sm sm:text-base font-light text-kloven-black/80 tracking-wider">
-            ${product.price.toLocaleString("es-AR")}
-          </span>
-          {product.compare_at_price && product.compare_at_price > product.price && (
-            <span className="text-xs text-kloven-black/50 line-through">
-              ${product.compare_at_price.toLocaleString("es-AR")}
-            </span>
-          )}
-        </div>
-      </div>
     </Link>
+
+    {/* Info — price first, then name */}
+    <div className="mt-3 px-1">
+      <div className="flex items-center gap-2">
+        <span className="text-base sm:text-lg font-bold text-kloven-white">
+          $ {product.price.toLocaleString("es-AR")}
+        </span>
+        {product.compare_at_price && product.compare_at_price > product.price && (
+          <span className="text-xs text-kloven-ash line-through">
+            $ {product.compare_at_price.toLocaleString("es-AR")}
+          </span>
+        )}
+      </div>
+      <h3 className="text-xs sm:text-sm text-kloven-ash leading-tight truncate mt-1">
+        {product.name}
+      </h3>
+    </div>
+    </>
   );
 }

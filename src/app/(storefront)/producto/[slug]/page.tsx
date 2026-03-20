@@ -379,8 +379,7 @@ export default function ProductoPage() {
               </h1>
               <div className="flex items-baseline gap-3 mb-6">
                 <p
-                  className="font-heading text-4xl text-kloven-gold tracking-wider"
-                  style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.8), 0 4px 15px rgba(0, 0, 0, 0.5)" }}
+                  className="font-heading text-4xl text-kloven-ash tracking-wider"
                 >
                   ${product.price.toLocaleString("es-AR")}
                 </p>
@@ -390,13 +389,15 @@ export default function ProductoPage() {
                   </p>
                 )}
               </div>
-              <p className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 text-green-400 text-sm font-bold uppercase tracking-wider px-4 py-2 mb-6">
-                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              <p className="inline-flex items-center gap-2 bg-green-700/15 border border-green-700/40 text-green-700 text-sm font-bold uppercase tracking-wider px-4 py-2 mb-6">
+                <span className="w-2 h-2 bg-green-700 rounded-full animate-pulse" />
                 Envio gratis a todo el pais
               </p>
-              <p className="text-kloven-ash leading-relaxed mb-8">
-                {product.description}
-              </p>
+              {product.description && !/^\s*env[ií]o\s+gr[aá]tis/i.test(product.description) && (
+                <p className="text-kloven-ash leading-relaxed mb-8">
+                  {product.description}
+                </p>
+              )}
 
               {/* Material & Fit */}
               {(product.material || product.fit) && (
@@ -651,7 +652,7 @@ export default function ProductoPage() {
                             className={`px-4 py-2 text-sm font-bold border-2 ${
                               selectedColor === color
                                 ? "border-kloven-gold bg-kloven-gold text-white"
-                                : "border-kloven-smoke text-kloven-white hover:border-kloven-gold"
+                                : "border-kloven-smoke bg-kloven-black text-kloven-white hover:border-kloven-gold"
                             }`}
                           >
                             {color}
@@ -669,7 +670,7 @@ export default function ProductoPage() {
                       </span>
                       <button
                         onClick={() => setSizeGuideOpen(true)}
-                        className="text-xs text-kloven-ash underline underline-offset-2 hover:text-kloven-gold transition-colors"
+                        className="text-xs text-kloven-white underline underline-offset-2 hover:text-kloven-gold transition-colors"
                       >
                         Guia de talles
                       </button>
@@ -690,8 +691,8 @@ export default function ProductoPage() {
                               selectedSize === size
                                 ? "border-kloven-gold bg-kloven-gold text-white"
                                 : hasStock
-                                ? "border-kloven-smoke text-kloven-white hover:border-kloven-gold"
-                                : "border-kloven-smoke/50 text-kloven-smoke cursor-not-allowed line-through"
+                                ? "border-kloven-smoke bg-kloven-black text-kloven-white hover:border-kloven-gold"
+                                : "border-kloven-smoke/50 bg-kloven-black text-kloven-smoke cursor-not-allowed line-through"
                             }`}
                           >
                             {size}

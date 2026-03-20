@@ -182,31 +182,39 @@ export function useTiendaFilters(products: ProductWithVariants[]) {
     return sorted;
   }, [products, filters]);
 
+  // Read current filters directly from the URL to avoid stale closures
+  const readCurrentFilters = useCallback(() => {
+    return parseFilters(new URLSearchParams(window.location.search));
+  }, []);
+
   const setFilters = useCallback(
     (update: Partial<TiendaFilters>) => {
-      const next = { ...filters, ...update };
+      const current = readCurrentFilters();
+      const next = { ...current, ...update };
       const params = filtersToParams(next);
       const qs = params.toString();
       router.replace(`/tienda${qs ? `?${qs}` : ""}`, { scroll: false });
     },
-    [filters, router]
+    [readCurrentFilters, router]
   );
 
   const clearFilters = useCallback(() => {
-    const params = filtersToParams({ ...DEFAULT_FILTERS, sort: filters.sort });
+    const current = readCurrentFilters();
+    const params = filtersToParams({ ...DEFAULT_FILTERS, sort: current.sort });
     const qs = params.toString();
     router.replace(`/tienda${qs ? `?${qs}` : ""}`, { scroll: false });
-  }, [filters.sort, router]);
+  }, [readCurrentFilters, router]);
 
   const toggleFilter = useCallback(
     (key: "categories" | "sizes" | "colors" | "tags", value: string) => {
-      const current = filters[key];
-      const next = current.includes(value)
-        ? current.filter((v) => v !== value)
-        : [...current, value];
+      const current = readCurrentFilters();
+      const arr = current[key];
+      const next = arr.includes(value)
+        ? arr.filter((v) => v !== value)
+        : [...arr, value];
       setFilters({ [key]: next });
     },
-    [filters, setFilters]
+    [readCurrentFilters, setFilters]
   );
 
   return {
