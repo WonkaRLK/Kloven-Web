@@ -233,10 +233,10 @@ export default function ProductoPage() {
 
   if (loading) {
     return (
-      <div className="pt-28 container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 animate-pulse">
-          <div className="aspect-[4/5] max-h-[75vh] bg-kloven-dark" />
-          <div className="space-y-4 py-8">
+      <div className="pt-20">
+        <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] animate-pulse">
+          <div className="h-[85vh] bg-kloven-dark mx-6 md:mx-12" />
+          <div className="space-y-4 px-8 md:px-12 lg:px-16 py-8">
             <div className="h-4 bg-kloven-dark w-1/4" />
             <div className="h-8 bg-kloven-dark w-3/4" />
             <div className="h-6 bg-kloven-dark w-1/4" />
@@ -264,20 +264,23 @@ export default function ProductoPage() {
   const isCombo = product.is_combo && product.combo_items && product.combo_items.length > 0;
 
   return (
-    <div className="pt-28 pb-20">
-      <div className="container mx-auto px-4">
+    <div className="pt-20 pb-20">
+      {/* Breadcrumb */}
+      <div className="px-6 md:px-12 mb-6">
         <Link
           href="/tienda"
-          className="inline-flex items-center gap-2 text-sm text-kloven-ash hover:text-kloven-gold mb-8"
+          className="inline-flex items-center gap-2 text-sm text-kloven-ash hover:text-kloven-gold"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver al catalogo
         </Link>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-12 overflow-hidden">
+      {/* Full-width product grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr]">
           {/* Image gallery */}
           <ScrollReveal>
-            <div className="flex gap-3">
+            <div className="flex gap-3 pl-6 md:pl-12 pr-0">
               {product.images?.length > 1 && (
                 <div className="hidden md:flex flex-col gap-2 shrink-0 w-16 lg:w-20">
                   {product.images.map((img, i) => (
@@ -308,7 +311,7 @@ export default function ProductoPage() {
                   onMouseMove={handleMouseMove}
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
-                  className="aspect-[4/5] max-h-[75vh] bg-kloven-dark overflow-hidden relative border border-kloven-smoke cursor-crosshair"
+                  className="h-[85vh] w-full bg-kloven-dark overflow-hidden relative border border-kloven-smoke cursor-crosshair"
                 >
                   <Image
                     src={
@@ -367,7 +370,7 @@ export default function ProductoPage() {
 
           {/* Info */}
           <ScrollReveal delay={0.2}>
-            <div className="py-4">
+            <div className="px-8 md:px-12 lg:px-16 py-4 lg:max-h-[85vh] lg:overflow-y-auto">
               <p className="text-xs text-kloven-ash uppercase tracking-widest mb-2">
                 {product.category}
                 {isCombo && (
@@ -753,8 +756,10 @@ export default function ProductoPage() {
               )}
             </div>
           </ScrollReveal>
-        </div>
+      </div>
 
+      {/* SizeGuide + Related */}
+      <div className="px-6 md:px-12 mt-24">
         <SizeGuideModal
           isOpen={sizeGuideOpen}
           onClose={() => setSizeGuideOpen(false)}
@@ -764,7 +769,7 @@ export default function ProductoPage() {
 
         {/* Related products */}
         {related.length > 0 && (
-          <div className="mt-24">
+          <div>
             <h2 className="font-heading text-3xl uppercase tracking-wider mb-10 text-kloven-white">
               Tambien te puede gustar
             </h2>
