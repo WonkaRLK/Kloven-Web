@@ -311,7 +311,7 @@ export default function ProductoPage() {
                   onMouseMove={handleMouseMove}
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
-                  className="aspect-[4/5] lg:aspect-auto lg:h-[85vh] w-full bg-kloven-dark overflow-hidden relative border border-kloven-smoke cursor-crosshair"
+                  className="aspect-[4/5] max-h-[85vh] w-full bg-kloven-dark overflow-hidden relative border border-kloven-smoke cursor-crosshair"
                 >
                   <Image
                     src={
