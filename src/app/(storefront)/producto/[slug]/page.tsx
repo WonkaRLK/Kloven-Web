@@ -276,8 +276,8 @@ export default function ProductoPage() {
         </Link>
       </div>
 
-      {/* Full-width product grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr]">
+      {/* Product grid */}
+      <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-[3fr_2fr]">
           {/* Image gallery */}
           <ScrollReveal>
             <div className="flex gap-3 pl-6 md:pl-12 pr-0">
@@ -311,7 +311,7 @@ export default function ProductoPage() {
                   onMouseMove={handleMouseMove}
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
-                  className="aspect-[4/5] max-h-[85vh] w-full bg-kloven-dark overflow-hidden relative border border-kloven-smoke cursor-crosshair"
+                  className="aspect-[4/5] max-h-[55vh] lg:max-h-[85vh] w-full bg-kloven-dark overflow-hidden relative border border-kloven-smoke cursor-crosshair"
                 >
                   <Image
                     src={
