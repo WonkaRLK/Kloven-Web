@@ -266,7 +266,7 @@ export default function ProductoPage() {
   return (
     <div className="pt-20 pb-20">
       {/* Breadcrumb */}
-      <div className="px-6 md:px-12 mb-6">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-12 mb-6">
         <Link
           href="/tienda"
           className="inline-flex items-center gap-2 text-sm text-kloven-ash hover:text-kloven-gold"
@@ -759,7 +759,7 @@ export default function ProductoPage() {
       </div>
 
       {/* SizeGuide + Related */}
-      <div className="px-6 md:px-12 mt-24">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-12 mt-24">
         <SizeGuideModal
           isOpen={sizeGuideOpen}
           onClose={() => setSizeGuideOpen(false)}
