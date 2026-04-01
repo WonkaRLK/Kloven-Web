@@ -389,7 +389,7 @@ export default function ProductoPage() {
                   </p>
                 )}
               </div>
-              <p className="inline-flex items-center gap-2 bg-green-700/15 border border-green-700/40 text-green-700 text-sm font-bold uppercase tracking-wider px-4 py-2 mb-6">
+              <p className="inline-flex items-center gap-2 text-green-700 text-sm font-bold uppercase tracking-wider mb-6">
                 <span className="w-2 h-2 bg-green-700 rounded-full animate-pulse" />
                 Envio gratis a todo el pais
               </p>
