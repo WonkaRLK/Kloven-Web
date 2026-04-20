@@ -10,6 +10,8 @@ export async function GET(request: NextRequest) {
   const { data, error } = await supabase
     .from("promo_codes")
     .select("*")
+    .not("code", "ilike", "SPIN-%")
+    .not("code", "ilike", "NOPE-%")
     .order("created_at", { ascending: false });
 
   if (error) {
