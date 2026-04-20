@@ -405,6 +405,11 @@ export async function POST(req: NextRequest) {
         payment_methods: {
           installments: 12,
           ...(installments && installments > 1 && { default_installments: installments }),
+          // Exclude cash-at-physical-store methods — we only accept online payments
+          excluded_payment_types: [
+            { id: "ticket" }, // Pagofácil, Rapipago, etc.
+            { id: "atm" },    // Cajeros automáticos
+          ],
         },
         ...(isHttps && {
           notification_url: `${baseUrl}/api/webhooks/mercadopago`,

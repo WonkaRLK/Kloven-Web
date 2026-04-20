@@ -434,6 +434,10 @@ export default function CheckoutPage() {
                   <span>Total</span>
                   <span>${total.toLocaleString("es-AR")}</span>
                 </div>
+                <div className="flex justify-between text-xs text-kloven-ash pt-1">
+                  <span>Transferencia / Efectivo</span>
+                  <span className="text-kloven-white font-semibold">${total.toLocaleString("es-AR")}</span>
+                </div>
               </div>
 
               {/* Installments selector */}
