@@ -83,6 +83,20 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Validate installments: must be one of the offered options
+    const ALLOWED_INSTALLMENTS = [1, 3, 6, 9, 12];
+    if (installments !== undefined && installments !== null) {
+      if (
+        !Number.isInteger(installments) ||
+        !ALLOWED_INSTALLMENTS.includes(installments)
+      ) {
+        return NextResponse.json(
+          { error: "Cantidad de cuotas invalida" },
+          { status: 400 }
+        );
+      }
+    }
+
     const supabase = getSupabaseAdmin();
 
     // Validate user_id against auth session if provided

@@ -193,3 +193,65 @@ export async function sendTrackingLinksEmail(email: string, orders: TrackingOrde
     throw error;
   }
 }
+
+export async function sendAdminOrderNotification(order: OrderData) {
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL;
+  if (!adminEmail) {
+    console.warn("ADMIN_NOTIFICATION_EMAIL not configured — skipping admin notification");
+    return;
+  }
+
+  const itemRows = order.order_items
+    .map(
+      (item) => `
+      <tr>
+        <td style="padding:8px 12px;border-bottom:1px solid #eee;">
+          <strong>${escapeHtml(item.product_name)}</strong>
+          <span style="color:#888;font-size:12px;"> — ${escapeHtml(item.size)}/${escapeHtml(item.color)} x${item.quantity}</span>
+        </td>
+        <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">
+          $${(item.unit_price * item.quantity).toLocaleString("es-AR")}
+        </td>
+      </tr>`
+    )
+    .join("");
+
+  const html = `
+  <div style="background:#f5f5f5;padding:32px 0;font-family:system-ui,sans-serif;">
+    <div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #eee;">
+      <div style="height:4px;background:#D90429;"></div>
+      <div style="padding:24px;">
+        <h1 style="color:#0a0a0a;font-size:18px;margin:0 0 4px;font-weight:900;">Nuevo pedido confirmado</h1>
+        <p style="color:#888;font-size:12px;margin:0 0 20px;">Pedido #${order.id.slice(0, 8)}</p>
+
+        <p style="font-size:14px;margin:0 0 8px;"><strong>Cliente:</strong> ${escapeHtml(order.payer_name)}</p>
+        <p style="font-size:14px;margin:0 0 8px;"><strong>Email:</strong> ${escapeHtml(order.payer_email)}</p>
+        <p style="font-size:14px;margin:0 0 16px;"><strong>Envio:</strong> ${escapeHtml(order.shipping_address)}, ${escapeHtml(order.shipping_city)} (${escapeHtml(order.shipping_zip)})</p>
+
+        <table style="width:100%;border-collapse:collapse;margin-bottom:16px;font-size:13px;">
+          <tbody>${itemRows}</tbody>
+        </table>
+
+        <p style="font-size:15px;font-weight:900;margin:0;">Total: $${order.total.toLocaleString("es-AR")}</p>
+
+        <div style="margin-top:20px;">
+          <a href="${baseUrl}/admin/pedidos/${order.id}" style="display:inline-block;background:#0a0a0a;color:#fff;padding:10px 20px;text-decoration:none;font-size:12px;text-transform:uppercase;letter-spacing:1px;">
+            Ver en admin
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  const { error } = await resend.emails.send({
+    from: process.env.RESEND_FROM_EMAIL || "Kloven <onboarding@resend.dev>",
+    to: adminEmail,
+    subject: `Kloven - Nuevo pedido #${order.id.slice(0, 8)} ($${order.total.toLocaleString("es-AR")})`,
+    html,
+  });
+
+  if (error) {
+    console.error("Resend admin notification error:", error);
+    throw error;
+  }
+}

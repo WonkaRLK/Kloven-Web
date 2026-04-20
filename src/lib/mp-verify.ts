@@ -6,7 +6,18 @@ export function verifyMPWebhook(
   dataId: string
 ): boolean {
   const secret = process.env.MP_WEBHOOK_SECRET;
-  if (!secret) return true; // Skip verification if secret not configured yet
+
+  // If the secret is not configured, we can't verify. We log loudly so the
+  // admin sees in Vercel logs that webhooks are running unverified, but we
+  // still accept the payload — otherwise the whole payment flow breaks.
+  // As soon as MP_WEBHOOK_SECRET is set (env var + MP panel), verification
+  // becomes strict automatically.
+  if (!secret) {
+    console.warn(
+      "[MP WEBHOOK] WARNING: MP_WEBHOOK_SECRET not configured — accepting webhook WITHOUT signature verification. Set the env var and configure the secret in Mercado Pago panel ASAP."
+    );
+    return true;
+  }
 
   if (!xSignature || !xRequestId) return false;
 
