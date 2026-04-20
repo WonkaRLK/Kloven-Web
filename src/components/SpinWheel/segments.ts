@@ -6,10 +6,10 @@ export interface Segment {
 }
 
 export const SEGMENTS: Segment[] = [
-  { label: "25% OFF", discount: 25, probability: 0.05, color: "#D90429" },
+  { label: "18% OFF", discount: 18, probability: 0.05, color: "#D90429" },
   { label: "Perdiste :(", discount: 0, probability: 0.30, color: "#1A1A1A" },
   { label: "10% OFF", discount: 10, probability: 0.25, color: "#2A2A2A" },
-  { label: "20% OFF", discount: 20, probability: 0.12, color: "#D90429" },
+  { label: "12% OFF", discount: 12, probability: 0.12, color: "#D90429" },
   { label: "5% OFF", discount: 5, probability: 0.05, color: "#1A1A1A" },
   { label: "15% OFF", discount: 15, probability: 0.23, color: "#2A2A2A" },
 ];

@@ -10,6 +10,7 @@ import ProductCard from "@/components/ProductCard";
 import SizeGuideModal from "@/components/SizeGuideModal";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import { getSizesForType } from "@/lib/sizes";
+import { getInstallmentOptions } from "@/lib/installments";
 import type {
   ProductWithVariants,
   ProductVariant,
@@ -392,6 +393,17 @@ export default function ProductoPage() {
                   </p>
                 )}
               </div>
+              {/* Installments */}
+              <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-6">
+                {getInstallmentOptions(product.price).map(({ count, monthlyAmount }) => (
+                  <span key={count} className="text-xs text-kloven-ash">
+                    <span className="text-kloven-white font-bold">{count}x</span>{" "}
+                    ${monthlyAmount.toLocaleString("es-AR")}
+                  </span>
+                ))}
+                <span className="text-[10px] text-kloven-smoke self-center">con interés</span>
+              </div>
+
               <p className="inline-flex items-center gap-2 text-green-700 text-sm font-bold uppercase tracking-wider mb-6">
                 <span className="w-2 h-2 bg-green-700 rounded-full animate-pulse" />
                 Envio gratis a todo el pais

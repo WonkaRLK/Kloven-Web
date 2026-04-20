@@ -4,10 +4,6 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import ProductCard from "./ProductCard";
 import type { Product, Category } from "@/lib/types";
 import ScrollReveal from "@/components/animations/ScrollReveal";
-import {
-  StaggerContainer,
-  StaggerItem,
-} from "@/components/animations/StaggerChildren";
 import GlitchText from "@/components/animations/GlitchText";
 
 interface CategorySection {
@@ -171,27 +167,15 @@ export default function FeaturedProducts() {
               </ScrollReveal>
 
               {products.length > 0 ? (
-                <>
-                  {/* Mobile: horizontal carousel */}
-                  <div className="md:hidden -mx-4 px-4">
-                    <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
-                      {products.map((product) => (
-                        <div key={product.id} className="w-40 shrink-0">
-                          <ProductCard product={product} />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Desktop: grid */}
-                  <StaggerContainer className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-x-5 lg:gap-x-6 gap-y-8 lg:gap-y-10">
+                <div className="-mx-4 px-4">
+                  <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
                     {products.map((product) => (
-                      <StaggerItem key={product.id}>
+                      <div key={product.id} className="w-44 sm:w-56 md:w-64 shrink-0">
                         <ProductCard product={product} />
-                      </StaggerItem>
+                      </div>
                     ))}
-                  </StaggerContainer>
-                </>
+                  </div>
+                </div>
               ) : (
                 <div className="text-center py-12 md:py-16 border border-dashed border-kloven-smoke">
                   <p className="text-kloven-ash text-xs md:text-sm font-medium uppercase tracking-widest">

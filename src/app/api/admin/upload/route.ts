@@ -8,9 +8,10 @@ export async function POST(request: NextRequest) {
     if (authError) return authError;
 
     const body = await request.json();
-    const { fileName, contentType } = body as {
+    const { fileName, contentType, folder } = body as {
       fileName: string;
       contentType: string;
+      folder?: string;
     };
 
     if (!fileName || !contentType) {
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
       .replace(/\.[^.]+$/, "")
       .replace(/[^a-zA-Z0-9-_]/g, "_")
       .substring(0, 50);
-    const path = `${timestamp}-${safeName}.${ext}`;
+    const path = folder ? `${folder}/${timestamp}-${safeName}.${ext}` : `${timestamp}-${safeName}.${ext}`;
 
     const { data, error: signError } = await supabase.storage
       .from(bucket)

@@ -386,6 +386,9 @@ export async function POST(req: NextRequest) {
         }),
         payer: { email, name },
         external_reference: order.id,
+        payment_methods: {
+          installments: 12,
+        },
         ...(isHttps && {
           notification_url: `${baseUrl}/api/webhooks/mercadopago`,
         }),

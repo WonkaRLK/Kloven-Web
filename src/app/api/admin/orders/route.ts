@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
   const { data, error } = await supabase
     .from("orders")
     .select("*")
+    .neq("status", "pending")
     .order("created_at", { ascending: false });
 
   if (error) {

@@ -6,18 +6,40 @@ import Image from "next/image";
 import { ChevronDown, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
-const HERO_COLUMNS = [
-  ["/hero/1.jpg", "/hero/6.jpg", "/hero/3.jpg"],
-  ["/hero/4.jpg", "/hero/7.jpg", "/hero/2.jpg"],
-  ["/hero/2.jpg", "/hero/5.jpg", "/hero/8.jpg"],
-  ["/hero/8.jpg", "/hero/3.jpg", "/hero/6.jpg"],
-  ["/hero/5.jpg", "/hero/1.jpg", "/hero/7.jpg"],
+const DEFAULT_IMAGES = [
+  "/hero/1.jpg", "/hero/2.jpg", "/hero/3.jpg", "/hero/4.jpg",
+  "/hero/5.jpg", "/hero/6.jpg", "/hero/7.jpg", "/hero/8.jpg",
 ];
+
+function buildColumns(images: string[]): string[][] {
+  const pool = images.length >= 3 ? images : DEFAULT_IMAGES;
+  const cols: string[][] = [];
+  for (let i = 0; i < 5; i++) {
+    cols.push([
+      pool[(i * 3) % pool.length],
+      pool[(i * 3 + 1) % pool.length],
+      pool[(i * 3 + 2) % pool.length],
+    ]);
+  }
+  return cols;
+}
 
 export default function Hero() {
   const [showTitle, setShowTitle] = useState(true);
+  const [heroColumns, setHeroColumns] = useState<string[][]>(() => buildColumns([]));
   const [glitchPhase, setGlitchPhase] = useState(0);
   const [goldShimmer, setGoldShimmer] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/hero-images")
+      .then((r) => r.json())
+      .then(({ images }) => {
+        if (Array.isArray(images) && images.length >= 3) {
+          setHeroColumns(buildColumns(images));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const t1 = setTimeout(() => setGlitchPhase(1), 100);
@@ -239,7 +261,7 @@ export default function Hero() {
                 </div>
 
                 <div className="grid grid-cols-5 gap-2 h-full">
-                  {HERO_COLUMNS.map((col, colIndex) => (
+                  {heroColumns.map((col, colIndex) => (
                     <div key={colIndex} className="relative overflow-hidden h-full">
                       <div
                         className="flex flex-col gap-2"
