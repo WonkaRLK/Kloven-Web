@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
       zip,
       promo_code,
       user_id,
+      installments,
     } = body as {
       items: CheckoutItem[];
       email: string;
@@ -55,6 +56,7 @@ export async function POST(req: NextRequest) {
       zip: string;
       promo_code?: string;
       user_id?: string;
+      installments?: number;
     };
 
     // Validate required fields
@@ -388,6 +390,7 @@ export async function POST(req: NextRequest) {
         external_reference: order.id,
         payment_methods: {
           installments: 12,
+          ...(installments && installments > 1 && { default_installments: installments }),
         },
         ...(isHttps && {
           notification_url: `${baseUrl}/api/webhooks/mercadopago`,

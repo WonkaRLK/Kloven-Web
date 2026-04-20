@@ -401,7 +401,6 @@ export default function ProductoPage() {
                     ${monthlyAmount.toLocaleString("es-AR")}
                   </span>
                 ))}
-                <span className="text-[10px] text-kloven-smoke self-center">con interés</span>
               </div>
 
               <p className="inline-flex items-center gap-2 text-green-700 text-sm font-bold uppercase tracking-wider mb-6">

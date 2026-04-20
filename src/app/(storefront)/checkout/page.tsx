@@ -28,6 +28,7 @@ export default function CheckoutPage() {
   const [promoError, setPromoError] = useState("");
   const [promoSuccess, setPromoSuccess] = useState("");
   const [validatingPromo, setValidatingPromo] = useState(false);
+  const [installments, setInstallments] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const promoAutoApplied = useRef(false);
@@ -132,6 +133,7 @@ export default function CheckoutPage() {
           zip,
           promo_code: promoCode.trim() || undefined,
           user_id: user?.id,
+          installments: installments > 1 ? installments : undefined,
         }),
       });
 
@@ -432,6 +434,54 @@ export default function CheckoutPage() {
                   <span>Total</span>
                   <span>${total.toLocaleString("es-AR")}</span>
                 </div>
+              </div>
+
+              {/* Installments selector */}
+              <div className="mt-5 pt-5 border-t border-kloven-smoke">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-kloven-ash mb-3">
+                  Cuotas con tarjeta de crédito
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  {[1, 3, 6, 9, 12].map((n) => {
+                    const monthlyTotal = n === 1
+                      ? total
+                      : Math.round(total * ([1,1.10,1.28,1.48,1.68][[1,3,6,9,12].indexOf(n)]) / n) * n;
+                    const monthly = n === 1
+                      ? total
+                      : Math.round(total * ([1,1.10,1.28,1.48,1.68][[1,3,6,9,12].indexOf(n)]) / n);
+                    return (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => setInstallments(n)}
+                        className={`text-left px-3 py-2.5 border text-xs transition-colors ${
+                          installments === n
+                            ? "border-kloven-gold bg-kloven-gold/10 text-kloven-white"
+                            : "border-kloven-smoke text-kloven-ash hover:border-kloven-ash"
+                        }`}
+                      >
+                        <span className="font-bold block">
+                          {n === 1 ? "1 pago" : `${n} cuotas`}
+                        </span>
+                        <span className="text-[11px]">
+                          {n === 1
+                            ? `$${total.toLocaleString("es-AR")}`
+                            : `${n}x $${monthly.toLocaleString("es-AR")}`}
+                        </span>
+                        {n > 1 && (
+                          <span className="text-[10px] text-kloven-ash block">
+                            Total ${monthlyTotal.toLocaleString("es-AR")}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+                {installments > 1 && (
+                  <p className="text-[10px] text-kloven-ash mt-2">
+                    * Interés referencial. El monto final depende de tu tarjeta.
+                  </p>
+                )}
               </div>
             </div>
           </div>
