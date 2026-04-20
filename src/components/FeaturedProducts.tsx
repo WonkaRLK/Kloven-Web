@@ -153,7 +153,7 @@ export default function FeaturedProducts() {
           ))}
         </div>
       ) : sections.length > 0 ? (
-        <div className="space-y-12 md:space-y-24">
+        <div className="space-y-8 md:space-y-14">
           {sections.map((section) => (
             <CategoryRow key={section.category.slug} {...section} />
           ))}
