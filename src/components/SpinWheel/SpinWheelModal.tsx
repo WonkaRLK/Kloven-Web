@@ -81,7 +81,7 @@ export default function SpinWheelModal({
 
           {/* Modal */}
           <motion.div
-            className="relative bg-black/40 backdrop-blur-xl border border-white/10 w-full max-w-sm min-h-[520px] max-h-[90vh] overflow-y-auto z-10"
+            className="relative bg-black/40 backdrop-blur-xl border border-white/10 w-full max-w-sm min-h-[min(520px,85vh)] max-h-[90vh] overflow-y-auto z-10"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}

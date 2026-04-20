@@ -242,7 +242,7 @@ export default function Navbar() {
                         initial={{ opacity: 0, y: -5, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -5, scale: 0.95 }}
-                        className="absolute right-0 top-full mt-2 w-72 bg-kloven-dark border border-kloven-smoke shadow-xl overflow-hidden"
+                        className="absolute right-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] bg-kloven-dark border border-kloven-smoke shadow-xl overflow-hidden"
                       >
                         <div className="px-5 py-4">
                           <h3 className="text-sm font-bold uppercase tracking-widest text-kloven-white mb-4">
