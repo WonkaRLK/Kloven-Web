@@ -394,3 +394,48 @@ body {
 .font-heading {
   font-family: var(--font-heading), Arial, sans-serif;
 }
+
+/* Carousel arrow glow button (from Uiverse.io by Navarog21) */
+.carousel-arrow {
+  position: relative;
+  border: 3px ridge #149CEA;
+  outline: none;
+  background-color: transparent;
+  color: white;
+  transition: 1s;
+  border-radius: 0.3em;
+  cursor: pointer;
+}
+
+.carousel-arrow::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 3%;
+  width: 95%;
+  height: 40%;
+  background-color: #0a0a0a;
+  transition: 0.5s;
+  transform-origin: center;
+}
+
+.carousel-arrow::before {
+  content: "";
+  transform-origin: center;
+  position: absolute;
+  top: 80%;
+  left: 3%;
+  width: 95%;
+  height: 40%;
+  background-color: #0a0a0a;
+  transition: 0.5s;
+}
+
+.carousel-arrow:hover::before,
+.carousel-arrow:hover::after {
+  transform: scale(0);
+}
+
+.carousel-arrow:hover {
+  box-shadow: inset 0px 0px 25px #1479EA;
+}

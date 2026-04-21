@@ -62,10 +62,10 @@ function CategoryRow({ category, products }: CategorySection) {
           {canScrollLeft && (
             <button
               onClick={() => scroll("left")}
-              className="absolute -left-12 top-[40%] -translate-y-1/2 z-10 w-8 h-8 bg-black flex items-center justify-center text-white hover:bg-neutral-800 transition-colors shadow-lg"
+              className="carousel-arrow absolute -left-12 top-[40%] -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center"
               aria-label="Anterior"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-4 h-4 relative z-10" />
             </button>
           )}
 
@@ -73,10 +73,10 @@ function CategoryRow({ category, products }: CategorySection) {
           {canScrollRight && (
             <button
               onClick={() => scroll("right")}
-              className="absolute -right-12 top-[40%] -translate-y-1/2 z-10 w-8 h-8 bg-black flex items-center justify-center text-white hover:bg-neutral-800 transition-colors shadow-lg"
+              className="carousel-arrow absolute -right-12 top-[40%] -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center"
               aria-label="Siguiente"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4 relative z-10" />
             </button>
           )}
 
