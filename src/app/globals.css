@@ -397,7 +397,7 @@ body {
 
 /* Carousel arrow glow button (from Uiverse.io by Navarog21) */
 .carousel-arrow {
-  border: 3px ridge #149CEA;
+  border: 3px ridge #111111;
   outline: none;
   background-color: transparent;
   color: white;
@@ -436,5 +436,5 @@ body {
 }
 
 .carousel-arrow:hover {
-  box-shadow: inset 0px 0px 25px #1479EA;
+  box-shadow: inset 0px 0px 25px #111111;
 }
