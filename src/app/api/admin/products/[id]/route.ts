@@ -96,35 +96,47 @@ export async function PUT(
     // Clean up any leftover variants
     await supabase.from("product_variants").delete().eq("product_id", id);
   } else if (body.variants) {
-    // Update variants: delete existing and re-insert
-    const { error: deleteError } = await supabase
-      .from("product_variants")
-      .delete()
-      .eq("product_id", id);
-
-    if (deleteError) {
-      return NextResponse.json({ error: "Error al eliminar variantes anteriores" }, { status: 500 });
-    }
-
     if (body.variants.length > 0) {
-      const variants = body.variants.map(
-        (v: { size: string; color: string; stock: number; sku: string; active?: boolean }) => ({
-          product_id: id,
-          size: v.size,
-          color: v.color,
-          stock: Math.max(1, parseInt(String(v.stock)) || 1),
-          sku: v.sku || "",
-          active: v.active !== false,
-        })
-      );
+      // Upsert variants by (product_id, size, color) unique constraint.
+      // This updates existing rows (preserving their IDs and any FK references
+      // from order_items) and inserts new ones — avoids FK violation on delete.
+      const variantsToUpsert = (body.variants as { size: string; color: string; stock: number; sku: string; active?: boolean }[]).map((v) => ({
+        product_id: id,
+        size: v.size,
+        color: v.color,
+        stock: Math.max(1, parseInt(String(v.stock)) || 1),
+        sku: v.sku || "",
+        active: true,
+      }));
 
-      const { error: insertError } = await supabase
+      const { error: upsertError } = await supabase
         .from("product_variants")
-        .insert(variants);
+        .upsert(variantsToUpsert, { onConflict: "product_id,size,color" });
 
-      if (insertError) {
+      if (upsertError) {
         return NextResponse.json({ error: "Error al guardar variantes" }, { status: 500 });
       }
+    }
+
+    // Soft-delete variants that the admin removed from the list.
+    // We can't hard-delete them if they're referenced by order_items.
+    const incomingKeys = new Set(
+      (body.variants as { size: string; color: string }[]).map((v) => `${v.size}|${v.color}`)
+    );
+    const { data: existingVariants } = await supabase
+      .from("product_variants")
+      .select("id, size, color")
+      .eq("product_id", id);
+
+    const toDeactivate = (existingVariants || [])
+      .filter((v) => !incomingKeys.has(`${v.size}|${v.color}`))
+      .map((v) => v.id);
+
+    if (toDeactivate.length > 0) {
+      await supabase
+        .from("product_variants")
+        .update({ active: false })
+        .in("id", toDeactivate);
     }
 
     // Clean up any leftover combo items
