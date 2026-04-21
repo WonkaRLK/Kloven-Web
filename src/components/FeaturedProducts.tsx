@@ -58,25 +58,25 @@ function CategoryRow({ category, products }: CategorySection) {
 
       {products.length > 0 ? (
         <div className="relative group/row">
-          {/* Left arrow */}
+          {/* Left arrow — sits outside the scroll area */}
           {canScrollLeft && (
             <button
               onClick={() => scroll("left")}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 z-10 w-9 h-9 bg-kloven-black border border-kloven-smoke flex items-center justify-center text-kloven-white hover:border-kloven-gold hover:text-kloven-gold transition-colors shadow-lg"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full z-10 w-8 h-8 bg-kloven-black border border-kloven-smoke flex items-center justify-center text-kloven-white hover:border-kloven-gold hover:text-kloven-gold transition-colors shadow-lg"
               aria-label="Anterior"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4" />
             </button>
           )}
 
-          {/* Right arrow */}
+          {/* Right arrow — sits outside the scroll area */}
           {canScrollRight && (
             <button
               onClick={() => scroll("right")}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 z-10 w-9 h-9 bg-kloven-black border border-kloven-smoke flex items-center justify-center text-kloven-white hover:border-kloven-gold hover:text-kloven-gold transition-colors shadow-lg"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full z-10 w-8 h-8 bg-kloven-black border border-kloven-smoke flex items-center justify-center text-kloven-white hover:border-kloven-gold hover:text-kloven-gold transition-colors shadow-lg"
               aria-label="Siguiente"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 h-4" />
             </button>
           )}
 
@@ -128,7 +128,7 @@ export default function FeaturedProducts() {
   }, []);
 
   return (
-    <section className="container mx-auto px-4 py-12 sm:py-24 relative z-20">
+    <section className="container mx-auto px-6 sm:px-8 py-12 sm:py-24 relative z-20">
       <ScrollReveal>
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-2 sm:gap-0 mb-6 sm:mb-8">
           <GlitchText
