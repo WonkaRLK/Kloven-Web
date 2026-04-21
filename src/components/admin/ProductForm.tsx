@@ -971,10 +971,10 @@ export default function ProductForm({ product }: ProductFormProps) {
                         type="number"
                         value={v.stock}
                         onChange={(e) =>
-                          updateVariant(i, "stock", parseInt(e.target.value) || 0)
+                          updateVariant(i, "stock", Math.max(1, parseInt(e.target.value) || 1))
                         }
                         className="bg-gray-50 border border-gray-200 p-2 text-sm w-20"
-                        min={0}
+                        min={1}
                       />
                     </td>
                     <td className="p-2">

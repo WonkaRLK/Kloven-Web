@@ -97,7 +97,14 @@ export async function PUT(
     await supabase.from("product_variants").delete().eq("product_id", id);
   } else if (body.variants) {
     // Update variants: delete existing and re-insert
-    await supabase.from("product_variants").delete().eq("product_id", id);
+    const { error: deleteError } = await supabase
+      .from("product_variants")
+      .delete()
+      .eq("product_id", id);
+
+    if (deleteError) {
+      return NextResponse.json({ error: "Error al eliminar variantes anteriores" }, { status: 500 });
+    }
 
     if (body.variants.length > 0) {
       const variants = body.variants.map(
@@ -105,13 +112,19 @@ export async function PUT(
           product_id: id,
           size: v.size,
           color: v.color,
-          stock: v.stock || 0,
+          stock: Math.max(1, parseInt(String(v.stock)) || 1),
           sku: v.sku || "",
           active: v.active !== false,
         })
       );
 
-      await supabase.from("product_variants").insert(variants);
+      const { error: insertError } = await supabase
+        .from("product_variants")
+        .insert(variants);
+
+      if (insertError) {
+        return NextResponse.json({ error: "Error al guardar variantes" }, { status: 500 });
+      }
     }
 
     // Clean up any leftover combo items
