@@ -62,7 +62,7 @@ function CategoryRow({ category, products }: CategorySection) {
           {canScrollLeft && (
             <button
               onClick={() => scroll("left")}
-              className="absolute -left-9 top-[40%] -translate-y-1/2 z-10 w-8 h-8 bg-kloven-black border border-kloven-smoke flex items-center justify-center text-kloven-white hover:border-kloven-gold hover:text-kloven-gold transition-colors shadow-lg"
+              className="absolute -left-12 top-[40%] -translate-y-1/2 z-10 w-8 h-8 bg-black flex items-center justify-center text-white hover:bg-neutral-800 transition-colors shadow-lg"
               aria-label="Anterior"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -73,7 +73,7 @@ function CategoryRow({ category, products }: CategorySection) {
           {canScrollRight && (
             <button
               onClick={() => scroll("right")}
-              className="absolute -right-9 top-[40%] -translate-y-1/2 z-10 w-8 h-8 bg-kloven-black border border-kloven-smoke flex items-center justify-center text-kloven-white hover:border-kloven-gold hover:text-kloven-gold transition-colors shadow-lg"
+              className="absolute -right-12 top-[40%] -translate-y-1/2 z-10 w-8 h-8 bg-black flex items-center justify-center text-white hover:bg-neutral-800 transition-colors shadow-lg"
               aria-label="Siguiente"
             >
               <ChevronRight className="w-4 h-4" />
@@ -128,7 +128,7 @@ export default function FeaturedProducts() {
   }, []);
 
   return (
-    <section className="container mx-auto px-10 sm:px-12 py-12 sm:py-24 relative z-20">
+    <section className="container mx-auto px-14 sm:px-16 py-12 sm:py-24 relative z-20">
       <ScrollReveal>
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-2 sm:gap-0 mb-6 sm:mb-8">
           <GlitchText
