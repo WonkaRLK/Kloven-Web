@@ -397,7 +397,6 @@ body {
 
 /* Carousel arrow glow button (from Uiverse.io by Navarog21) */
 .carousel-arrow {
-  position: relative;
   border: 3px ridge #149CEA;
   outline: none;
   background-color: transparent;
@@ -414,7 +413,7 @@ body {
   left: 3%;
   width: 95%;
   height: 40%;
-  background-color: #0a0a0a;
+  background-color: var(--background);
   transition: 0.5s;
   transform-origin: center;
 }
@@ -427,7 +426,7 @@ body {
   left: 3%;
   width: 95%;
   height: 40%;
-  background-color: #0a0a0a;
+  background-color: var(--background);
   transition: 0.5s;
 }
 
