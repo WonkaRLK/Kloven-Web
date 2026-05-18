@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import ProductCard from "./ProductCard";
 import type { Product, Category } from "@/lib/types";
 import ScrollReveal from "@/components/animations/ScrollReveal";
@@ -17,29 +17,49 @@ function CategoryRow({ category, products }: CategorySection) {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
-  const checkScroll = () => {
+  const checkScroll = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
     setCanScrollLeft(el.scrollLeft > 0);
     setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
-  };
+  }, []);
+
+  const updateScales = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const containerCenter = el.scrollLeft + el.clientWidth / 2;
+    const children = Array.from(el.children) as HTMLElement[];
+    children.forEach((child) => {
+      const childCenter = child.offsetLeft + child.offsetWidth / 2;
+      const distance = Math.abs(containerCenter - childCenter);
+      const maxDist = el.clientWidth * 0.55;
+      const ratio = Math.min(distance / maxDist, 1);
+      const scale = 1 - ratio * 0.28;
+      const opacity = 1 - ratio * 0.45;
+      child.style.transform = `scale(${scale})`;
+      child.style.opacity = String(Math.max(opacity, 0.45));
+    });
+  }, []);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
     checkScroll();
-    el.addEventListener("scroll", checkScroll, { passive: true });
-    window.addEventListener("resize", checkScroll);
+    updateScales();
+    const onScroll = () => { checkScroll(); updateScales(); };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
     return () => {
-      el.removeEventListener("scroll", checkScroll);
-      window.removeEventListener("resize", checkScroll);
+      el.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
-  }, [products]);
+  }, [products, checkScroll, updateScales]);
 
   const scroll = (dir: "left" | "right") => {
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollBy({ left: dir === "left" ? -320 : 320, behavior: "smooth" });
+    const cardWidth = (el.children[0] as HTMLElement)?.offsetWidth ?? 256;
+    el.scrollBy({ left: dir === "left" ? -(cardWidth + 16) : (cardWidth + 16), behavior: "smooth" });
   };
 
   return (
@@ -99,7 +119,11 @@ function CategoryRow({ category, products }: CategorySection) {
             className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
           >
             {products.map((product) => (
-              <div key={product.id} className="w-44 sm:w-56 md:w-64 shrink-0">
+              <div
+                key={product.id}
+                className="w-44 sm:w-56 md:w-64 shrink-0"
+                style={{ transition: "transform 0.15s ease-out, opacity 0.15s ease-out", transformOrigin: "center top" }}
+              >
                 <ProductCard product={product} />
               </div>
             ))}
