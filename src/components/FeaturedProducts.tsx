@@ -116,13 +116,13 @@ function CategoryRow({ category, products }: CategorySection) {
 
           <div
             ref={scrollRef}
-            className="flex gap-4 overflow-x-auto scrollbar-hide pt-10 pb-4 -mt-10"
+            className="flex items-center gap-4 overflow-x-auto scrollbar-hide pt-10 pb-4 -mt-10"
           >
             {products.map((product) => (
               <div
                 key={product.id}
                 className="w-44 sm:w-56 md:w-64 shrink-0"
-                style={{ transition: "transform 0.15s ease-out, opacity 0.15s ease-out", transformOrigin: "center top" }}
+                style={{ transition: "transform 0.15s ease-out, opacity 0.15s ease-out", transformOrigin: "center center" }}
               >
                 <ProductCard product={product} />
               </div>
