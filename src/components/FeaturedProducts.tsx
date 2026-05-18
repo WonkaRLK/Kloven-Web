@@ -63,9 +63,9 @@ function CategoryRow({ category, products }: CategorySection) {
   };
 
   return (
-    <div id={category.slug}>
+    <div id={category.slug} className="mb-8 md:mb-14">
       <ScrollReveal>
-        <div className="flex items-end justify-between mb-5 md:mb-8 border-b border-kloven-smoke pb-3 md:pb-4">
+        <div className="flex items-end justify-between px-4 sm:px-8 mb-5 md:mb-8 border-b border-kloven-smoke pb-3 md:pb-4">
           <GlitchText
             text={category.name}
             className="font-heading text-xl sm:text-3xl md:text-4xl uppercase tracking-wider"
@@ -78,22 +78,22 @@ function CategoryRow({ category, products }: CategorySection) {
 
       {products.length > 0 ? (
         <div className="relative group/row">
-          {/* Left arrow — outside the scroll area, centered with card image */}
+          {/* Left arrow */}
           {canScrollLeft && (
             <button
               onClick={() => scroll("left")}
-              className="carousel-arrow absolute -left-12 top-[40%] -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center"
+              className="carousel-arrow absolute left-1 top-[40%] -translate-y-1/2 z-20 w-8 h-8 flex items-center justify-center"
               aria-label="Anterior"
             >
               <ChevronLeft className="w-4 h-4 relative z-10" />
             </button>
           )}
 
-          {/* Right arrow — outside the scroll area, centered with card image */}
+          {/* Right arrow */}
           {canScrollRight && (
             <button
               onClick={() => scroll("right")}
-              className="carousel-arrow absolute -right-12 top-[40%] -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center"
+              className="carousel-arrow absolute right-1 top-[40%] -translate-y-1/2 z-20 w-8 h-8 flex items-center justify-center"
               aria-label="Siguiente"
             >
               <ChevronRight className="w-4 h-4 relative z-10" />
@@ -103,14 +103,14 @@ function CategoryRow({ category, products }: CategorySection) {
           {/* Edge fades */}
           {canScrollLeft && (
             <div
-              className="absolute left-0 top-0 bottom-4 w-32 z-10 pointer-events-none"
-              style={{ background: "linear-gradient(to right, var(--background) 30%, transparent)" }}
+              className="absolute left-0 top-0 bottom-4 w-24 z-10 pointer-events-none"
+              style={{ background: "linear-gradient(to right, var(--background) 20%, transparent)" }}
             />
           )}
           {canScrollRight && (
             <div
-              className="absolute right-0 top-0 bottom-4 w-32 z-10 pointer-events-none"
-              style={{ background: "linear-gradient(to left, var(--background) 30%, transparent)" }}
+              className="absolute right-0 top-0 bottom-4 w-24 z-10 pointer-events-none"
+              style={{ background: "linear-gradient(to left, var(--background) 20%, transparent)" }}
             />
           )}
 
@@ -164,16 +164,7 @@ export default function FeaturedProducts() {
   }, []);
 
   return (
-    <section className="container mx-auto px-14 sm:px-16 pt-4 pb-12 sm:pt-6 sm:pb-24 relative z-20">
-      <ScrollReveal>
-        <div className="mb-6 sm:mb-8">
-          <GlitchText
-            text="Últimos Drops"
-            className="font-heading text-2xl sm:text-3xl md:text-4xl uppercase tracking-wider"
-          />
-        </div>
-      </ScrollReveal>
-
+    <section className="container mx-auto pt-2 pb-12 sm:pt-4 sm:pb-24 relative z-20">
       {loading ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 gap-y-8">
           {[1, 2, 3, 4].map((i) => (

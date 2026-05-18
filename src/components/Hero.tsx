@@ -126,12 +126,12 @@ export default function Hero() {
         }
 
         .hero-overlay-logo-wrap {
-          opacity: 0.75;
+          opacity: 1;
           transition: opacity 1s ease-out;
         }
         @media (min-width: 768px) {
           .hero-overlay-logo-wrap {
-            opacity: 0.4;
+            opacity: 1;
           }
         }
 
@@ -155,11 +155,11 @@ export default function Hero() {
           100% { color: #F5F5F5; }
         }
         .hero-overlay-logo-wrap:has(.gold-shimmer) {
-          opacity: 0.85;
+          opacity: 1;
         }
         @media (min-width: 768px) {
           .hero-overlay-logo-wrap:has(.gold-shimmer) {
-            opacity: 0.6;
+            opacity: 1;
           }
         }
 
@@ -293,8 +293,8 @@ export default function Hero() {
 
       {/* Fade de transición al fondo de la página */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-24 z-10 pointer-events-none"
-        style={{ background: "linear-gradient(to bottom, transparent, var(--background))" }}
+        className="absolute bottom-0 left-0 right-0 h-48 z-10 pointer-events-none"
+        style={{ background: "linear-gradient(to bottom, transparent 0%, var(--background) 85%)" }}
       />
     </div>
   );
