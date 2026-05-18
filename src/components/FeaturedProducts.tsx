@@ -80,6 +80,20 @@ function CategoryRow({ category, products }: CategorySection) {
             </button>
           )}
 
+          {/* Edge fades */}
+          {canScrollLeft && (
+            <div
+              className="absolute left-0 top-0 bottom-4 w-16 z-10 pointer-events-none"
+              style={{ background: "linear-gradient(to right, var(--background), transparent)" }}
+            />
+          )}
+          {canScrollRight && (
+            <div
+              className="absolute right-0 top-0 bottom-4 w-16 z-10 pointer-events-none"
+              style={{ background: "linear-gradient(to left, var(--background), transparent)" }}
+            />
+          )}
+
           <div
             ref={scrollRef}
             className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"

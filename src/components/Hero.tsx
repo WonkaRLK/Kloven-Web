@@ -59,7 +59,7 @@ export default function Hero() {
   }, [showTitle]);
 
   return (
-    <div className={`relative overflow-hidden ${showTitle ? "min-h-screen bg-kloven-black" : "md:min-h-screen"}`}>
+    <div className={`relative overflow-hidden ${showTitle ? "min-h-[50vh] bg-kloven-black" : "md:min-h-[50vh]"}`}>
       <style>{`
         @keyframes glitchSlice1 {
           0% { clip-path: inset(20% 0 60% 0); transform: translateX(-8px) skewX(-2deg); }
@@ -207,13 +207,13 @@ export default function Hero() {
       )}
 
       {/* Gallery content */}
-      <div className="relative z-[1] flex items-center md:min-h-screen">
+      <div className="relative z-[1] flex items-center md:min-h-[50vh]">
         {!showTitle && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="flex flex-col items-center w-full md:min-h-screen"
+            className="flex flex-col items-center w-full md:min-h-[50vh]"
           >
             <div className="flex flex-col justify-center px-2 pt-20 pb-10 md:pt-24 md:pb-0 w-full md:px-4">
               {/* Gallery with gold border and overlay */}
