@@ -488,13 +488,6 @@ export default function AdminDashboard() {
           <h1 className="text-3xl font-black tracking-tight">Dashboard</h1>
           <p className="text-gray-500 text-sm mt-1">Resumen general de la tienda</p>
         </div>
-        <Link
-          href="/admin/productos/nuevo"
-          className="bg-black text-white px-6 py-3 text-sm font-bold uppercase tracking-widest hover:bg-kloven-red transition-colors flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          Nuevo Producto
-        </Link>
       </div>
 
       {/* Drop Mode */}
