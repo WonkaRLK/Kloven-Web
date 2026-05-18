@@ -143,7 +143,6 @@ function CategoryRow({ category, products }: CategorySection) {
 export default function FeaturedProducts() {
   const [sections, setSections] = useState<CategorySection[]>([]);
   const [loading, setLoading] = useState(true);
-  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     Promise.all([
@@ -153,7 +152,6 @@ export default function FeaturedProducts() {
       .then(([cats, prods]) => {
         const categories: Category[] = Array.isArray(cats) ? cats : [];
         const products: Product[] = Array.isArray(prods) ? prods : [];
-        setTotalCount(products.length);
         setSections(
           categories.map((cat) => ({
             category: cat,
@@ -166,16 +164,13 @@ export default function FeaturedProducts() {
   }, []);
 
   return (
-    <section className="container mx-auto px-14 sm:px-16 py-12 sm:py-24 relative z-20">
+    <section className="container mx-auto px-14 sm:px-16 pt-4 pb-12 sm:pt-6 sm:pb-24 relative z-20">
       <ScrollReveal>
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-2 sm:gap-0 mb-6 sm:mb-8">
+        <div className="mb-6 sm:mb-8">
           <GlitchText
             text="Últimos Drops"
-            className="font-heading text-3xl sm:text-5xl md:text-6xl uppercase tracking-wider"
+            className="font-heading text-2xl sm:text-3xl md:text-4xl uppercase tracking-wider"
           />
-          <span className="text-sm font-bold text-kloven-ash font-mono tabular-nums">
-            [{String(totalCount).padStart(2, "0")}] items
-          </span>
         </div>
       </ScrollReveal>
 

@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, ArrowRight } from "lucide-react";
+
 import { motion } from "framer-motion";
 
 const DEFAULT_IMAGES = [
@@ -287,35 +286,16 @@ export default function Hero() {
                 </div>
               </div>
 
-              <div className="h-[2px] w-12 bg-kloven-gold mt-5 mb-4 md:mt-8 md:mb-6" />
-
-              <Link
-                href="/tienda"
-                className="inline-flex items-center gap-3 text-sm uppercase tracking-[0.3em] text-kloven-white font-bold hover:text-kloven-gold group w-fit"
-              >
-                Ver Catalogo
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
             </div>
           </motion.div>
         )}
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-2 text-kloven-ash"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.6 }}
-      >
-        <span className="text-[10px] uppercase tracking-widest">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        >
-          <ChevronDown className="w-5 h-5" />
-        </motion.div>
-      </motion.div>
+      {/* Fade de transición al fondo de la página */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-24 z-10 pointer-events-none"
+        style={{ background: "linear-gradient(to bottom, transparent, var(--background))" }}
+      />
     </div>
   );
 }
