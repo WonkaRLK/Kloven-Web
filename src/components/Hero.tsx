@@ -215,10 +215,10 @@ export default function Hero() {
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center w-full md:min-h-[25vh]"
           >
-            <div className="flex flex-col justify-center px-2 pt-20 pb-10 md:pt-24 md:pb-0 w-full md:px-4">
+            <div className="flex flex-col justify-center px-2 pt-16 pb-4 md:pt-16 md:pb-4 w-full md:px-4">
               {/* Gallery with gold border and overlay */}
               <div
-                className="relative w-full h-[55vh] md:h-[75vh] overflow-hidden rounded-lg"
+                className="relative w-full h-[28vh] md:h-[38vh] overflow-hidden rounded-lg"
                 style={{
                   boxShadow: "inset 0 0 60px rgba(0,0,0,0.5)",
                 }}
