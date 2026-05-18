@@ -63,7 +63,7 @@ function CategoryRow({ category, products }: CategorySection) {
   };
 
   return (
-    <div id={category.slug} className="mb-8 md:mb-14">
+    <div id={category.slug} className="mb-4 md:mb-6">
       <ScrollReveal>
         <div className="flex items-end justify-between px-4 sm:px-8 mb-5 md:mb-8 border-b border-kloven-smoke pb-3 md:pb-4">
           <GlitchText
@@ -177,7 +177,7 @@ export default function FeaturedProducts() {
           ))}
         </div>
       ) : sections.length > 0 ? (
-        <div className="space-y-8 md:space-y-14">
+        <div className="space-y-4 md:space-y-6">
           {sections.map((section) => (
             <CategoryRow key={section.category.slug} {...section} />
           ))}
