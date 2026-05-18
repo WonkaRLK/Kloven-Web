@@ -17,5 +17,5 @@ export async function GET() {
   const open =
     !active || (opensAt !== null && new Date(opensAt) <= new Date());
 
-  return NextResponse.json({ open });
+  return NextResponse.json({ open, drop_opens_at: opensAt });
 }

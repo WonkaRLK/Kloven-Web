@@ -51,8 +51,8 @@ export default async function DropPage() {
         }}
       />
 
-      {/* Poller: redirige automáticamente cuando el admin abre la tienda */}
-      <DropPoller />
+      {/* Poller: redirige cuando abre la tienda, recarga si cambia la config */}
+      <DropPoller opensAt={opensAt} />
 
       <div className="relative z-10 flex flex-col items-center text-center max-w-2xl w-full gap-8">
         {/* Logo */}
