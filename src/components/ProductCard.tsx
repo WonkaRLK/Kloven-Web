@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag, Package } from "lucide-react";
 import type { Product } from "@/lib/types";
+import { useStoreConfig } from "@/context/StoreConfigContext";
 
 interface ProductCardProps {
   product: Product;
@@ -13,6 +14,7 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const cardRef = useRef<HTMLAnchorElement>(null);
   const glareRef = useRef<HTMLDivElement>(null);
+  const { transferDiscountPercent, installmentsCount } = useStoreConfig();
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     const card = cardRef.current;
@@ -113,6 +115,16 @@ export default function ProductCard({ product }: ProductCardProps) {
       <h3 className="text-xs sm:text-sm text-kloven-ash leading-tight truncate mt-1">
         {product.name}
       </h3>
+      {transferDiscountPercent > 0 && (
+        <p className="text-[11px] text-kloven-ash mt-1 leading-tight">
+          ${Math.round(product.price * (1 - transferDiscountPercent / 100)).toLocaleString("es-AR")} con Transferencia
+        </p>
+      )}
+      {installmentsCount > 0 && (
+        <p className="text-[11px] text-kloven-ash mt-0.5 leading-tight">
+          {installmentsCount} cuotas sin interés de ${Math.round(product.price / installmentsCount).toLocaleString("es-AR")}
+        </p>
+      )}
     </div>
     </>
   );

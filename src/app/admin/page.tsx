@@ -14,6 +14,7 @@ import {
   Clock,
   Save,
   ExternalLink,
+  CreditCard,
 } from "lucide-react";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 
@@ -269,6 +270,115 @@ function DropModeCard({ token }: { token: string }) {
   );
 }
 
+function PaymentConfigCard({ token }: { token: string }) {
+  const [transfer, setTransfer] = useState("");
+  const [installments, setInstallments] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const headers = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
+
+  useEffect(() => {
+    fetch("/api/admin/store-config", { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => r.json())
+      .then((data) => {
+        setTransfer(data.transfer_discount_percent > 0 ? String(data.transfer_discount_percent) : "");
+        setInstallments(data.installments_count > 0 ? String(data.installments_count) : "");
+      })
+      .finally(() => setLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      await fetch("/api/admin/store-config", {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify({
+          transfer_discount_percent: transfer ? parseInt(transfer) : 0,
+          installments_count: installments ? parseInt(installments) : 0,
+        }),
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return (
+    <div className="bg-white border border-gray-200 rounded-lg p-6 flex items-center justify-center h-24">
+      <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+    </div>
+  );
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <div className="flex items-center gap-3 px-5 sm:px-6 py-4 border-b border-gray-100">
+        <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
+          <CreditCard className="w-4 h-4 text-gray-600" />
+        </div>
+        <div>
+          <p className="text-sm font-bold text-gray-900">Métodos de pago</p>
+          <p className="text-xs text-gray-500">Se muestra en las cards y páginas de producto</p>
+        </div>
+      </div>
+
+      <div className="px-5 sm:px-6 py-5 grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+          <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1.5">
+            Descuento por Transferencia (%)
+          </label>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            value={transfer}
+            onChange={(e) => setTransfer(e.target.value)}
+            placeholder="0 = desactivado"
+            className="w-full bg-gray-50 border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:border-black transition-colors rounded"
+          />
+          <p className="text-xs text-gray-400 mt-1">
+            {transfer && parseInt(transfer) > 0
+              ? `Muestra precio con ${transfer}% de descuento`
+              : "No se muestra descuento"}
+          </p>
+        </div>
+
+        <div>
+          <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1.5">
+            Cuotas sin interés
+          </label>
+          <input
+            type="number"
+            min="0"
+            max="48"
+            value={installments}
+            onChange={(e) => setInstallments(e.target.value)}
+            placeholder="0 = desactivado"
+            className="w-full bg-gray-50 border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:border-black transition-colors rounded"
+          />
+          <p className="text-xs text-gray-400 mt-1">
+            {installments && parseInt(installments) > 0
+              ? `Muestra ${installments} cuotas sin interés`
+              : "No se muestran cuotas"}
+          </p>
+        </div>
+      </div>
+
+      <div className="px-5 sm:px-6 pb-5">
+        <button
+          onClick={save}
+          disabled={saving}
+          className="flex items-center gap-2 bg-black text-white px-5 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-kloven-red transition-colors rounded disabled:opacity-50"
+        >
+          {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+          Guardar
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const { isAuthenticated, login, token } = useAdminAuth();
   const [password, setPassword] = useState("");
@@ -388,8 +498,13 @@ export default function AdminDashboard() {
       </div>
 
       {/* Drop Mode */}
-      <div className="mb-10">
+      <div className="mb-6">
         <DropModeCard token={token!} />
+      </div>
+
+      {/* Payment Config */}
+      <div className="mb-10">
+        <PaymentConfigCard token={token!} />
       </div>
 
       {/* Stats cards */}

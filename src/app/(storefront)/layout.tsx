@@ -1,19 +1,36 @@
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { StoreConfigProvider } from "@/context/StoreConfigContext";
 import Navbar from "@/components/Navbar";
 import CartDrawer from "@/components/CartDrawer";
 import Footer from "@/components/Footer";
 import SmokeBackground from "@/components/SmokeBackground";
 import SpinWheelContainer from "@/components/SpinWheel/SpinWheelContainer";
+import { supabase } from "@/lib/supabase";
 
-export default function StorefrontLayout({
+async function getPaymentConfig() {
+  const { data } = await supabase
+    .from("store_config")
+    .select("transfer_discount_percent, installments_count")
+    .eq("id", 1)
+    .single();
+  return {
+    transferDiscountPercent: data?.transfer_discount_percent ?? 0,
+    installmentsCount: data?.installments_count ?? 0,
+  };
+}
+
+export default async function StorefrontLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const paymentConfig = await getPaymentConfig();
+
   return (
     <AuthProvider>
       <CartProvider>
+      <StoreConfigProvider value={paymentConfig}>
         <div className="min-h-screen flex flex-col bg-kloven-black text-kloven-white">
           <SmokeBackground />
           <Navbar />
@@ -34,6 +51,7 @@ export default function StorefrontLayout({
             </svg>
           </a>
         </div>
+      </StoreConfigProvider>
       </CartProvider>
     </AuthProvider>
   );

@@ -10,7 +10,7 @@ import ProductCard from "@/components/ProductCard";
 import SizeGuideModal from "@/components/SizeGuideModal";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import { getSizesForType } from "@/lib/sizes";
-import { getInstallmentOptions } from "@/lib/installments";
+import { useStoreConfig } from "@/context/StoreConfigContext";
 import type {
   ProductWithVariants,
   ProductVariant,
@@ -31,6 +31,7 @@ interface ComboProductSelection {
 export default function ProductoPage() {
   const { slug } = useParams<{ slug: string }>();
   const { addToCart, addComboToCart } = useCart();
+  const { transferDiscountPercent, installmentsCount } = useStoreConfig();
 
   const [product, setProduct] = useState<ProductWithVariants | null>(null);
   const [loading, setLoading] = useState(true);
@@ -393,15 +394,25 @@ export default function ProductoPage() {
                   </p>
                 )}
               </div>
-              {/* Installments */}
-              <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-6">
-                {getInstallmentOptions(product.price).map(({ count, monthlyAmount }) => (
-                  <span key={count} className="text-xs text-kloven-ash">
-                    <span className="text-kloven-white font-bold">{count}x</span>{" "}
-                    ${monthlyAmount.toLocaleString("es-AR")}
-                  </span>
-                ))}
-              </div>
+              {/* Transferencia y cuotas */}
+              {(transferDiscountPercent > 0 || installmentsCount > 0) && (
+                <div className="flex flex-col gap-1 mb-6">
+                  {transferDiscountPercent > 0 && (
+                    <p className="text-sm text-kloven-ash">
+                      <span className="text-kloven-white font-semibold">
+                        ${Math.round(product.price * (1 - transferDiscountPercent / 100)).toLocaleString("es-AR")}
+                      </span>{" "}
+                      con Transferencia o depósito bancario
+                    </p>
+                  )}
+                  {installmentsCount > 0 && (
+                    <p className="text-sm text-kloven-ash">
+                      <span className="text-kloven-white font-semibold">{installmentsCount} cuotas sin interés</span>{" "}
+                      de ${Math.round(product.price / installmentsCount).toLocaleString("es-AR")}
+                    </p>
+                  )}
+                </div>
+              )}
 
               <p className="inline-flex items-center gap-2 text-green-700 text-sm font-bold uppercase tracking-wider mb-6">
                 <span className="w-2 h-2 bg-green-700 rounded-full animate-pulse" />
