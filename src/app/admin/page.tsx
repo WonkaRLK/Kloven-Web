@@ -74,15 +74,23 @@ function DropModeCard({ token }: { token: string }) {
   const toggle = async () => {
     if (!config) return;
     setToggling(true);
+    const turningOff = config.drop_mode_active;
     try {
+      const body: Partial<StoreConfig> = { drop_mode_active: !config.drop_mode_active };
+      // Al apagar, limpiar el countdown para no dejar fechas viejas
+      if (turningOff) body.drop_opens_at = null;
       const res = await fetch("/api/admin/store-config", {
         method: "PATCH",
         headers,
-        body: JSON.stringify({ drop_mode_active: !config.drop_mode_active }),
+        body: JSON.stringify(body),
       });
       if (res.ok) {
         const updated: StoreConfig = await res.json();
         setConfig(updated);
+        if (turningOff) {
+          setCountdownEnabled(false);
+          setOpensAtInput("");
+        }
       }
     } finally {
       setToggling(false);

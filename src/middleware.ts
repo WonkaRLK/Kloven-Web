@@ -21,6 +21,7 @@ async function getStoreConfig(): Promise<StoreConfig | null> {
           apikey: SUPABASE_ANON_KEY,
           Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         },
+        cache: "no-store",
       }
     );
     if (!res.ok) return null;

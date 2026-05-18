@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 export default function DropPoller() {
   useEffect(() => {
-    const interval = setInterval(async () => {
+    const check = async () => {
       try {
         const res = await fetch("/api/store-status");
         if (!res.ok) return;
@@ -13,7 +13,9 @@ export default function DropPoller() {
       } catch {
         // silencioso, reintenta en el próximo tick
       }
-    }, 30_000);
+    };
+
+    const interval = setInterval(check, 10_000);
 
     return () => clearInterval(interval);
   }, []);
