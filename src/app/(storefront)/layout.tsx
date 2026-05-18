@@ -6,18 +6,29 @@ import CartDrawer from "@/components/CartDrawer";
 import Footer from "@/components/Footer";
 import SmokeBackground from "@/components/SmokeBackground";
 import SpinWheelContainer from "@/components/SpinWheel/SpinWheelContainer";
-import { supabase } from "@/lib/supabase";
 
 async function getPaymentConfig() {
-  const { data } = await supabase
-    .from("store_config")
-    .select("transfer_discount_percent, installments_count")
-    .eq("id", 1)
-    .single();
-  return {
-    transferDiscountPercent: data?.transfer_discount_percent ?? 0,
-    installmentsCount: data?.installments_count ?? 0,
-  };
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/store_config?select=transfer_discount_percent,installments_count&id=eq.1&limit=1`,
+      {
+        headers: {
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
+        },
+        cache: "no-store",
+      }
+    );
+    if (!res.ok) return { transferDiscountPercent: 0, installmentsCount: 0 };
+    const data = await res.json();
+    const row = data[0];
+    return {
+      transferDiscountPercent: row?.transfer_discount_percent ?? 0,
+      installmentsCount: row?.installments_count ?? 0,
+    };
+  } catch {
+    return { transferDiscountPercent: 0, installmentsCount: 0 };
+  }
 }
 
 export default async function StorefrontLayout({
