@@ -15,7 +15,7 @@ export default function DropPoller() {
       }
     };
 
-    const interval = setInterval(check, 10_000);
+    const interval = setInterval(check, 3_000);
 
     return () => clearInterval(interval);
   }, []);
