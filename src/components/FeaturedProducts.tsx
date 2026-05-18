@@ -116,7 +116,7 @@ function CategoryRow({ category, products }: CategorySection) {
 
           <div
             ref={scrollRef}
-            className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
+            className="flex gap-4 overflow-x-auto scrollbar-hide pt-10 pb-4 -mt-10"
           >
             {products.map((product) => (
               <div
