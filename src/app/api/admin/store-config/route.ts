@@ -22,7 +22,7 @@ export async function PATCH(request: NextRequest) {
   if (authError) return authError;
 
   const body = await request.json();
-  const allowed = ["drop_mode_active", "drop_opens_at", "drop_title", "drop_message"];
+  const allowed = ["drop_mode_active", "drop_opens_at", "drop_title", "drop_message", "transfer_discount_percent", "installments_count"];
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
 
   for (const key of allowed) {

@@ -83,14 +83,14 @@ function CategoryRow({ category, products }: CategorySection) {
           {/* Edge fades */}
           {canScrollLeft && (
             <div
-              className="absolute left-0 top-0 bottom-4 w-16 z-10 pointer-events-none"
-              style={{ background: "linear-gradient(to right, var(--background), transparent)" }}
+              className="absolute left-0 top-0 bottom-4 w-32 z-10 pointer-events-none"
+              style={{ background: "linear-gradient(to right, var(--background) 30%, transparent)" }}
             />
           )}
           {canScrollRight && (
             <div
-              className="absolute right-0 top-0 bottom-4 w-16 z-10 pointer-events-none"
-              style={{ background: "linear-gradient(to left, var(--background), transparent)" }}
+              className="absolute right-0 top-0 bottom-4 w-32 z-10 pointer-events-none"
+              style={{ background: "linear-gradient(to left, var(--background) 30%, transparent)" }}
             />
           )}
 
