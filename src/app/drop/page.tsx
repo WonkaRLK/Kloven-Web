@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
+import { redirect } from "next/navigation";
 import DropCountdown from "@/components/DropCountdown";
+import DropPoller from "@/components/DropPoller";
 
 export const dynamic = "force-dynamic";
 
@@ -26,12 +28,15 @@ async function getConfig(): Promise<StoreConfig | null> {
 export default async function DropPage() {
   const config = await getConfig();
 
+  const isActive = config?.drop_mode_active ?? false;
+  const opensAt = config?.drop_opens_at ?? null;
   const title = config?.drop_title ?? "Nuevo drop en camino";
   const message = config?.drop_message ?? "Estamos preparando algo especial. Volvé pronto.";
-  const opensAt = config?.drop_opens_at ?? null;
 
-  // If drop mode is off, show a neutral message (user came here directly)
-  const isActive = config?.drop_mode_active ?? false;
+  // Si el modo está apagado o el countdown ya pasó, mandar a home
+  if (!isActive || (opensAt && new Date(opensAt) <= new Date())) {
+    redirect("/");
+  }
 
   return (
     <div
@@ -46,6 +51,9 @@ export default async function DropPage() {
         }}
       />
 
+      {/* Poller: redirige automáticamente cuando el admin abre la tienda */}
+      <DropPoller />
+
       <div className="relative z-10 flex flex-col items-center text-center max-w-2xl w-full gap-8">
         {/* Logo */}
         <span
@@ -55,27 +63,23 @@ export default async function DropPage() {
           Kloven<span style={{ color: "var(--kloven-red)" }}>.</span>
         </span>
 
-        {/* Divider */}
         <div className="w-12 h-px" style={{ background: "var(--kloven-smoke)" }} />
 
-        {/* Title */}
         <h1
           className="font-heading text-4xl sm:text-5xl lg:text-6xl uppercase tracking-tight leading-tight"
           style={{ color: "var(--kloven-white)" }}
         >
-          {isActive ? title : "Volvemos pronto"}
+          {title}
         </h1>
 
-        {/* Message */}
         <p
           className="text-base sm:text-lg max-w-md leading-relaxed"
           style={{ color: "var(--kloven-ash)" }}
         >
-          {isActive ? message : "La tienda no está en modo drop en este momento."}
+          {message}
         </p>
 
-        {/* Countdown */}
-        {isActive && opensAt && (
+        {opensAt && (
           <div className="flex flex-col items-center gap-6 mt-4">
             <p className="text-xs tracking-[0.3em] uppercase" style={{ color: "var(--kloven-ash)" }}>
               Abre en
@@ -84,7 +88,6 @@ export default async function DropPage() {
           </div>
         )}
 
-        {/* Bottom divider */}
         <div className="w-12 h-px mt-4" style={{ background: "var(--kloven-smoke)" }} />
 
         <p className="text-xs tracking-widest uppercase" style={{ color: "var(--kloven-ash)" }}>
