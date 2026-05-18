@@ -55,23 +55,23 @@ export default function DropCountdown({ opensAt }: Props) {
   ];
 
   return (
-    <div className="flex items-end gap-3 sm:gap-6">
+    <div className="flex items-end gap-2 sm:gap-5">
       {units.map(({ label, value }, i) => (
-        <div key={label} className="flex items-end gap-3 sm:gap-6">
+        <div key={label} className="flex items-end gap-2 sm:gap-5">
           <div className="flex flex-col items-center">
             <span
-              className="font-heading text-5xl sm:text-7xl lg:text-8xl tabular-nums leading-none"
+              className="font-heading text-4xl sm:text-6xl lg:text-8xl tabular-nums leading-none"
               style={{ color: "var(--kloven-red)" }}
             >
               {pad(value)}
             </span>
-            <span className="text-[10px] sm:text-xs tracking-[0.2em] mt-2" style={{ color: "var(--kloven-ash)" }}>
+            <span className="text-[9px] sm:text-xs tracking-[0.2em] mt-2" style={{ color: "var(--kloven-ash)" }}>
               {label}
             </span>
           </div>
           {i < units.length - 1 && (
             <span
-              className="font-heading text-4xl sm:text-6xl lg:text-7xl leading-none pb-5"
+              className="font-heading text-3xl sm:text-5xl lg:text-7xl leading-none pb-5"
               style={{ color: "var(--kloven-smoke)" }}
             >
               :
