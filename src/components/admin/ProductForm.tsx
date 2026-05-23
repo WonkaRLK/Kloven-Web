@@ -79,6 +79,7 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [featured, setFeatured] = useState(product?.featured || false);
   const [active, setActive] = useState(product?.active !== false);
   const [onSale, setOnSale] = useState(product?.on_sale || false);
+  const [soldOut, setSoldOut] = useState(product?.sold_out || false);
   const [tags, setTags] = useState<string[]>(product?.tags || []);
   const [tagInput, setTagInput] = useState("");
 
@@ -375,6 +376,7 @@ export default function ProductForm({ product }: ProductFormProps) {
         featured,
         active,
         on_sale: onSale,
+        sold_out: soldOut,
         tags,
         is_combo: isCombo,
       };
@@ -642,6 +644,15 @@ export default function ProductForm({ product }: ProductFormProps) {
               className="accent-kloven-red w-4 h-4"
             />
             <span className="text-sm font-medium">Activo</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={soldOut}
+              onChange={(e) => setSoldOut(e.target.checked)}
+              className="accent-orange-500 w-4 h-4"
+            />
+            <span className="text-sm font-medium text-orange-600">Agotado</span>
           </label>
         </div>
       </div>

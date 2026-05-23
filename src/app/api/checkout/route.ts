@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
     const [{ data: products }, { data: variants }] = await Promise.all([
       supabase
         .from("products")
-        .select("id, name, price, image_url, is_combo")
+        .select("id, name, price, image_url, is_combo, sold_out")
         .in("id", [...allProductIds]),
       allVariantIds.size > 0
         ? supabase
@@ -155,6 +155,12 @@ export async function POST(req: NextRequest) {
       if (!product) {
         return NextResponse.json(
           { error: "Producto no encontrado" },
+          { status: 400 }
+        );
+      }
+      if (product.sold_out) {
+        return NextResponse.json(
+          { error: `"${product.name}" está agotado` },
           { status: 400 }
         );
       }

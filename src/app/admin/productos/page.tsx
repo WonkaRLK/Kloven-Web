@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAdminAuth } from "@/context/AdminAuthContext";
-import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Package, PackageX } from "lucide-react";
 import type { ProductWithVariants } from "@/lib/types";
 
 export default function AdminProductosPage() {
@@ -12,6 +12,7 @@ export default function AdminProductosPage() {
   const [products, setProducts] = useState<ProductWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [togglingStock, setTogglingStock] = useState<string | null>(null);
 
   const fetchProducts = async () => {
     try {
@@ -29,6 +30,21 @@ export default function AdminProductosPage() {
   useEffect(() => {
     if (token) fetchProducts();
   }, [token]);
+
+  const handleToggleSoldOut = async (id: string, current: boolean) => {
+    setTogglingStock(id);
+    try {
+      const res = await fetch(`/api/admin/products/${id}/sold-out`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ sold_out: !current }),
+      });
+      if (res.ok) {
+        setProducts(products.map((p) => p.id === id ? { ...p, sold_out: !current } : p));
+      }
+    } catch { /* ignore */ }
+    setTogglingStock(null);
+  };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Eliminar este producto?")) return;
@@ -135,18 +151,33 @@ export default function AdminProductosPage() {
                       : p.product_variants?.length || 0}
                   </td>
                   <td className="p-4 hidden md:table-cell">
-                    <span
-                      className={`text-xs font-bold uppercase px-2 py-1 rounded ${
-                        p.active
-                          ? "bg-green-50 text-green-600"
-                          : "bg-gray-100 text-gray-400"
-                      }`}
-                    >
-                      {p.active ? "Activo" : "Inactivo"}
-                    </span>
+                    <div className="flex flex-col gap-1">
+                      <span className={`text-xs font-bold uppercase px-2 py-1 rounded w-fit ${p.active ? "bg-green-50 text-green-600" : "bg-gray-100 text-gray-400"}`}>
+                        {p.active ? "Activo" : "Inactivo"}
+                      </span>
+                      {p.sold_out && (
+                        <span className="text-xs font-bold uppercase px-2 py-1 rounded w-fit bg-orange-50 text-orange-600">
+                          Agotado
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="p-4">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleToggleSoldOut(p.id, p.sold_out || false)}
+                        disabled={togglingStock === p.id}
+                        title={p.sold_out ? "Marcar disponible" : "Marcar agotado"}
+                        className={`p-2 transition-colors disabled:opacity-50 ${p.sold_out ? "text-orange-500 hover:text-gray-400" : "text-gray-400 hover:text-orange-500"}`}
+                      >
+                        {togglingStock === p.id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : p.sold_out ? (
+                          <PackageX className="w-4 h-4" />
+                        ) : (
+                          <Package className="w-4 h-4" />
+                        )}
+                      </button>
                       <Link
                         href={`/admin/productos/${p.id}`}
                         className="p-2 text-gray-400 hover:text-black transition-colors"

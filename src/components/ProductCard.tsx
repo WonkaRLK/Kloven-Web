@@ -82,6 +82,15 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         )}
 
+        {/* Sold out badge */}
+        {product.sold_out && (
+          <span className={`absolute text-[10px] sm:text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider z-10 bg-gray-900 text-white ${
+            product.is_combo ? "top-10 right-2" : product.compare_at_price && product.compare_at_price > product.price ? "top-2 right-2" : "top-2 left-2"
+          }`}>
+            AGOTADO
+          </span>
+        )}
+
         {/* Discount badge */}
         {product.compare_at_price && product.compare_at_price > product.price && (
           <span className="absolute top-2 left-2 bg-kloven-red text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider z-10">
@@ -91,10 +100,16 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Hover overlay */}
         <div className="absolute inset-x-0 bottom-0 p-3 translate-y-0 md:translate-y-full md:group-hover:translate-y-0 transition-transform duration-300 flex flex-col gap-2 bg-gradient-to-t from-black/80 to-transparent pt-10">
-          <span className="w-full bg-kloven-white text-kloven-black py-2.5 text-xs font-bold uppercase tracking-widest text-center flex items-center justify-center gap-1.5 rounded-lg">
-            Ver Producto
-            <ShoppingBag className="w-3.5 h-3.5" />
-          </span>
+          {product.sold_out ? (
+            <span className="w-full bg-gray-700 text-gray-400 py-2.5 text-xs font-bold uppercase tracking-widest text-center rounded-lg">
+              Sin Stock
+            </span>
+          ) : (
+            <span className="w-full bg-kloven-white text-kloven-black py-2.5 text-xs font-bold uppercase tracking-widest text-center flex items-center justify-center gap-1.5 rounded-lg">
+              Ver Producto
+              <ShoppingBag className="w-3.5 h-3.5" />
+            </span>
+          )}
         </div>
       </div>
 

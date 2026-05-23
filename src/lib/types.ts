@@ -23,6 +23,7 @@ export interface Product {
   featured: boolean;
   active: boolean;
   on_sale: boolean;
+  sold_out: boolean;
   tags: string[];
   created_at: string;
   updated_at: string;

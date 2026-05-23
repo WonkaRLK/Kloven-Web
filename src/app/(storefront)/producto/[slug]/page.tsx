@@ -634,6 +634,14 @@ export default function ProductoPage() {
                   </div>
 
                   {/* Add combo to cart */}
+                  {product.sold_out ? (
+                    <button
+                      disabled
+                      className="w-full py-4 font-bold uppercase tracking-widest flex items-center justify-center gap-2 bg-gray-700 text-gray-400 cursor-not-allowed opacity-70"
+                    >
+                      Sin Stock
+                    </button>
+                  ) : (
                   <button
                     onClick={handleAddComboToCart}
                     disabled={!allComboSelectionsComplete}
@@ -659,6 +667,7 @@ export default function ProductoPage() {
                       </>
                     )}
                   </button>
+                  )}
                 </>
               ) : (
                 <>
@@ -747,6 +756,14 @@ export default function ProductoPage() {
                   )}
 
                   {/* Add to cart */}
+                  {product.sold_out ? (
+                    <button
+                      disabled
+                      className="w-full py-4 font-bold uppercase tracking-widest flex items-center justify-center gap-2 bg-gray-700 text-gray-400 cursor-not-allowed opacity-70"
+                    >
+                      Sin Stock
+                    </button>
+                  ) : (
                   <button
                     onClick={handleAddToCart}
                     disabled={!selectedVariant || selectedVariant.stock <= 0}
@@ -774,6 +791,7 @@ export default function ProductoPage() {
                       </>
                     )}
                   </button>
+                  )}
                 </>
               )}
             </div>

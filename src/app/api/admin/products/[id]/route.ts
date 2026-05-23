@@ -64,6 +64,7 @@ export async function PUT(
       featured: body.featured,
       active: body.active,
       on_sale: body.on_sale || false,
+      sold_out: body.sold_out ?? false,
       tags: body.tags || [],
       is_combo: body.is_combo || false,
       updated_at: new Date().toISOString(),

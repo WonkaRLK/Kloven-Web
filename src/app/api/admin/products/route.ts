@@ -67,6 +67,7 @@ export async function POST(request: NextRequest) {
       featured: body.featured || false,
       active: body.active !== false,
       on_sale: body.on_sale || false,
+      sold_out: body.sold_out || false,
       tags: body.tags || [],
       is_combo: body.is_combo || false,
     })
