@@ -14,15 +14,11 @@ interface CategorySection {
 
 function CategoryRow({ category, products }: CategorySection) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-
-  const checkScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 0);
-    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
-  }, []);
+  const infinite = products.length > 1;
+  // Triple the list so the user can scroll left or right infinitely
+  const displayProducts = infinite
+    ? [...products, ...products, ...products]
+    : products;
 
   const updateScales = useCallback(() => {
     const el = scrollRef.current;
@@ -34,26 +30,44 @@ function CategoryRow({ category, products }: CategorySection) {
       const distance = Math.abs(containerCenter - childCenter);
       const maxDist = el.clientWidth * 0.55;
       const ratio = Math.min(distance / maxDist, 1);
-      const scale = 1 - ratio * 0.28;
-      const opacity = 1 - ratio * 0.45;
-      child.style.transform = `scale(${scale})`;
-      child.style.opacity = String(Math.max(opacity, 0.45));
+      child.style.transform = `scale(${1 - ratio * 0.28})`;
+      child.style.opacity = String(Math.max(1 - ratio * 0.45, 0.45));
     });
   }, []);
+
+  // Silently jump back to the middle third when approaching either boundary
+  const loopCheck = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el || !infinite) return;
+    const third = el.scrollWidth / 3;
+    if (el.scrollLeft < third * 0.35) {
+      el.scrollLeft += third;
+    } else if (el.scrollLeft > third * 1.65) {
+      el.scrollLeft -= third;
+    }
+  }, [infinite]);
+
+  // Init: start at middle third so user can scroll both ways immediately
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || !infinite) return;
+    el.scrollLeft = el.scrollWidth / 3;
+    updateScales();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [products]);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    checkScroll();
     updateScales();
-    const onScroll = () => { checkScroll(); updateScales(); };
+    const onScroll = () => { loopCheck(); updateScales(); };
     el.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {
       el.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, [products, checkScroll, updateScales]);
+  }, [products, updateScales, loopCheck]);
 
   const scroll = (dir: "left" | "right") => {
     const el = scrollRef.current;
@@ -79,48 +93,40 @@ function CategoryRow({ category, products }: CategorySection) {
       {products.length > 0 ? (
         <div className="relative group/row">
           {/* Left arrow */}
-          {canScrollLeft && (
-            <button
-              onClick={() => scroll("left")}
-              className="carousel-arrow absolute left-0 top-[40%] -translate-y-1/2 z-20 w-8 h-8 flex items-center justify-center"
-              aria-label="Anterior"
-            >
-              <ChevronLeft className="w-4 h-4 relative z-10" />
-            </button>
-          )}
+          <button
+            onClick={() => scroll("left")}
+            className="carousel-arrow absolute left-8 top-[40%] -translate-y-1/2 z-20 w-8 h-8 flex items-center justify-center"
+            aria-label="Anterior"
+          >
+            <ChevronLeft className="w-4 h-4 relative z-10" />
+          </button>
 
           {/* Right arrow */}
-          {canScrollRight && (
-            <button
-              onClick={() => scroll("right")}
-              className="carousel-arrow absolute right-0 top-[40%] -translate-y-1/2 z-20 w-8 h-8 flex items-center justify-center"
-              aria-label="Siguiente"
-            >
-              <ChevronRight className="w-4 h-4 relative z-10" />
-            </button>
-          )}
+          <button
+            onClick={() => scroll("right")}
+            className="carousel-arrow absolute right-8 top-[40%] -translate-y-1/2 z-20 w-8 h-8 flex items-center justify-center"
+            aria-label="Siguiente"
+          >
+            <ChevronRight className="w-4 h-4 relative z-10" />
+          </button>
 
-          {/* Edge fades */}
-          {canScrollLeft && (
-            <div
-              className="absolute left-0 top-0 bottom-4 w-24 z-10 pointer-events-none"
-              style={{ background: "linear-gradient(to right, var(--background) 20%, transparent)" }}
-            />
-          )}
-          {canScrollRight && (
-            <div
-              className="absolute right-0 top-0 bottom-4 w-24 z-10 pointer-events-none"
-              style={{ background: "linear-gradient(to left, var(--background) 20%, transparent)" }}
-            />
-          )}
+          {/* Edge fades — always visible for infinite */}
+          <div
+            className="absolute left-0 top-0 bottom-4 w-24 z-10 pointer-events-none"
+            style={{ background: "linear-gradient(to right, var(--background) 20%, transparent)" }}
+          />
+          <div
+            className="absolute right-0 top-0 bottom-4 w-24 z-10 pointer-events-none"
+            style={{ background: "linear-gradient(to left, var(--background) 20%, transparent)" }}
+          />
 
           <div
             ref={scrollRef}
             className="flex items-center gap-4 overflow-x-auto scrollbar-hide pt-10 pb-4 -mt-10"
           >
-            {products.map((product) => (
+            {displayProducts.map((product, idx) => (
               <div
-                key={product.id}
+                key={`${product.id}-${idx}`}
                 className="w-44 sm:w-56 md:w-64 shrink-0"
                 style={{ transition: "transform 0.15s ease-out, opacity 0.15s ease-out", transformOrigin: "center center" }}
               >
