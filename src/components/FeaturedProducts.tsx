@@ -14,7 +14,8 @@ interface CategorySection {
 
 function CategoryRow({ category, products }: CategorySection) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isAnimatingRef = useRef(false);
+  const animTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const infinite = products.length > 1;
   const displayProducts = infinite
     ? [...products, ...products, ...products]
@@ -35,18 +36,15 @@ function CategoryRow({ category, products }: CategorySection) {
     });
   }, []);
 
-  // Silently snap back to middle third — called only AFTER scroll animation ends
-  const loopReset = useCallback(() => {
+  // Called on every scroll event — only fires when NOT doing a smooth-scroll animation
+  const loopCheck = useCallback(() => {
     const el = scrollRef.current;
-    if (!el || !infinite) return;
+    if (!el || !infinite || isAnimatingRef.current) return;
     const third = el.scrollWidth / 3;
-    if (el.scrollLeft < third * 0.3) {
-      el.scrollLeft += third;
-      updateScales();
-    } else if (el.scrollLeft > third * 1.7) {
-      el.scrollLeft -= third;
-      updateScales();
-    }
+    // Use while so rapid scrolling that crosses multiple thirds always lands in safe zone
+    while (el.scrollLeft < third * 0.4) el.scrollLeft += third;
+    while (el.scrollLeft > third * 1.6) el.scrollLeft -= third;
+    updateScales();
   }, [infinite, updateScales]);
 
   useEffect(() => {
@@ -61,39 +59,36 @@ function CategoryRow({ category, products }: CategorySection) {
     const el = scrollRef.current;
     if (!el) return;
     updateScales();
-
-    const scheduleReset = () => {
-      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
-      // Fallback: fire 600ms after last scroll event (covers browsers without scrollend)
-      resetTimerRef.current = setTimeout(loopReset, 600);
-    };
-
-    const onScroll = () => {
-      updateScales();
-      scheduleReset();
-    };
-
-    // scrollend fires after smooth scroll AND inertia both finish — perfect timing
-    const onScrollEnd = () => {
-      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
-      loopReset();
-    };
-
+    const onScroll = () => { loopCheck(); updateScales(); };
     el.addEventListener("scroll", onScroll, { passive: true });
-    el.addEventListener("scrollend", onScrollEnd);
     window.addEventListener("resize", updateScales);
     return () => {
       el.removeEventListener("scroll", onScroll);
-      el.removeEventListener("scrollend", onScrollEnd);
       window.removeEventListener("resize", updateScales);
     };
-  }, [products, updateScales, loopReset]);
+  }, [products, updateScales, loopCheck]);
 
   const scroll = (dir: "left" | "right") => {
     const el = scrollRef.current;
     if (!el) return;
+
+    // Only pre-jump when starting a fresh animation sequence
+    if (infinite && !isAnimatingRef.current) {
+      const third = el.scrollWidth / 3;
+      if (el.scrollLeft < third * 0.5) el.scrollLeft += third;
+      else if (el.scrollLeft > third * 1.5) el.scrollLeft -= third;
+    }
+
+    // Mark animating — loopCheck won't fire while this is true
+    isAnimatingRef.current = true;
+    if (animTimerRef.current) clearTimeout(animTimerRef.current);
     const cardWidth = (el.children[0] as HTMLElement)?.offsetWidth ?? 256;
     el.scrollBy({ left: dir === "left" ? -(cardWidth + 16) : (cardWidth + 16), behavior: "smooth" });
+    // After the animation completes, re-enable loopCheck and normalize position
+    animTimerRef.current = setTimeout(() => {
+      isAnimatingRef.current = false;
+      loopCheck();
+    }, 500);
   };
 
   return (
@@ -112,7 +107,7 @@ function CategoryRow({ category, products }: CategorySection) {
 
       {products.length > 0 ? (
         <div className="relative group/row">
-          {/* Arrows at the outer edges — px-24 on scroll div keeps cards well clear */}
+          {/* Arrows sit in the px-24 dead zone — 56px gap from first card */}
           <button
             onClick={() => scroll("left")}
             className="carousel-arrow absolute left-0 top-[40%] -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center"
@@ -128,7 +123,7 @@ function CategoryRow({ category, products }: CategorySection) {
             <ChevronRight className="w-5 h-5 relative z-10" />
           </button>
 
-          {/* Edge fades — cover the full padding zone so no card bleeds under arrows */}
+          {/* Fades cover the full 96px padding so no card bleeds under the arrows */}
           <div
             className="absolute left-0 top-0 bottom-4 w-28 z-10 pointer-events-none"
             style={{ background: "linear-gradient(to right, var(--background) 40%, transparent)" }}
@@ -138,7 +133,7 @@ function CategoryRow({ category, products }: CategorySection) {
             style={{ background: "linear-gradient(to left, var(--background) 40%, transparent)" }}
           />
 
-          {/* px-24 = 96px padding each side; arrow is 40px wide → 56px gap before first card */}
+          {/* px-24 = 96px padding; arrow is 40px wide → 56px clear gap before first card */}
           <div
             ref={scrollRef}
             className="flex items-center gap-4 overflow-x-auto scrollbar-hide pt-10 pb-4 -mt-10 px-24"
