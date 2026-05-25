@@ -14,8 +14,8 @@ interface CategorySection {
 
 function CategoryRow({ category, products }: CategorySection) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const infinite = products.length > 1;
-  // Triple the list so the user can scroll left or right infinitely
   const displayProducts = infinite
     ? [...products, ...products, ...products]
     : products;
@@ -35,19 +35,20 @@ function CategoryRow({ category, products }: CategorySection) {
     });
   }, []);
 
-  // Silently jump back to the middle third when approaching either boundary
-  const loopCheck = useCallback(() => {
+  // Silently snap back to middle third — called only AFTER scroll animation ends
+  const loopReset = useCallback(() => {
     const el = scrollRef.current;
     if (!el || !infinite) return;
     const third = el.scrollWidth / 3;
-    if (el.scrollLeft < third * 0.35) {
+    if (el.scrollLeft < third * 0.3) {
       el.scrollLeft += third;
-    } else if (el.scrollLeft > third * 1.65) {
+      updateScales();
+    } else if (el.scrollLeft > third * 1.7) {
       el.scrollLeft -= third;
+      updateScales();
     }
-  }, [infinite]);
+  }, [infinite, updateScales]);
 
-  // Init: start at middle third so user can scroll both ways immediately
   useEffect(() => {
     const el = scrollRef.current;
     if (!el || !infinite) return;
@@ -60,14 +61,33 @@ function CategoryRow({ category, products }: CategorySection) {
     const el = scrollRef.current;
     if (!el) return;
     updateScales();
-    const onScroll = () => { loopCheck(); updateScales(); };
+
+    const scheduleReset = () => {
+      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+      // Fallback: fire 600ms after last scroll event (covers browsers without scrollend)
+      resetTimerRef.current = setTimeout(loopReset, 600);
+    };
+
+    const onScroll = () => {
+      updateScales();
+      scheduleReset();
+    };
+
+    // scrollend fires after smooth scroll AND inertia both finish — perfect timing
+    const onScrollEnd = () => {
+      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+      loopReset();
+    };
+
     el.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    el.addEventListener("scrollend", onScrollEnd);
+    window.addEventListener("resize", updateScales);
     return () => {
       el.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      el.removeEventListener("scrollend", onScrollEnd);
+      window.removeEventListener("resize", updateScales);
     };
-  }, [products, updateScales, loopCheck]);
+  }, [products, updateScales, loopReset]);
 
   const scroll = (dir: "left" | "right") => {
     const el = scrollRef.current;
@@ -92,37 +112,36 @@ function CategoryRow({ category, products }: CategorySection) {
 
       {products.length > 0 ? (
         <div className="relative group/row">
-          {/* Left arrow */}
+          {/* Arrows at the outer edges — px-24 on scroll div keeps cards well clear */}
           <button
             onClick={() => scroll("left")}
-            className="carousel-arrow absolute left-8 top-[40%] -translate-y-1/2 z-20 w-8 h-8 flex items-center justify-center"
+            className="carousel-arrow absolute left-0 top-[40%] -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center"
             aria-label="Anterior"
           >
-            <ChevronLeft className="w-4 h-4 relative z-10" />
+            <ChevronLeft className="w-5 h-5 relative z-10" />
           </button>
-
-          {/* Right arrow */}
           <button
             onClick={() => scroll("right")}
-            className="carousel-arrow absolute right-8 top-[40%] -translate-y-1/2 z-20 w-8 h-8 flex items-center justify-center"
+            className="carousel-arrow absolute right-0 top-[40%] -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center"
             aria-label="Siguiente"
           >
-            <ChevronRight className="w-4 h-4 relative z-10" />
+            <ChevronRight className="w-5 h-5 relative z-10" />
           </button>
 
-          {/* Edge fades — always visible for infinite */}
+          {/* Edge fades — cover the full padding zone so no card bleeds under arrows */}
           <div
-            className="absolute left-0 top-0 bottom-4 w-24 z-10 pointer-events-none"
-            style={{ background: "linear-gradient(to right, var(--background) 20%, transparent)" }}
+            className="absolute left-0 top-0 bottom-4 w-28 z-10 pointer-events-none"
+            style={{ background: "linear-gradient(to right, var(--background) 40%, transparent)" }}
           />
           <div
-            className="absolute right-0 top-0 bottom-4 w-24 z-10 pointer-events-none"
-            style={{ background: "linear-gradient(to left, var(--background) 20%, transparent)" }}
+            className="absolute right-0 top-0 bottom-4 w-28 z-10 pointer-events-none"
+            style={{ background: "linear-gradient(to left, var(--background) 40%, transparent)" }}
           />
 
+          {/* px-24 = 96px padding each side; arrow is 40px wide → 56px gap before first card */}
           <div
             ref={scrollRef}
-            className="flex items-center gap-4 overflow-x-auto scrollbar-hide pt-10 pb-4 -mt-10"
+            className="flex items-center gap-4 overflow-x-auto scrollbar-hide pt-10 pb-4 -mt-10 px-24"
           >
             {displayProducts.map((product, idx) => (
               <div
