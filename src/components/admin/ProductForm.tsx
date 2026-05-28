@@ -667,13 +667,14 @@ export default function ProductForm({ product }: ProductFormProps) {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {images.map((url, i) => (
               <div key={url + i} className="relative group">
-                <div className="relative aspect-[3/4] bg-gray-100 rounded overflow-hidden">
+                <div className="relative aspect-[3/4] bg-gray-100 rounded overflow-hidden flex items-center justify-center">
                   <Image
                     src={url}
                     alt={`Imagen ${i + 1}`}
                     fill
                     className="object-cover"
                     sizes="192px"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                   />
                   {i === 0 && (
                     <span className="absolute top-1 left-1 bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
