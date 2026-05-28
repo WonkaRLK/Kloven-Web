@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 import { Plus, Pencil, Trash2, Loader2, Package, PackageX } from "lucide-react";
 import type { ProductWithVariants } from "@/lib/types";
@@ -117,13 +116,12 @@ export default function AdminProductosPage() {
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-16 bg-gray-100 rounded overflow-hidden relative flex-shrink-0 flex items-center justify-center">
                         {p.image_url ? (
-                          <Image
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
                             src={p.image_url}
                             alt={p.name}
-                            fill
-                            className="object-cover"
-                            sizes="48px"
-                            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                            className="w-full h-full object-cover"
+                            onError={(e) => { e.currentTarget.style.display = "none"; }}
                           />
                         ) : (
                           <Package className="w-5 h-5 text-gray-300" />

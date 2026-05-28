@@ -66,7 +66,6 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [images, _setImages] = useState<string[]>(
     product?.images?.length ? product.images : product?.image_url ? [product.image_url] : []
   );
-  const [brokenImages, setBrokenImages] = useState<Set<string>>(new Set());
   const imagesRef = useRef(images);
   const setImages = (updater: string[] | ((prev: string[]) => string[])) => {
     _setImages((prev) => {
@@ -668,24 +667,26 @@ export default function ProductForm({ product }: ProductFormProps) {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {images.map((url, i) => (
               <div key={url + i} className="relative group">
-                <div className="relative aspect-[3/4] bg-gray-100 rounded overflow-hidden flex items-center justify-center">
-                  {brokenImages.has(url) ? (
-                    <div className="flex flex-col items-center gap-1 text-gray-400 p-2 text-center">
-                      <span className="text-2xl">🖼️</span>
-                      <span className="text-[10px]">Imagen rota</span>
-                    </div>
-                  ) : (
-                    <Image
-                      src={url}
-                      alt={`Imagen ${i + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="192px"
-                      onError={() => setBrokenImages((prev) => new Set(prev).add(url))}
-                    />
-                  )}
+                <div className="relative aspect-[3/4] bg-gray-100 rounded overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={url}
+                    alt={`Imagen ${i + 1}`}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const t = e.currentTarget;
+                      t.style.display = "none";
+                      const parent = t.parentElement;
+                      if (parent && !parent.querySelector(".broken-placeholder")) {
+                        const ph = document.createElement("div");
+                        ph.className = "broken-placeholder absolute inset-0 flex flex-col items-center justify-center gap-1 text-gray-400 text-[10px]";
+                        ph.innerHTML = '<span style="font-size:1.5rem">🖼️</span><span>Imagen rota</span>';
+                        parent.appendChild(ph);
+                      }
+                    }}
+                  />
                   {i === 0 && (
-                    <span className="absolute top-1 left-1 bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                    <span className="absolute top-1 left-1 bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded z-10">
                       PRINCIPAL
                     </span>
                   )}
