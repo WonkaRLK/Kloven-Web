@@ -41,8 +41,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Generate unique path
-    const ext = fileName.split(".").pop();
+    // Generate unique path — normalize JFIF/JPEG variants to .jpg
+    const rawExt = (fileName.split(".").pop() || "jpg").toLowerCase();
+    const ext = rawExt === "jfif" || rawExt === "jpeg" ? "jpg" : rawExt;
     const timestamp = Date.now();
     const safeName = fileName
       .replace(/\.[^.]+$/, "")

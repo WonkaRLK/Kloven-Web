@@ -299,6 +299,7 @@ export default function ProductoPage() {
                         src={img}
                         alt={`${product.name} ${i + 1}`}
                         fill
+                        unoptimized
                         className="object-cover"
                         sizes="80px"
                       />
@@ -324,6 +325,7 @@ export default function ProductoPage() {
                     alt={product.name}
                     fill
                     priority
+                    unoptimized
                     className="object-cover transition-transform duration-200 ease-out"
                     style={
                       isZooming
@@ -359,6 +361,7 @@ export default function ProductoPage() {
                           src={img}
                           alt={`${product.name} ${i + 1}`}
                           fill
+                          unoptimized
                           className="object-cover"
                           sizes="80px"
                         />
