@@ -66,6 +66,7 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [images, _setImages] = useState<string[]>(
     product?.images?.length ? product.images : product?.image_url ? [product.image_url] : []
   );
+  const [brokenImages, setBrokenImages] = useState<Set<string>>(new Set());
   const imagesRef = useRef(images);
   const setImages = (updater: string[] | ((prev: string[]) => string[])) => {
     _setImages((prev) => {
@@ -668,14 +669,21 @@ export default function ProductForm({ product }: ProductFormProps) {
             {images.map((url, i) => (
               <div key={url + i} className="relative group">
                 <div className="relative aspect-[3/4] bg-gray-100 rounded overflow-hidden flex items-center justify-center">
-                  <Image
-                    src={url}
-                    alt={`Imagen ${i + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="192px"
-                    onError={() => setImages((prev) => prev.filter((_, j) => j !== i))}
-                  />
+                  {brokenImages.has(url) ? (
+                    <div className="flex flex-col items-center gap-1 text-gray-400 p-2 text-center">
+                      <span className="text-2xl">🖼️</span>
+                      <span className="text-[10px]">Imagen rota</span>
+                    </div>
+                  ) : (
+                    <Image
+                      src={url}
+                      alt={`Imagen ${i + 1}`}
+                      fill
+                      className="object-cover"
+                      sizes="192px"
+                      onError={() => setBrokenImages((prev) => new Set(prev).add(url))}
+                    />
+                  )}
                   {i === 0 && (
                     <span className="absolute top-1 left-1 bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
                       PRINCIPAL
