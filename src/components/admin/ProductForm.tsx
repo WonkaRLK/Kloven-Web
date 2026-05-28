@@ -370,7 +370,7 @@ export default function ProductForm({ product }: ProductFormProps) {
         compare_at_price: compareAtPrice ? rawPrice(compareAtPrice) : null,
         category,
         images,
-        image_url: images[0] || "",
+        image_url: images[0] || (isCombo && comboItems[0]?.product_image) || "",
         material,
         fit,
         featured,

@@ -115,17 +115,20 @@ export default function AdminProductosPage() {
                 >
                   <td className="p-4">
                     <div className="flex items-center gap-3">
-                      {p.image_url && (
-                        <div className="w-12 h-16 bg-gray-100 rounded overflow-hidden relative flex-shrink-0">
+                      <div className="w-12 h-16 bg-gray-100 rounded overflow-hidden relative flex-shrink-0 flex items-center justify-center">
+                        {p.image_url ? (
                           <Image
                             src={p.image_url}
                             alt={p.name}
                             fill
                             className="object-cover"
                             sizes="48px"
+                            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                           />
-                        </div>
-                      )}
+                        ) : (
+                          <Package className="w-5 h-5 text-gray-300" />
+                        )}
+                      </div>
                       <div>
                         <p className="font-bold">
                           {p.name}
