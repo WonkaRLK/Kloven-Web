@@ -674,7 +674,7 @@ export default function ProductForm({ product }: ProductFormProps) {
                     fill
                     className="object-cover"
                     sizes="192px"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    onError={() => setImages((prev) => prev.filter((_, j) => j !== i))}
                   />
                   {i === 0 && (
                     <span className="absolute top-1 left-1 bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
