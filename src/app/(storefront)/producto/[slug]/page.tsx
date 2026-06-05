@@ -404,17 +404,15 @@ export default function ProductoPage() {
                   <span className="ml-2 text-purple-400">COMBO</span>
                 )}
               </p>
-              <h1 className="font-heading text-4xl md:text-5xl tracking-wider mb-4 text-kloven-white">
+              <h1 className="font-display text-4xl md:text-5xl font-black tracking-wider mb-4 text-kloven-white uppercase">
                 {product.name}
               </h1>
               <div className="flex items-baseline gap-3 mb-6">
-                <p
-                  className="font-heading text-4xl text-kloven-ash tracking-wider"
-                >
+                <p className="font-display text-4xl font-black text-kloven-ash tracking-wider">
                   ${product.price.toLocaleString("es-AR")}
                 </p>
                 {product.compare_at_price && product.compare_at_price > product.price && (
-                  <p className="text-xl text-kloven-ash line-through">
+                  <p className="font-display text-xl text-kloven-ash line-through">
                     ${product.compare_at_price.toLocaleString("es-AR")}
                   </p>
                 )}

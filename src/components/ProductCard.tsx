@@ -118,16 +118,16 @@ export default function ProductCard({ product }: ProductCardProps) {
     {/* Info — price first, then name */}
     <div className="mt-3 px-1">
       <div className="flex items-center gap-2">
-        <span className="text-lg sm:text-xl font-bold text-kloven-white">
+        <span className="font-display text-lg sm:text-xl font-black text-kloven-white">
           $ {product.price.toLocaleString("es-AR")}
         </span>
         {product.compare_at_price && product.compare_at_price > product.price && (
-          <span className="text-sm text-kloven-ash line-through">
+          <span className="font-display text-sm text-kloven-ash line-through">
             $ {product.compare_at_price.toLocaleString("es-AR")}
           </span>
         )}
       </div>
-      <h3 className="text-sm sm:text-base text-kloven-ash leading-tight truncate mt-1">
+      <h3 className="font-display text-sm sm:text-base font-black text-kloven-ash leading-tight truncate mt-1">
         {product.name}
       </h3>
       {transferDiscountPercent > 0 && (
