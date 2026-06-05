@@ -337,7 +337,7 @@ export default function ProductoPage() {
                   onMouseMove={handleMouseMove}
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
-                  className="aspect-[4/5] max-h-[55vh] lg:max-h-[65vh] w-full bg-kloven-dark overflow-hidden relative border border-kloven-smoke cursor-crosshair"
+                  className="min-h-[400px] max-h-[55vh] lg:max-h-[75vh] w-full bg-kloven-dark overflow-hidden relative border border-kloven-smoke cursor-crosshair"
                 >
                   <Image
                     src={
@@ -348,7 +348,7 @@ export default function ProductoPage() {
                     alt={product.name}
                     fill
                     priority
-                    className="object-cover transition-transform duration-200 ease-out"
+                    className="object-contain transition-transform duration-200 ease-out"
                     style={
                       isZooming
                         ? {
