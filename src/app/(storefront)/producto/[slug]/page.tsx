@@ -337,7 +337,7 @@ export default function ProductoPage() {
                   onMouseMove={handleMouseMove}
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
-                  className="min-h-[400px] max-h-[55vh] lg:max-h-[75vh] w-full bg-kloven-dark overflow-hidden relative border border-kloven-smoke cursor-crosshair"
+                  className="min-h-[400px] max-h-[55vh] lg:max-h-[75vh] w-full overflow-hidden relative cursor-crosshair"
                 >
                   <Image
                     src={
