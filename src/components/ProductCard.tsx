@@ -118,25 +118,25 @@ export default function ProductCard({ product }: ProductCardProps) {
     {/* Info — price first, then name */}
     <div className="mt-3 px-1">
       <div className="flex items-center gap-2">
-        <span className="text-base sm:text-lg font-bold text-kloven-white">
+        <span className="text-lg sm:text-xl font-bold text-kloven-white">
           $ {product.price.toLocaleString("es-AR")}
         </span>
         {product.compare_at_price && product.compare_at_price > product.price && (
-          <span className="text-xs text-kloven-ash line-through">
+          <span className="text-sm text-kloven-ash line-through">
             $ {product.compare_at_price.toLocaleString("es-AR")}
           </span>
         )}
       </div>
-      <h3 className="text-xs sm:text-sm text-kloven-ash leading-tight truncate mt-1">
+      <h3 className="text-sm sm:text-base text-kloven-ash leading-tight truncate mt-1">
         {product.name}
       </h3>
       {transferDiscountPercent > 0 && (
-        <p className="text-[11px] text-emerald-400 mt-1 leading-tight">
+        <p className="text-xs text-emerald-400 mt-1 leading-tight">
           ${Math.round(product.price * (1 - transferDiscountPercent / 100)).toLocaleString("es-AR")} con Transferencia
         </p>
       )}
       {installmentsCount > 0 && (
-        <p className="text-[11px] text-sky-400 mt-0.5 leading-tight">
+        <p className="text-xs text-sky-400 mt-0.5 leading-tight">
           {installmentsCount} cuotas sin interés de ${Math.round(product.price / installmentsCount).toLocaleString("es-AR")}
         </p>
       )}
