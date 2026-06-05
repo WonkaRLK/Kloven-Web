@@ -226,9 +226,7 @@ export default function AdminPedidoDetailPage() {
           <div className="flex justify-between">
             <span className="text-gray-500">Envio</span>
             <span>
-              {order.shipping_cost === 0
-                ? "Gratis"
-                : `$${order.shipping_cost.toLocaleString("es-AR")}`}
+              ${order.shipping_cost.toLocaleString("es-AR")}
             </span>
           </div>
           <div className="flex justify-between text-xl font-black border-t border-gray-200 pt-3 mt-3">

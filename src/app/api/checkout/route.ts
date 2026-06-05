@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { MercadoPagoConfig, Preference } from "mercadopago";
 import { getSupabaseAdmin } from "@/lib/supabase";
-import { calculateShipping } from "@/lib/shipping";
+import { fetchShippingCost } from "@/lib/shippingApi";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { safeError } from "@/lib/api-utils";
 
@@ -248,7 +248,7 @@ export async function POST(req: NextRequest) {
 
     const discountAmount = Math.round(subtotal * (discountPercent / 100));
     const afterDiscount = subtotal - discountAmount;
-    const shippingCost = calculateShipping(afterDiscount);
+    const { cost: shippingCost } = fetchShippingCost(zip);
     const total = afterDiscount + shippingCost;
 
     // Create order

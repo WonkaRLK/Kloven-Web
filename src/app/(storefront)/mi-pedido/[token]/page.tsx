@@ -219,9 +219,7 @@ export default function TrackingPage() {
           <div className="flex justify-between text-kloven-ash">
             <span>Envio</span>
             <span>
-              {order.shipping_cost === 0
-                ? "Gratis"
-                : `$${order.shipping_cost.toLocaleString("es-AR")}`}
+              ${order.shipping_cost.toLocaleString("es-AR")}
             </span>
           </div>
           <div className="flex justify-between font-black text-lg border-t border-kloven-smoke pt-2 mt-2 text-kloven-white">

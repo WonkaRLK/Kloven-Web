@@ -131,12 +131,12 @@ export default function ProductCard({ product }: ProductCardProps) {
         {product.name}
       </h3>
       {transferDiscountPercent > 0 && (
-        <p className="text-[11px] text-kloven-ash mt-1 leading-tight">
+        <p className="text-[11px] text-emerald-400 mt-1 leading-tight">
           ${Math.round(product.price * (1 - transferDiscountPercent / 100)).toLocaleString("es-AR")} con Transferencia
         </p>
       )}
       {installmentsCount > 0 && (
-        <p className="text-[11px] text-kloven-ash mt-0.5 leading-tight">
+        <p className="text-[11px] text-sky-400 mt-0.5 leading-tight">
           {installmentsCount} cuotas sin interés de ${Math.round(product.price / installmentsCount).toLocaleString("es-AR")}
         </p>
       )}

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Check, Loader2, Package } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
-import { getShippingInfo } from "@/lib/shipping";
+import { FLAT_FEE } from "@/lib/shipping";
 import type { CartItem } from "@/lib/types";
 
 function getItemKey(item: CartItem): string {
@@ -59,10 +59,45 @@ export default function CheckoutPage() {
     }
   }, [promoCode]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const [shippingCost, setShippingCost] = useState(FLAT_FEE);
+  const [shippingLabel, setShippingLabel] = useState<string | null>(null);
+  const [calculatingShipping, setCalculatingShipping] = useState(false);
+
+  useEffect(() => {
+    if (!/^\d{4}$/.test(zip)) {
+      setShippingCost(FLAT_FEE);
+      setShippingLabel(null);
+      return;
+    }
+    const cpAtTrigger = zip;
+    setCalculatingShipping(true);
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch("/api/shipping/calculate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cp_destino: cpAtTrigger }),
+        });
+        const data = await res.json();
+        setZip((current) => {
+          if (current === cpAtTrigger) {
+            setShippingCost(data.cost);
+            setShippingLabel(data.label ?? null);
+          }
+          return current;
+        });
+      } catch {
+        // silent fallback
+      } finally {
+        setCalculatingShipping(false);
+      }
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [zip]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const discountAmount = Math.round(subtotal * discount);
   const afterDiscount = subtotal - discountAmount;
-  const shipping = getShippingInfo(afterDiscount);
-  const total = afterDiscount + shipping.cost;
+  const total = afterDiscount + shippingCost;
 
   const handleApplyPromo = async () => {
     const code = promoCode.trim().toUpperCase();
@@ -283,9 +318,11 @@ export default function CheckoutPage() {
                       required
                       type="text"
                       value={zip}
-                      onChange={(e) => setZip(e.target.value)}
+                      onChange={(e) => setZip(e.target.value.replace(/\D/g, ""))}
                       className={inputClasses}
                       placeholder="CP"
+                      maxLength={4}
+                      inputMode="numeric"
                     />
                   </div>
                 </div>
@@ -334,7 +371,7 @@ export default function CheckoutPage() {
 
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || calculatingShipping}
               className="w-full bg-kloven-gold text-white py-4 font-bold uppercase tracking-widest hover:bg-kloven-gold/80 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-[0_0_30px_rgba(166,124,46,0.3)]"
             >
               {submitting ? (
@@ -420,15 +457,18 @@ export default function CheckoutPage() {
                 )}
                 <div className="flex justify-between text-kloven-ash">
                   <span>Envio</span>
-                  <span>
-                    {shipping.isFree ? (
-                      <span className="text-green-400 font-medium">
-                        Gratis
-                      </span>
+                  <div className="text-right">
+                    {calculatingShipping ? (
+                      <span className="text-xs animate-pulse">Calculando...</span>
                     ) : (
-                      `$${shipping.cost.toLocaleString("es-AR")}`
+                      <>
+                        <span>${shippingCost.toLocaleString("es-AR")}</span>
+                        {shippingLabel && (
+                          <span className="block text-[10px] text-kloven-ash/60">{shippingLabel}</span>
+                        )}
+                      </>
                     )}
-                  </span>
+                  </div>
                 </div>
                 <div className="flex justify-between text-xl font-black border-t border-kloven-smoke pt-3 mt-3 text-kloven-white">
                   <span>Total</span>

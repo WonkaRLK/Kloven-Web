@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag, ArrowLeft, Check, Package } from "lucide-react";
+import { ShoppingBag, ArrowLeft, Check, Package, Banknote, CreditCard } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import ProductCard from "@/components/ProductCard";
 import SizeGuideModal from "@/components/SizeGuideModal";
@@ -19,6 +19,30 @@ import type {
   ComboVariantSelection,
   ComboItemWithProduct,
 } from "@/lib/types";
+
+const COLOR_MAP: Record<string, string> = {
+  NEGRO: "#0a0a0a",
+  BLANCO: "#f5f5f5",
+  AZUL: "#2563eb",
+  ROJO: "#dc2626",
+  VERDE: "#16a34a",
+  GRIS: "#6b7280",
+  AMARILLO: "#eab308",
+  NARANJA: "#ea580c",
+  ROSA: "#ec4899",
+  VIOLETA: "#7c3aed",
+  CELESTE: "#38bdf8",
+  BEIGE: "#d4b896",
+  CAMEL: "#c19a6b",
+  MARRON: "#92400e",
+  CREMA: "#f5efe0",
+  BORDO: "#7f1d1d",
+  MILITAR: "#4a5a35",
+};
+
+function getColorSwatch(name: string): string {
+  return COLOR_MAP[name.toUpperCase()] ?? "#888888";
+}
 
 // Per-product selection state for combo items
 interface ComboProductSelection {
@@ -313,7 +337,7 @@ export default function ProductoPage() {
                   onMouseMove={handleMouseMove}
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
-                  className="aspect-[4/5] max-h-[55vh] lg:max-h-[85vh] w-full bg-kloven-dark overflow-hidden relative border border-kloven-smoke cursor-crosshair"
+                  className="aspect-[4/5] max-h-[55vh] lg:max-h-[65vh] w-full bg-kloven-dark overflow-hidden relative border border-kloven-smoke cursor-crosshair"
                 >
                   <Image
                     src={
@@ -397,28 +421,38 @@ export default function ProductoPage() {
               </div>
               {/* Transferencia y cuotas */}
               {(transferDiscountPercent > 0 || installmentsCount > 0) && (
-                <div className="flex flex-col gap-1 mb-6">
+                <div className="flex flex-col gap-2 mb-6 border border-kloven-smoke rounded-xl p-4 bg-kloven-black/40">
                   {transferDiscountPercent > 0 && (
-                    <p className="text-sm text-kloven-ash">
-                      <span className="text-kloven-white font-semibold">
-                        ${Math.round(product.price * (1 - transferDiscountPercent / 100)).toLocaleString("es-AR")}
-                      </span>{" "}
-                      con Transferencia o depósito bancario
-                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                        <Banknote className="w-5 h-5 text-emerald-400" />
+                      </div>
+                      <div>
+                        <p className="text-emerald-400 font-bold text-base leading-tight">
+                          ${Math.round(product.price * (1 - transferDiscountPercent / 100)).toLocaleString("es-AR")}
+                        </p>
+                        <p className="text-xs text-kloven-ash">con Transferencia o depósito bancario</p>
+                      </div>
+                    </div>
+                  )}
+                  {transferDiscountPercent > 0 && installmentsCount > 0 && (
+                    <div className="border-t border-kloven-smoke/50" />
                   )}
                   {installmentsCount > 0 && (
-                    <p className="text-sm text-kloven-ash">
-                      <span className="text-kloven-white font-semibold">{installmentsCount} cuotas sin interés</span>{" "}
-                      de ${Math.round(product.price / installmentsCount).toLocaleString("es-AR")}
-                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-sky-500/10 flex items-center justify-center flex-shrink-0">
+                        <CreditCard className="w-5 h-5 text-sky-400" />
+                      </div>
+                      <div>
+                        <p className="text-sky-400 font-bold text-base leading-tight">
+                          {installmentsCount} cuotas sin interés
+                        </p>
+                        <p className="text-xs text-kloven-ash">de ${Math.round(product.price / installmentsCount).toLocaleString("es-AR")} c/u</p>
+                      </div>
+                    </div>
                   )}
                 </div>
               )}
-
-              <p className="inline-flex items-center gap-2 text-green-700 text-sm font-bold uppercase tracking-wider mb-6">
-                <span className="w-2 h-2 bg-green-700 rounded-full animate-pulse" />
-                Envio gratis a todo el pais
-              </p>
               {product.description && !/^\s*env[ií]o\s+gr[aá]tis/i.test(product.description) && (
                 <p className="text-kloven-ash leading-relaxed mb-8">
                   {product.description}
@@ -543,26 +577,37 @@ export default function ProductoPage() {
                                   Color
                                 </span>
                                 <div className="flex flex-wrap gap-2">
-                                  {subColors.map((color) => (
-                                    <button
-                                      key={color}
-                                      type="button"
-                                      onClick={() =>
-                                        updateComboSelection(
-                                          ci.product.id,
-                                          "selectedColor",
-                                          color
-                                        )
-                                      }
-                                      className={`px-3 py-1.5 text-xs font-bold border-2 ${
-                                        sel?.selectedColor === color
-                                          ? "border-kloven-gold bg-kloven-gold text-white"
-                                          : "border-kloven-smoke text-kloven-white hover:border-kloven-gold"
-                                      }`}
-                                    >
-                                      {color}
-                                    </button>
-                                  ))}
+                                  {subColors.map((color) => {
+                                    const swatch = getColorSwatch(color);
+                                    const isSelected = sel?.selectedColor === color;
+                                    const isLight = ["BLANCO", "CREMA", "AMARILLO", "CELESTE", "BEIGE"].includes(color.toUpperCase());
+                                    return (
+                                      <button
+                                        key={color}
+                                        type="button"
+                                        title={color}
+                                        onClick={() =>
+                                          updateComboSelection(
+                                            ci.product.id,
+                                            "selectedColor",
+                                            color
+                                          )
+                                        }
+                                        className={`relative w-7 h-7 rounded-full transition-all ${
+                                          isSelected
+                                            ? "ring-2 ring-offset-1 ring-offset-kloven-black ring-kloven-gold scale-110"
+                                            : "ring-1 ring-kloven-smoke hover:ring-kloven-gold hover:scale-105"
+                                        }`}
+                                        style={{ backgroundColor: swatch }}
+                                      >
+                                        {isSelected && (
+                                          <span className={`absolute inset-0 flex items-center justify-center text-[10px] font-bold ${isLight ? "text-black" : "text-white"}`}>
+                                            ✓
+                                          </span>
+                                        )}
+                                      </button>
+                                    );
+                                  })}
                                 </div>
                               </div>
                             )}
@@ -679,21 +724,35 @@ export default function ProductoPage() {
                       <span className="font-bold uppercase tracking-widest text-xs text-kloven-ash block mb-3">
                         Color
                       </span>
-                      <div className="flex gap-3">
-                        {availableColors.map((color) => (
-                          <button
-                            key={color}
-                            onClick={() => setSelectedColor(color)}
-                            className={`px-4 py-2 text-sm font-bold border-2 ${
-                              selectedColor === color
-                                ? "border-kloven-gold bg-kloven-gold text-white"
-                                : "border-kloven-smoke bg-kloven-black text-kloven-white hover:border-kloven-gold"
-                            }`}
-                          >
-                            {color}
-                          </button>
-                        ))}
+                      <div className="flex gap-3 flex-wrap">
+                        {availableColors.map((color) => {
+                          const swatch = getColorSwatch(color);
+                          const isSelected = selectedColor === color;
+                          const isLight = ["BLANCO", "CREMA", "AMARILLO", "CELESTE", "BEIGE"].includes(color.toUpperCase());
+                          return (
+                            <button
+                              key={color}
+                              onClick={() => setSelectedColor(color)}
+                              title={color}
+                              className={`relative w-9 h-9 rounded-full transition-all ${
+                                isSelected
+                                  ? "ring-2 ring-offset-2 ring-offset-kloven-black ring-kloven-gold scale-110"
+                                  : "ring-1 ring-kloven-smoke hover:ring-kloven-gold hover:scale-105"
+                              }`}
+                              style={{ backgroundColor: swatch }}
+                            >
+                              {isSelected && (
+                                <span className={`absolute inset-0 flex items-center justify-center text-xs font-bold ${isLight ? "text-black" : "text-white"}`}>
+                                  ✓
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
                       </div>
+                      {selectedColor && (
+                        <p className="text-xs text-kloven-ash mt-2">{selectedColor}</p>
+                      )}
                     </div>
                   )}
 

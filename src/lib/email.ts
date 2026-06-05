@@ -87,7 +87,7 @@ export async function sendOrderConfirmationEmail(order: OrderData) {
           }
           <tr>
             <td style="padding:4px 16px;color:#666;">Envio</td>
-            <td style="padding:4px 16px;text-align:right;">${order.shipping_cost === 0 ? "Gratis" : `$${order.shipping_cost.toLocaleString("es-AR")}`}</td>
+            <td style="padding:4px 16px;text-align:right;">$${order.shipping_cost.toLocaleString("es-AR")}</td>
           </tr>
           <tr style="border-top:2px solid #0a0a0a;">
             <td style="padding:12px 16px;font-weight:900;font-size:16px;">Total</td>

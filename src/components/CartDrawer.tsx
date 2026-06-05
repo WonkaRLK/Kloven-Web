@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag, X, Minus, Plus, Check, Package } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { getShippingInfo } from "@/lib/shipping";
+import { FLAT_FEE } from "@/lib/shipping";
 import { motion, AnimatePresence } from "framer-motion";
 import type { CartItem } from "@/lib/types";
 
@@ -39,8 +39,7 @@ export default function CartDrawer() {
 
   const discountAmount = Math.round(subtotal * discount);
   const afterDiscount = subtotal - discountAmount;
-  const shipping = getShippingInfo(afterDiscount);
-  const total = afterDiscount + shipping.cost;
+  const total = afterDiscount + FLAT_FEE;
 
   const handleApplyPromo = async () => {
     const code = promoCode.trim().toUpperCase();
@@ -274,21 +273,8 @@ export default function CartDrawer() {
               )}
               <div className="flex justify-between items-center text-kloven-ash">
                 <span>Envio</span>
-                <span>
-                  {shipping.isFree ? (
-                    <span className="text-green-400 font-medium">Gratis</span>
-                  ) : (
-                    `$${shipping.cost.toLocaleString("es-AR")}`
-                  )}
-                </span>
+                <span>${FLAT_FEE.toLocaleString("es-AR")}</span>
               </div>
-              {!shipping.isFree && shipping.remaining > 0 && (
-                <p className="text-xs text-kloven-ash">
-                  Envio gratis a partir de $
-                  {shipping.freeThreshold.toLocaleString("es-AR")} (faltan $
-                  {shipping.remaining.toLocaleString("es-AR")})
-                </p>
-              )}
               <div className="flex justify-between items-center text-lg font-black border-t border-kloven-smoke pt-2 mt-2 text-kloven-white">
                 <span>Total</span>
                 <span>${total.toLocaleString("es-AR")}</span>
