@@ -57,7 +57,7 @@
   --color-muted: var(--muted);
   --font-heading: var(--font-heading);
   --font-sans: var(--font-sans);
-  --font-display: var(--font-display);
+  --font-display: 'Barlow', Arial, sans-serif;
 
   --animate-fade-in: fadeIn 0.5s ease-out;
   --animate-slide-up: slideUp 0.5s ease-out;

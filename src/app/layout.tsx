@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo_Black, Familjen_Grotesk, Barlow } from "next/font/google";
+import { Archivo_Black, Familjen_Grotesk } from "next/font/google";
 import "./globals.css";
 
 const archivo = Archivo_Black({
@@ -12,12 +12,6 @@ const familjen = Familjen_Grotesk({
   variable: "--font-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-});
-
-const barlow = Barlow({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -33,7 +27,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${archivo.variable} ${familjen.variable} ${barlow.variable} antialiased`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@800;900&display=swap" rel="stylesheet" />
+      </head>
+      <body className={`${archivo.variable} ${familjen.variable} antialiased`}>
         {children}
       </body>
     </html>
