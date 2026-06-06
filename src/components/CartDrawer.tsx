@@ -193,10 +193,11 @@ export default function CartDrawer() {
                         <div className="flex items-center border border-kloven-smoke rounded-sm">
                           <button
                             onClick={() =>
-                              updateQuantity(key, item.quantity - 1)
+                              item.quantity === 1
+                                ? removeFromCart(key)
+                                : updateQuantity(key, item.quantity - 1)
                             }
-                            className="px-2 py-1 hover:bg-kloven-carbon transition-colors disabled:opacity-50 text-kloven-white"
-                            disabled={item.quantity <= 1}
+                            className="px-2 py-1 hover:bg-kloven-carbon transition-colors text-kloven-white"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
