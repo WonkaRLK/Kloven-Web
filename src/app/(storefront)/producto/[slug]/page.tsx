@@ -331,7 +331,7 @@ export default function ProductoPage() {
               )}
 
               <div className="flex-1 flex flex-col gap-3">
-                <div className="relative flex justify-center h-[65vh] overflow-hidden">
+                <div className="relative flex justify-start h-[65vh] overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={
