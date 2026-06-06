@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -78,9 +78,8 @@ export default function ProductoPage() {
   // Zoom state
   const [isZooming, setIsZooming] = useState(false);
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
-  const imageContainerRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLImageElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
@@ -306,7 +305,7 @@ export default function ProductoPage() {
       <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-[3fr_2fr]">
           {/* Image gallery */}
           <ScrollReveal>
-            <div className="flex gap-1 pl-6 md:pl-12 pr-4">
+            <div className="flex gap-0.5 pl-6 md:pl-12 pr-4">
               {product.images?.length > 1 && (
                 <div className="hidden md:flex flex-col gap-1.5 shrink-0 w-16">
                   {product.images.map((img, i) => (
@@ -332,23 +331,19 @@ export default function ProductoPage() {
               )}
 
               <div className="flex-1 flex flex-col gap-3">
-                <div
-                  ref={imageContainerRef}
-                  onMouseMove={handleMouseMove}
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                  className="relative w-full h-[65vh] cursor-crosshair"
-                >
-                  <Image
+                <div className="relative flex justify-center h-[65vh] overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
                     src={
                       product.images?.length
                         ? product.images[activeImage]
                         : product.image_url
                     }
                     alt={product.name}
-                    fill
-                    priority
-                    className="object-contain transition-transform duration-200 ease-out"
+                    onMouseMove={handleMouseMove}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    className="h-full w-auto max-w-full object-contain cursor-crosshair transition-transform duration-200 ease-out"
                     style={
                       isZooming
                         ? {
@@ -357,7 +352,6 @@ export default function ProductoPage() {
                           }
                         : undefined
                     }
-                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                   {isCombo && (
                     <span className="absolute top-3 right-3 bg-purple-600 text-white text-xs font-bold px-2.5 py-1 uppercase tracking-wider flex items-center gap-1 z-10">
