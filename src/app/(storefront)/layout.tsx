@@ -4,7 +4,6 @@ import { StoreConfigProvider } from "@/context/StoreConfigContext";
 import Navbar from "@/components/Navbar";
 import CartDrawer from "@/components/CartDrawer";
 import Footer from "@/components/Footer";
-import SmokeBackground from "@/components/SmokeBackground";
 import SpinWheelContainer from "@/components/SpinWheel/SpinWheelContainer";
 
 async function getPaymentConfig() {
@@ -43,7 +42,6 @@ export default async function StorefrontLayout({
       <CartProvider>
       <StoreConfigProvider value={paymentConfig}>
         <div className="min-h-screen flex flex-col bg-transparent text-kloven-white">
-          <SmokeBackground />
           <Navbar />
           <CartDrawer />
           <main className="flex-grow relative z-[1]">{children}</main>

@@ -126,11 +126,11 @@ function CategoryRow({ category, products }: CategorySection) {
           {/* Fades cover the full 96px padding so no card bleeds under the arrows */}
           <div
             className="absolute left-0 top-0 bottom-4 w-28 z-10 pointer-events-none"
-            style={{ background: "linear-gradient(to right, var(--background) 40%, transparent)" }}
+            style={{ background: "linear-gradient(to right, rgba(10,10,10,0.92) 40%, transparent)" }}
           />
           <div
             className="absolute right-0 top-0 bottom-4 w-28 z-10 pointer-events-none"
-            style={{ background: "linear-gradient(to left, var(--background) 40%, transparent)" }}
+            style={{ background: "linear-gradient(to left, rgba(10,10,10,0.92) 40%, transparent)" }}
           />
 
           {/* px-24 = 96px padding; arrow is 40px wide → 56px clear gap before first card */}
