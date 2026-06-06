@@ -103,6 +103,7 @@ export default function GlitchText({ text, className = "" }: GlitchTextProps) {
     <h2
       ref={ref}
       className={`relative inline-block ${className}`}
+      style={{ color: '#F5F5F5' }}
       aria-label={text}
     >
       {/* Cyan layer */}
