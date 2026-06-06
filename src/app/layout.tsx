@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo_Black, Familjen_Grotesk, Big_Shoulders_Display } from "next/font/google";
+import { Archivo_Black, Familjen_Grotesk, Barlow } from "next/font/google";
 import "./globals.css";
 
 const archivo = Archivo_Black({
@@ -14,10 +14,10 @@ const familjen = Familjen_Grotesk({
   weight: ["400", "500", "600", "700"],
 });
 
-const bigShoulders = Big_Shoulders_Display({
+const barlow = Barlow({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["700", "800", "900"],
+  weight: ["800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -33,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${archivo.variable} ${familjen.variable} ${bigShoulders.variable} antialiased`}>
+      <body className={`${archivo.variable} ${familjen.variable} ${barlow.variable} antialiased`}>
         {children}
       </body>
     </html>
