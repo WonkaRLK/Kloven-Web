@@ -58,7 +58,7 @@ export default function Hero() {
   }, [showTitle]);
 
   return (
-    <div className={`relative overflow-hidden ${showTitle ? "min-h-[25vh] bg-kloven-black" : "md:min-h-[25vh]"}`}>
+    <div className="relative overflow-hidden md:min-h-[25vh]">
       <style>{`
         @keyframes glitchSlice1 {
           0% { clip-path: inset(20% 0 60% 0); transform: translateX(-8px) skewX(-2deg); }

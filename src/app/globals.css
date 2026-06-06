@@ -242,13 +242,25 @@ html {
 }
 
 body {
+  background-color: #080808;
   background-image:
-    linear-gradient(rgba(10, 10, 10, 0.72), rgba(10, 10, 10, 0.72)),
-    url('/bg-halftone.jpg');
-  background-size: 120% auto;
+    /* Halftone dot overlay */
+    radial-gradient(circle, rgba(217,4,41,0.18) 1px, transparent 1px),
+    /* Top red nebula bloom */
+    radial-gradient(ellipse 110% 55% at 50% -5%, rgba(185,5,25,0.58) 0%, rgba(140,3,18,0.28) 45%, transparent 70%),
+    /* Left fire glow */
+    radial-gradient(ellipse 50% 75% at -5% 35%, rgba(160,3,18,0.42) 0%, transparent 60%),
+    /* Right lower glow */
+    radial-gradient(ellipse 45% 60% at 108% 72%, rgba(130,2,15,0.36) 0%, transparent 55%),
+    /* Bottom bloom */
+    radial-gradient(ellipse 75% 50% at 40% 100%, rgba(170,5,22,0.42) 0%, transparent 60%),
+    /* Dark center void */
+    radial-gradient(ellipse 55% 45% at 60% 45%, rgba(2,0,0,0.55) 0%, transparent 65%);
+  background-size:
+    18px 18px,
+    100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
   background-attachment: fixed;
-  background-position: center top;
-  background-color: var(--background);
+  background-position: 0 0, center, center, center, center, center;
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
