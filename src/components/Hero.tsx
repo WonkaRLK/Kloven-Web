@@ -294,7 +294,7 @@ export default function Hero() {
       {/* Fade de transición al fondo de la página */}
       <div
         className="absolute bottom-0 left-0 right-0 h-48 z-10 pointer-events-none"
-        style={{ background: "linear-gradient(to bottom, transparent 0%, var(--background) 85%)" }}
+        style={{ background: "linear-gradient(to bottom, transparent 0%, #080808 85%)" }}
       />
     </div>
   );

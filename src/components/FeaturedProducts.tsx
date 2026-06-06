@@ -97,7 +97,7 @@ function CategoryRow({ category, products }: CategorySection) {
         <div className="flex items-end justify-between px-4 sm:px-8 mb-5 md:mb-8 border-b border-kloven-smoke pb-3 md:pb-4">
           <GlitchText
             text={category.name}
-            className="font-heading text-xl sm:text-3xl md:text-4xl uppercase tracking-wider"
+            className="font-heading text-xl sm:text-3xl md:text-4xl uppercase tracking-wider text-kloven-white"
           />
           <span className="text-[10px] md:text-xs font-bold text-kloven-ash font-mono tabular-nums">
             [{String(products.length).padStart(2, "0")}]
