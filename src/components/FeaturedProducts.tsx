@@ -123,20 +123,14 @@ function CategoryRow({ category, products }: CategorySection) {
             <ChevronRight className="w-5 h-5 relative z-10" />
           </button>
 
-          {/* Fades cover the full 96px padding so no card bleeds under the arrows */}
-          <div
-            className="absolute left-0 top-0 bottom-4 w-28 z-10 pointer-events-none"
-            style={{ background: "linear-gradient(to right, #080808 30%, transparent)" }}
-          />
-          <div
-            className="absolute right-0 top-0 bottom-4 w-28 z-10 pointer-events-none"
-            style={{ background: "linear-gradient(to left, #080808 30%, transparent)" }}
-          />
-
-          {/* px-24 = 96px padding; arrow is 40px wide → 56px clear gap before first card */}
+          {/* Mask-based fade — no color overlay, works with any background */}
           <div
             ref={scrollRef}
             className="flex items-center gap-4 overflow-x-auto scrollbar-hide pt-10 pb-4 -mt-10 px-24"
+            style={{
+              maskImage: "linear-gradient(to right, transparent 0%, black 96px, black calc(100% - 96px), transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 96px, black calc(100% - 96px), transparent 100%)",
+            }}
           >
             {displayProducts.map((product, idx) => (
               <div
