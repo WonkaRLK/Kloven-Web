@@ -306,9 +306,9 @@ export default function ProductoPage() {
       <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-[3fr_2fr]">
           {/* Image gallery */}
           <ScrollReveal>
-            <div className="flex gap-1 pl-6 md:pl-12 pr-0">
+            <div className="flex gap-1 pl-6 md:pl-12 pr-4">
               {product.images?.length > 1 && (
-                <div className="hidden md:flex flex-col gap-2 shrink-0 w-16 lg:w-20">
+                <div className="hidden md:flex flex-col gap-1.5 shrink-0 w-16">
                   {product.images.map((img, i) => (
                     <button
                       key={img + i}
@@ -324,7 +324,7 @@ export default function ProductoPage() {
                         alt={`${product.name} ${i + 1}`}
                         fill
                         className="object-cover"
-                        sizes="80px"
+                        sizes="64px"
                       />
                     </button>
                   ))}
@@ -337,7 +337,7 @@ export default function ProductoPage() {
                   onMouseMove={handleMouseMove}
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
-                  className="min-h-[400px] max-h-[55vh] lg:max-h-[75vh] w-full overflow-hidden relative cursor-crosshair"
+                  className="relative w-full aspect-[2/3] max-h-[85vh] overflow-hidden cursor-crosshair"
                 >
                   <Image
                     src={
@@ -348,7 +348,7 @@ export default function ProductoPage() {
                     alt={product.name}
                     fill
                     priority
-                    className="object-contain object-left transition-transform duration-200 ease-out"
+                    className="object-cover transition-transform duration-200 ease-out"
                     style={
                       isZooming
                         ? {
