@@ -348,7 +348,7 @@ export default function ProductoPage() {
                     alt={product.name}
                     fill
                     priority
-                    className="object-contain transition-transform duration-200 ease-out"
+                    className="object-contain object-left transition-transform duration-200 ease-out"
                     style={
                       isZooming
                         ? {
