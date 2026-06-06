@@ -118,16 +118,16 @@ export default function ProductCard({ product }: ProductCardProps) {
     {/* Info — price first, then name */}
     <div className="mt-3 px-1">
       <div className="flex items-center gap-2">
-        <span className="font-display text-lg sm:text-xl font-black text-kloven-white">
+        <span className="font-display text-lg sm:text-xl font-black" style={{ color: '#F5F5F5' }}>
           $ {product.price.toLocaleString("es-AR")}
         </span>
         {product.compare_at_price && product.compare_at_price > product.price && (
-          <span className="font-display text-sm text-kloven-ash line-through">
+          <span className="font-display text-sm line-through" style={{ color: '#888888' }}>
             $ {product.compare_at_price.toLocaleString("es-AR")}
           </span>
         )}
       </div>
-      <h3 className="font-display text-sm sm:text-base font-black text-kloven-ash leading-tight truncate mt-1">
+      <h3 className="font-display text-sm sm:text-base font-black leading-tight truncate mt-1" style={{ color: '#F5F5F5' }}>
         {product.name}
       </h3>
       {transferDiscountPercent > 0 && (
