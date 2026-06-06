@@ -337,7 +337,7 @@ export default function ProductoPage() {
                   onMouseMove={handleMouseMove}
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
-                  className="relative w-full aspect-[2/3] max-h-[68vh] overflow-hidden cursor-crosshair"
+                  className="relative w-full h-[65vh] cursor-crosshair"
                 >
                   <Image
                     src={
@@ -348,7 +348,7 @@ export default function ProductoPage() {
                     alt={product.name}
                     fill
                     priority
-                    className="object-cover transition-transform duration-200 ease-out"
+                    className="object-contain transition-transform duration-200 ease-out"
                     style={
                       isZooming
                         ? {
