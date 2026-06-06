@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer className="bg-kloven-dark text-kloven-white pt-12 sm:pt-20 pb-10 border-t border-kloven-gold/30">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 sm:gap-16 mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 sm:gap-16 mb-16">
           <div className="col-span-1">
             <div className="mb-6 text-kloven-white">
               <KlovenLogo height={44} />

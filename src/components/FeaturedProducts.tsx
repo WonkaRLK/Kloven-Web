@@ -126,10 +126,10 @@ function CategoryRow({ category, products }: CategorySection) {
           {/* Mask-based fade — no color overlay, works with any background */}
           <div
             ref={scrollRef}
-            className="flex items-center gap-4 overflow-x-auto scrollbar-hide pt-10 pb-4 -mt-10 px-24"
+            className="flex items-center gap-4 overflow-x-auto scrollbar-hide pt-10 pb-4 -mt-10 px-4 sm:px-16 md:px-24"
             style={{
-              maskImage: "linear-gradient(to right, transparent 0%, black 96px, black calc(100% - 96px), transparent 100%)",
-              WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 96px, black calc(100% - 96px), transparent 100%)",
+              maskImage: "linear-gradient(to right, transparent 0%, black 16px, black calc(100% - 16px), transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 16px, black calc(100% - 16px), transparent 100%)",
             }}
           >
             {displayProducts.map((product, idx) => (

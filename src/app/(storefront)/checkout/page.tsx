@@ -296,7 +296,7 @@ export default function CheckoutPage() {
                     placeholder="Calle y altura"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[10px] font-bold uppercase mb-1 tracking-widest text-kloven-ash">
                       Ciudad
@@ -485,7 +485,7 @@ export default function CheckoutPage() {
                 <p className="text-[10px] font-bold uppercase tracking-widest text-kloven-ash mb-3">
                   Cuotas con tarjeta de crédito
                 </p>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {[1, 3, 6, 9, 12].map((n) => {
                     const monthlyTotal = n === 1
                       ? total

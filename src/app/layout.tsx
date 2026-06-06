@@ -30,9 +30,10 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@800;900&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@800;900&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet" />
       </head>
       <body className={`${archivo.variable} ${familjen.variable} antialiased`}>
+        <div className="grain-overlay" />
         {children}
       </body>
     </html>

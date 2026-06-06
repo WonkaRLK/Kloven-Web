@@ -99,7 +99,7 @@ export default function TiendaSection({
                 <div className="h-5 bg-kloven-dark w-32 animate-pulse" />
                 <div className="h-10 bg-kloven-dark w-40 animate-pulse" />
               </div>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 sm:gap-x-5 lg:gap-x-6 gap-y-8 sm:gap-y-10">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-3 sm:gap-x-5 lg:gap-x-6 gap-y-8 sm:gap-y-10">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div key={i} className="animate-pulse">
                     <div className="aspect-[3/4] bg-kloven-dark mb-4" />
@@ -142,7 +142,7 @@ export default function TiendaSection({
               {filtered.length > 0 ? (
                 <StaggerContainer
                 key={filtered.map((p) => p.id).join(",")}
-                className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 sm:gap-x-5 lg:gap-x-6 gap-y-8 sm:gap-y-10"
+                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-3 sm:gap-x-5 lg:gap-x-6 gap-y-8 sm:gap-y-10"
               >
                   {filtered.map((product) => (
                     <StaggerItem key={product.id}>

@@ -48,7 +48,7 @@ export default function MobileFilterDrawer({
 
       {/* Drawer - slides from left */}
       <motion.div
-        className="fixed top-0 left-0 h-full w-full max-w-sm bg-kloven-dark z-50 shadow-2xl flex flex-col border-r border-kloven-smoke"
+        className="fixed top-0 left-0 h-full w-[calc(100%-1.5rem)] max-w-sm bg-kloven-dark z-50 shadow-2xl flex flex-col border-r border-kloven-smoke"
         initial={false}
         animate={{ x: open ? 0 : "-100%" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}

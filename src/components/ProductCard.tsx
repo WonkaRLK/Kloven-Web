@@ -45,7 +45,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   }, []);
 
   return (
-    <>
+    <div>
     <Link
       ref={cardRef}
       href={`/producto/${product.slug}`}
@@ -117,8 +117,11 @@ export default function ProductCard({ product }: ProductCardProps) {
 
     {/* Info — price first, then name */}
     <div className="mt-3 px-1">
-      <div className="flex items-center gap-2">
-        <span className="font-display text-lg sm:text-xl font-black" style={{ color: '#F5F5F5' }}>
+      <h3 className="font-display text-sm sm:text-base font-semibold leading-tight truncate" style={{ color: '#F5F5F5' }}>
+        {product.name}
+      </h3>
+      <div className="flex items-center gap-2 mt-1">
+        <span className="font-display text-lg sm:text-xl font-semibold px-2 py-0.5 rounded" style={{ color: '#F5F5F5', border: '1.5px solid rgba(217,4,41,0.6)' }}>
           $ {product.price.toLocaleString("es-AR")}
         </span>
         {product.compare_at_price && product.compare_at_price > product.price && (
@@ -127,20 +130,17 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         )}
       </div>
-      <h3 className="font-display text-sm sm:text-base font-black leading-tight truncate mt-1" style={{ color: '#F5F5F5' }}>
-        {product.name}
-      </h3>
       {transferDiscountPercent > 0 && (
-        <p className="text-xs text-emerald-400 mt-1 leading-tight">
-          ${Math.round(product.price * (1 - transferDiscountPercent / 100)).toLocaleString("es-AR")} con Transferencia
+        <p className="text-xs font-medium text-emerald-400 mt-1 leading-tight pl-2">
+          <span className="text-sm">${Math.round(product.price * (1 - transferDiscountPercent / 100)).toLocaleString("es-AR")}</span> con Transferencia
         </p>
       )}
       {installmentsCount > 0 && (
-        <p className="text-xs text-sky-400 mt-0.5 leading-tight">
-          {installmentsCount} cuotas sin interés de ${Math.round(product.price / installmentsCount).toLocaleString("es-AR")}
+        <p className="text-xs font-medium text-sky-400 mt-0.5 leading-tight pl-2">
+          {installmentsCount} cuotas sin interés de <span className="text-sm">${Math.round(product.price / installmentsCount).toLocaleString("es-AR")}</span>
         </p>
       )}
     </div>
-    </>
+    </div>
   );
 }

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Spec: Sold Out Toggle — Kloven</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f0f0f; color: #e5e5e5; line-height: 1.7; padding: 2rem 1rem; }
+  .container { max-width: 820px; margin: 0 auto; }
+  header { border-bottom: 1px solid #333; padding-bottom: 1.5rem; margin-bottom: 2rem; }
+  header h1 { font-size: 1.8rem; font-weight: 800; color: #fff; letter-spacing: -0.02em; }
+  header .meta { display: flex; gap: 1rem; margin-top: .5rem; flex-wrap: wrap; }
+  .badge { display: inline-flex; align-items: center; gap: .4rem; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; padding: .25rem .6rem; border-radius: 4px; }
+  .badge.green { background: #14532d; color: #4ade80; }
+  .badge.gray { background: #1f1f1f; color: #888; }
+
+  h2 { font-size: 1.15rem; font-weight: 700; color: #fff; margin: 2.5rem 0 .75rem; padding-bottom: .4rem; border-bottom: 1px solid #222; }
+  h3 { font-size: .95rem; font-weight: 700; color: #ccc; margin: 1.5rem 0 .5rem; }
+  p { color: #bbb; margin-bottom: .75rem; }
+  ul, ol { padding-left: 1.4rem; margin-bottom: .75rem; color: #bbb; }
+  li { margin-bottom: .3rem; }
+  strong { color: #fff; }
+
+  code { font-family: "JetBrains Mono", "Fira Code", monospace; font-size: .82em; background: #1a1a1a; border: 1px solid #2a2a2a; padding: .15em .4em; border-radius: 4px; color: #a78bfa; }
+  pre { background: #111; border: 1px solid #2a2a2a; border-radius: 8px; padding: 1.2rem; overflow-x: auto; margin: 1rem 0; }
+  pre code { background: none; border: none; padding: 0; color: #7dd3fc; font-size: .85rem; line-height: 1.6; }
+
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .88rem; }
+  th { text-align: left; font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: #666; padding: .6rem .8rem; border-bottom: 1px solid #2a2a2a; }
+  td { padding: .6rem .8rem; border-bottom: 1px solid #1a1a1a; color: #bbb; }
+  tr:last-child td { border-bottom: none; }
+
+  .section { background: #131313; border: 1px solid #222; border-radius: 10px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .critical { border-left: 3px solid #ef4444; }
+  .highlight { background: #1a1200; border: 1px solid #3d2e00; border-radius: 8px; padding: .8rem 1rem; margin: .75rem 0; color: #fbbf24; font-size: .88rem; }
+  .no-change { background: #0d1a0d; border: 1px solid #1a3a1a; border-radius: 8px; padding: .8rem 1rem; margin: .75rem 0; color: #4ade80; font-size: .88rem; }
+
+  .files { display: grid; gap: .4rem; margin-top: .75rem; }
+  .file { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: .4rem .8rem; font-family: monospace; font-size: .82rem; color: #94a3b8; }
+  .file.new { border-color: #14532d; color: #4ade80; }
+  .file.new::before { content: "+ "; }
+  .file.mod::before { content: "~ "; color: #fbbf24; }
+
+  .flow { display: flex; flex-direction: column; gap: .4rem; margin: 1rem 0; counter-reset: step; }
+  .flow-item { display: flex; gap: .8rem; align-items: flex-start; }
+  .flow-item::before { counter-increment: step; content: counter(step); min-width: 24px; height: 24px; border-radius: 50%; background: #1f1f1f; border: 1px solid #333; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; color: #888; flex-shrink: 0; margin-top: .1rem; }
+  .flow-item.admin::before { background: #1a1a2e; border-color: #6366f1; color: #818cf8; }
+  .flow-item.user::before { background: #1a0d0d; border-color: #ef4444; color: #f87171; }
+  .flow-item.server::before { background: #0d1a14; border-color: #22c55e; color: #4ade80; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>Sold Out Toggle — Kloven Streetwear</h1>
+  <div class="meta">
+    <span class="badge green">✓ Aprobado por usuario</span>
+    <span class="badge gray">2026-05-22</span>
+    <span class="badge gray">v2 — revisión técnica incluida</span>
+  </div>
+</header>
+
+<div class="section">
+  <h2>Objetivo</h2>
+  <p>Agregar un flag <code>sold_out</code> a nivel producto que:</p>
+  <ul>
+    <li>El admin activa/desactiva con un <strong>toggle rápido</strong> desde la lista de productos (sin entrar a editar)</li>
+    <li>Muestra badge <strong>"AGOTADO"</strong> en la card y página de producto del storefront</li>
+    <li>Deshabilita el botón de carrito en la página de detalle</li>
+    <li><strong>El servidor bloquea el checkout</strong> si el producto está agotado (la UI es decorativa, el API es el guardián real)</li>
+    <li>El producto <strong>sigue visible</strong> en la web (≠ <code>active: false</code> que lo oculta)</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>Base de datos</h2>
+  <pre><code>ALTER TABLE products
+  ADD COLUMN IF NOT EXISTS sold_out BOOLEAN NOT NULL DEFAULT false;</code></pre>
+  <p>El default <code>false</code> mantiene todos los productos existentes disponibles sin ninguna migración de datos.</p>
+</div>
+
+<div class="section">
+  <h2>Tipos — <code>src/lib/types.ts</code></h2>
+  <pre><code>export interface Product {
+  // ...campos existentes...
+  sold_out: boolean;  // &lt;-- nuevo
+}</code></pre>
+  <p><code>ProductWithVariants extends Product</code>, <code>RegularCartItem</code> y <code>ComboCartItem</code> reciben el campo automáticamente.</p>
+</div>
+
+<div class="section">
+  <h2>API</h2>
+
+  <h3>Nuevo: <code>PATCH /api/admin/products/[id]/sold-out</code></h3>
+  <p>Endpoint liviano solo para el toggle rápido. No requiere el body completo del producto.</p>
+  <pre><code>// Body: { sold_out: boolean }
+// Requiere validateAdminAuth
+// Actualiza: sold_out + updated_at
+// Respuesta: objeto producto (campos de products, sin variantes)</code></pre>
+  <p>Justificación: el <code>PUT</code> existente exige el producto completo + variantes. Mandar todo eso solo para un boolean es innecesario.</p>
+
+  <h3><code>PUT /api/admin/products/[id]</code></h3>
+  <p>Agregar al objeto de update:</p>
+  <pre><code>sold_out: body.sold_out ?? false,</code></pre>
+  <div class="highlight">⚠️ El formulario de edición DEBE leer y enviar el valor actual de <code>sold_out</code>. Si el form no lo incluye, <code>?? false</code> lo resetea silenciosamente cada vez que el admin guarda el producto.</div>
+
+  <h3><code>POST /api/checkout</code> — validación server-side</h3>
+  <div class="highlight">⚠️ Este es el cambio más crítico. Sin esto, un usuario puede completar el checkout aunque el producto esté marcado como agotado.</div>
+  <pre><code>// 1. Agregar sold_out al select de productos:
+.select("id, name, price, image_url, is_combo, sold_out")
+
+// 2. En el loop de validación de items:
+if (product.sold_out) {
+  return NextResponse.json(
+    { error: `El producto "${product.name}" está agotado` },
+    { status: 400 }
+  );
+}</code></pre>
+
+  <h3><code>GET /api/products</code> y <code>GET /api/products/[slug]</code></h3>
+  <p>Sin cambios — ya hacen <code>select("*")</code>, el campo nuevo llega solo.</p>
+
+  <h3><code>POST /api/admin/products</code> (crear)</h3>
+  <p>Agregar <code>sold_out: body.sold_out || false</code> en el insert, por simetría y para no depender del default de DB.</p>
+</div>
+
+<div class="section">
+  <h2>Admin</h2>
+
+  <h3>Lista de productos (<code>/admin/productos</code>)</h3>
+  <ul>
+    <li><strong>Columna Estado:</strong> junto a "Activo/Inactivo", mostrar badge naranja <strong>"Agotado"</strong> cuando <code>sold_out === true</code></li>
+    <li><strong>Toggle rápido:</strong> botón con ícono <code>PackageX</code> (agotado) / <code>Package</code> (disponible) junto a editar/eliminar</li>
+    <li>Al clickear: llama a <code>PATCH .../sold-out</code>, actualiza estado local, sin recargar la lista</li>
+    <li>Feedback visual con spinner durante el loading</li>
+  </ul>
+
+  <h3>Formulario de edición (<code>/admin/productos/[id]</code>)</h3>
+  <ul>
+    <li>Toggle "Marcar como agotado" en la sección de configuración</li>
+    <li>Mismo estilo que otros toggles del admin (inline-flex, rounded-full)</li>
+    <li><strong>Obligatorio:</strong> inicializar desde <code>product.sold_out</code> y enviarlo en cada PUT</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>Storefront — ProductCard</h2>
+
+  <h3>Badge "AGOTADO" — posicionamiento sin colisiones</h3>
+  <p>La card ya tiene hasta dos badges: <code>top-2 left-2</code> (descuento) y <code>top-2 right-2</code> (COMBO).</p>
+  <table>
+    <thead>
+      <tr><th>Situación</th><th>Posición AGOTADO</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Solo sold_out</td><td><code>top-2 left-2</code></td></tr>
+      <tr><td>sold_out + descuento</td><td><code>top-2 right-2</code></td></tr>
+      <tr><td>sold_out + combo</td><td>COMBO en <code>top-2 right-2</code>, AGOTADO en <code>top-10 right-2</code></td></tr>
+      <tr><td>sold_out + descuento + combo</td><td>COMBO en <code>top-2 right-2</code>, AGOTADO en <code>top-10 right-2</code>, descuento en <code>top-2 left-2</code></td></tr>
+    </tbody>
+  </table>
+  <p>Estilo: <code>bg-gray-900 text-white</code>, mismo tamaño que el badge de descuento.</p>
+
+  <h3>Overlay hover</h3>
+  <p>La card es un <code>&lt;Link&gt;</code> — el usuario <strong>puede seguir clickeando</strong> para ir a la página del producto (puede ver fotos y esperar restock). Solo cambia el texto del overlay:</p>
+  <ul>
+    <li>Si <code>sold_out</code>: texto <strong>"Sin Stock"</strong> en gris, sin ícono de bolsa</li>
+    <li>Si no: comportamiento actual sin cambios</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>Storefront — Página de producto</h2>
+
+  <h3>Botón de carrito</h3>
+  <pre><code>{product.sold_out ? (
+  &lt;button
+    disabled
+    className="w-full py-4 bg-gray-700 text-gray-400 font-bold
+               uppercase tracking-widest cursor-not-allowed opacity-70"
+  &gt;
+    Sin Stock
+  &lt;/button&gt;
+) : (
+  // botón actual — sin cambios
+)}</code></pre>
+  <p>La selección de talle/color sigue mostrándose. El botón está deshabilitado sin importar la selección.</p>
+
+  <h3>Combos</h3>
+  <p>Si el combo tiene <code>sold_out === true</code>, aplica la misma lógica. La flag <code>sold_out</code> de los sub-productos dentro de un combo es <strong>ignorada</strong> — solo importa el flag del combo como unidad.</p>
+</div>
+
+<div class="section">
+  <h2>CartContext y carrito existente</h2>
+  <p>El CartContext guarda un snapshot al momento de agregar. Si el producto se marca como agotado después, la UI del carrito no lo detecta. El <strong>server-side check en <code>/api/checkout</code> es el guardián autoritativo</strong> — devuelve 400 sin importar el estado del carrito del cliente.</p>
+</div>
+
+<div class="section">
+  <h2>Flujo completo</h2>
+  <div class="flow">
+    <div class="flow-item admin"><span>Admin entra a <code>/admin/productos</code> y clickea el toggle <code>PackageX</code> en la fila</span></div>
+    <div class="flow-item admin"><span>Badge "Agotado" aparece en la tabla sin recargar</span></div>
+    <div class="flow-item user"><span>En el storefront, la card muestra badge "AGOTADO" y el overlay dice "Sin Stock"</span></div>
+    <div class="flow-item user"><span>El cliente entra al producto — puede ver fotos y talles, el botón está deshabilitado</span></div>
+    <div class="flow-item server"><span>Si el cliente tenía el producto en el carrito desde antes, el checkout devuelve error 400</span></div>
+    <div class="flow-item admin"><span>Cuando llega stock, el admin clickea el toggle — el producto vuelve a estar disponible</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Archivos a modificar / crear</h2>
+  <div class="files">
+    <div class="file mod">src/lib/types.ts — agregar <code>sold_out: boolean</code> a Product</div>
+    <div class="file new">src/app/api/admin/products/[id]/sold-out/route.ts — nuevo PATCH endpoint</div>
+    <div class="file mod">src/app/api/admin/products/[id]/route.ts — agregar sold_out en PUT</div>
+    <div class="file mod">src/app/api/admin/products/route.ts — agregar sold_out en POST (create)</div>
+    <div class="file mod">src/app/api/checkout/route.ts — validación server-side</div>
+    <div class="file mod">src/components/admin/ProductForm.tsx — toggle sold_out en form</div>
+    <div class="file mod">src/app/admin/productos/page.tsx — badge + toggle rápido en lista</div>
+    <div class="file mod">src/components/ProductCard.tsx — badge AGOTADO + overlay Sin Stock</div>
+    <div class="file mod">src/app/(storefront)/producto/[slug]/page.tsx — botón Sin Stock</div>
+  </div>
+</div>
+
+<div class="section no-change">
+  <h2>Lo que NO cambia</h2>
+  <ul>
+    <li>El producto sigue apareciendo en la tienda, carousel y búsquedas</li>
+    <li><code>active: false</code> sigue siendo el mecanismo para ocultar el producto completamente</li>
+    <li>El stock numérico de variantes no se modifica — <code>sold_out</code> es independiente</li>
+    <li>No hay lógica automática: el admin activa/desactiva manualmente</li>
+    <li>El campo <code>on_sale</code> no interactúa con <code>sold_out</code></li>
+  </ul>
+</div>
+
+</div>
+</body>
+</html>

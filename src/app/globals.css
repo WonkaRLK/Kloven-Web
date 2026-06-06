@@ -241,30 +241,74 @@ html {
   scroll-behavior: smooth;
 }
 
+@keyframes blobFloat1 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+  33%  { transform: translate(4%, 6%) scale(1.1); opacity: 0.85; }
+  66%  { transform: translate(-3%, 2%) scale(0.93); opacity: 1; }
+  100% { transform: translate(0, 0) scale(1); opacity: 1; }
+}
+@keyframes blobFloat2 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.9; }
+  33%  { transform: translate(-5%, -4%) scale(1.12); opacity: 1; }
+  66%  { transform: translate(3%, -3%) scale(0.92); opacity: 0.85; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.9; }
+}
+@keyframes blobFloat3 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(3%, -5%) scale(1.08); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
 body {
-  background-color: #080808;
+  background-color: #030303;
   background-image:
-    /* Halftone dot overlay */
-    radial-gradient(circle, rgba(217,4,41,0.18) 1px, transparent 1px),
-    /* Top red nebula bloom */
-    radial-gradient(ellipse 110% 55% at 50% -5%, rgba(185,5,25,0.58) 0%, rgba(140,3,18,0.28) 45%, transparent 70%),
-    /* Left fire glow */
-    radial-gradient(ellipse 50% 75% at -5% 35%, rgba(160,3,18,0.42) 0%, transparent 60%),
-    /* Right lower glow */
-    radial-gradient(ellipse 45% 60% at 108% 72%, rgba(130,2,15,0.36) 0%, transparent 55%),
-    /* Bottom bloom */
-    radial-gradient(ellipse 75% 50% at 40% 100%, rgba(170,5,22,0.42) 0%, transparent 60%),
-    /* Dark center void */
-    radial-gradient(ellipse 55% 45% at 60% 45%, rgba(2,0,0,0.55) 0%, transparent 65%);
-  background-size:
-    18px 18px,
-    100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+    radial-gradient(circle, rgba(217,4,41,0.12) 1px, transparent 1px);
+  background-size: 18px 18px;
   background-attachment: fixed;
-  background-position: 0 0, center, center, center, center, center;
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: -25%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+body::before {
+  background:
+    radial-gradient(ellipse 65% 65% at 20% 20%, rgba(217,4,41,0.85) 0%, rgba(160,3,18,0.5) 35%, transparent 65%),
+    radial-gradient(ellipse 55% 55% at 80% 80%, rgba(185,5,25,0.75) 0%, rgba(120,2,14,0.4) 35%, transparent 65%),
+    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(0,0,0,0.95) 0%, transparent 70%),
+    radial-gradient(ellipse 100% 100% at 50% 50%, rgba(0,0,0,0.5) 0%, transparent 100%);
+  animation: blobFloat1 7s ease-in-out infinite;
+}
+
+body::after {
+  background:
+    radial-gradient(ellipse 60% 60% at 75% 15%, rgba(200,4,35,0.8) 0%, rgba(140,3,18,0.45) 35%, transparent 65%),
+    radial-gradient(ellipse 50% 50% at 15% 80%, rgba(180,4,28,0.75) 0%, rgba(120,2,14,0.4) 35%, transparent 65%),
+    radial-gradient(ellipse 45% 45% at 50% 50%, rgba(0,0,0,0.92) 0%, transparent 65%),
+    radial-gradient(ellipse 100% 100% at 50% 50%, rgba(0,0,0,0.6) 0%, transparent 100%);
+  animation: blobFloat2 9s ease-in-out infinite;
+}
+
+
+
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
+  opacity: 0.32;
 }
 
 @media (pointer: coarse) {

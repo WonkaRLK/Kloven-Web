@@ -4,7 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag, ArrowLeft, Check, Package, Banknote, CreditCard } from "lucide-react";
+import { ShoppingBag, ArrowLeft, Check, Package, CreditCard } from "lucide-react";
+import { FaMoneyBillWave } from "react-icons/fa";
 import { useCart } from "@/context/CartContext";
 import ProductCard from "@/components/ProductCard";
 import SizeGuideModal from "@/components/SizeGuideModal";
@@ -291,23 +292,23 @@ export default function ProductoPage() {
   return (
     <div className="pt-20 pb-20">
       {/* Breadcrumb */}
-      <div className="max-w-[1600px] mx-auto px-6 md:px-12 mb-6">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-12 mb-6 mt-4">
         <Link
           href="/tienda"
-          className="inline-flex items-center gap-2 text-sm text-kloven-ash hover:text-kloven-gold"
+          className="inline-flex items-center gap-2 text-sm text-kloven-white hover:text-kloven-gold"
         >
           <ArrowLeft className="w-4 h-4" />
-          Volver al catalogo
+          Volver al catálogo
         </Link>
       </div>
 
       {/* Product grid */}
-      <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-[3fr_2fr]">
+      <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-[3fr_2fr] relative">
           {/* Image gallery */}
           <ScrollReveal>
-            <div className="flex gap-0.5 pl-6 md:pl-12 pr-4 justify-end">
+            <div className="flex gap-3 px-4 md:pl-12 md:pr-4 justify-center lg:justify-end">
               {product.images?.length > 1 && (
-                <div className="hidden md:flex flex-col gap-1.5 shrink-0 w-16">
+                <div className="hidden md:flex flex-col gap-3 shrink-0 w-24">
                   {product.images.map((img, i) => (
                     <button
                       key={img + i}
@@ -315,7 +316,7 @@ export default function ProductoPage() {
                       className={`relative aspect-square overflow-hidden border-2 transition-colors ${
                         activeImage === i
                           ? "border-kloven-gold"
-                          : "border-kloven-smoke hover:border-kloven-ash"
+                          : "border-kloven-ash/60 hover:border-kloven-gold/60"
                       }`}
                     >
                       <Image
@@ -330,8 +331,8 @@ export default function ProductoPage() {
                 </div>
               )}
 
-              <div className="flex flex-col gap-3">
-                <div className="relative flex justify-start h-[65vh] overflow-hidden">
+              <div className="flex flex-col gap-3 w-full lg:w-auto">
+                <div className="relative flex justify-center lg:justify-start h-[45vh] sm:h-[55vh] lg:h-[65vh] overflow-hidden" style={{ zIndex: 2 }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={
@@ -362,7 +363,7 @@ export default function ProductoPage() {
                 </div>
 
                 {product.images?.length > 1 && (
-                  <div className="grid grid-cols-5 gap-2 md:hidden">
+                  <div className="flex flex-wrap gap-2 md:hidden justify-center">
                     {product.images.map((img, i) => (
                       <button
                         key={img + i}
@@ -389,20 +390,40 @@ export default function ProductoPage() {
             </div>
           </ScrollReveal>
 
+          {/* Column separator */}
+          <div className="hidden lg:block absolute inset-y-0 pointer-events-none" style={{
+            right: "37%",
+            width: "50px",
+            background: "linear-gradient(to right, transparent 0%, rgba(3,3,3,0.7) 100%)",
+            mask: "linear-gradient(to bottom, transparent 0%, black 47%, black 53%, transparent 100%)",
+            WebkitMask: "linear-gradient(to bottom, transparent 0%, black 47%, black 53%, transparent 100%)",
+            zIndex: 1
+          }} />
+          {/* Glow right of separator */}
+          <div className="hidden lg:block absolute inset-y-0 pointer-events-none" style={{
+            right: "calc(37% - 18px)",
+            width: "18px",
+            background: "linear-gradient(to right, rgba(255,255,255,0.07) 0%, transparent 100%)",
+            mask: "linear-gradient(to bottom, transparent 0%, black 47%, black 53%, transparent 100%)",
+            WebkitMask: "linear-gradient(to bottom, transparent 0%, black 47%, black 53%, transparent 100%)",
+            zIndex: 2
+          }} />
+
           {/* Info */}
           <ScrollReveal delay={0.2}>
-            <div className="px-8 md:px-12 lg:px-16 py-4 lg:max-h-[85vh] lg:overflow-y-auto">
-              <p className="text-xs text-kloven-ash uppercase tracking-widest mb-2">
+            <div className="px-8 md:px-12 lg:px-16 py-4 lg:max-h-[85vh] lg:overflow-y-auto relative product-info-panel">
+              <p className="text-xs text-kloven-white uppercase tracking-widest mb-2">
                 {product.category}
                 {isCombo && (
                   <span className="ml-2 text-purple-400">COMBO</span>
                 )}
               </p>
-              <h1 className="font-display text-4xl md:text-5xl font-black tracking-wider mb-4 text-kloven-white uppercase">
+              <h1 className="font-display text-3xl md:text-4xl font-black tracking-wider mb-4 text-kloven-white uppercase">
                 {product.name}
               </h1>
+              <div className="border-t border-kloven-white/40 mb-4" />
               <div className="flex items-baseline gap-3 mb-6">
-                <p className="font-display text-4xl font-black text-kloven-ash tracking-wider">
+                <p className="text-4xl text-white tracking-wider bg-kloven-red/60 px-2 rounded-md inline-flex items-center leading-none" style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 500, paddingTop: '2px', paddingBottom: '6px' }}>
                   ${product.price.toLocaleString("es-AR")}
                 </p>
                 {product.compare_at_price && product.compare_at_price > product.price && (
@@ -413,33 +434,29 @@ export default function ProductoPage() {
               </div>
               {/* Transferencia y cuotas */}
               {(transferDiscountPercent > 0 || installmentsCount > 0) && (
-                <div className="flex flex-col gap-2 mb-6 border border-kloven-smoke rounded-xl p-4 bg-kloven-black/40">
+                <div className="flex flex-col gap-0 mb-6 border border-kloven-smoke/40 rounded-lg overflow-hidden">
                   {transferDiscountPercent > 0 && (
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-                        <Banknote className="w-5 h-5 text-emerald-400" />
-                      </div>
+                    <div className="flex items-center gap-4 px-4 py-3 bg-kloven-black/60">
+                      <FaMoneyBillWave className="w-5 h-5 flex-shrink-0" style={{ fontSize: "1.25rem", color: "#22c55e" }} />
                       <div>
-                        <p className="text-emerald-400 font-bold text-base leading-tight">
+                        <p className="text-[11px] text-kloven-white font-medium tracking-widest uppercase mb-0.5">Transferencia / depósito</p>
+                        <p className="text-green-500 text-xl font-bold leading-none">
                           ${Math.round(product.price * (1 - transferDiscountPercent / 100)).toLocaleString("es-AR")}
                         </p>
-                        <p className="text-xs text-kloven-ash">con Transferencia o depósito bancario</p>
                       </div>
                     </div>
                   )}
                   {transferDiscountPercent > 0 && installmentsCount > 0 && (
-                    <div className="border-t border-kloven-smoke/50" />
+                    <div className="border-t border-kloven-smoke/30" />
                   )}
                   {installmentsCount > 0 && (
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-sky-500/10 flex items-center justify-center flex-shrink-0">
-                        <CreditCard className="w-5 h-5 text-sky-400" />
-                      </div>
+                    <div className="flex items-center gap-4 px-4 py-3 bg-kloven-black/60">
+                      <CreditCard className="w-5 h-5 text-kloven-white flex-shrink-0" />
                       <div>
-                        <p className="text-sky-400 font-bold text-base leading-tight">
-                          {installmentsCount} cuotas sin interés
+                        <p className="text-[11px] text-kloven-white font-medium tracking-widest uppercase mb-0.5">Cuotas sin interés</p>
+                        <p className="text-kloven-white text-xl font-bold leading-none">
+                          {installmentsCount}x ${Math.round(product.price / installmentsCount).toLocaleString("es-AR")}
                         </p>
-                        <p className="text-xs text-kloven-ash">de ${Math.round(product.price / installmentsCount).toLocaleString("es-AR")} c/u</p>
                       </div>
                     </div>
                   )}
@@ -456,7 +473,7 @@ export default function ProductoPage() {
                 <div className="flex gap-6 mb-8 text-sm">
                   {product.material && (
                     <div>
-                      <span className="font-bold uppercase tracking-widest text-xs text-kloven-ash block mb-1">
+                      <span className="font-bold uppercase tracking-widest text-xs text-kloven-white block mb-1">
                         Material
                       </span>
                       <span className="text-kloven-white">
@@ -466,7 +483,7 @@ export default function ProductoPage() {
                   )}
                   {product.fit && (
                     <div>
-                      <span className="font-bold uppercase tracking-widest text-xs text-kloven-ash block mb-1">
+                      <span className="font-bold uppercase tracking-widest text-xs text-kloven-white block mb-1">
                         Fit
                       </span>
                       <span className="text-kloven-white">{product.fit}</span>
@@ -479,7 +496,7 @@ export default function ProductoPage() {
               {isCombo ? (
                 <>
                   <div className="mb-8">
-                    <h3 className="font-bold uppercase tracking-widest text-xs text-kloven-ash mb-4">
+                    <h3 className="font-bold uppercase tracking-widest text-xs text-kloven-white mb-4">
                       Elegi talle y color para cada producto
                     </h3>
                     <div className="space-y-6">
@@ -565,7 +582,7 @@ export default function ProductoPage() {
                             {/* Color selector */}
                             {subColors.length > 0 && (
                               <div className="mb-3">
-                                <span className="font-bold uppercase tracking-widest text-[10px] text-kloven-ash block mb-2">
+                                <span className="font-bold uppercase tracking-widest text-[10px] text-kloven-white block mb-2">
                                   Color
                                 </span>
                                 <div className="flex flex-wrap gap-2">
@@ -606,7 +623,7 @@ export default function ProductoPage() {
 
                             {/* Size selector */}
                             <div>
-                              <span className="font-bold uppercase tracking-widest text-[10px] text-kloven-ash block mb-2">
+                              <span className="font-bold uppercase tracking-widest text-[10px] text-kloven-white block mb-2">
                                 Talle
                               </span>
                               <div className="flex flex-wrap gap-2">
@@ -631,7 +648,7 @@ export default function ProductoPage() {
                                         )
                                       }
                                       disabled={!hasStock}
-                                      className={`w-10 h-10 text-xs font-bold border-2 ${
+                                      className={`w-10 h-10 text-xs font-bold border-2 rounded-full ${
                                         sel?.selectedSize === size
                                           ? "border-kloven-gold bg-kloven-gold text-white"
                                           : hasStock
@@ -655,8 +672,7 @@ export default function ProductoPage() {
                                   </p>
                                 ) : sel.selectedVariant.stock <= 3 ? (
                                   <p className="text-orange-400 text-xs font-medium">
-                                    Ultimas {sel.selectedVariant.stock}{" "}
-                                    unidades!
+                                    {sel.selectedVariant.stock === 1 ? "Última unidad!" : `Últimas ${sel.selectedVariant.stock} unidades!`}
                                   </p>
                                 ) : (
                                   <p className="text-green-400 text-xs font-medium">
@@ -675,7 +691,7 @@ export default function ProductoPage() {
                   {product.sold_out ? (
                     <button
                       disabled
-                      className="w-full py-4 font-bold uppercase tracking-widest flex items-center justify-center gap-2 bg-gray-700 text-gray-400 cursor-not-allowed opacity-70"
+                      className="w-full py-4 font-bold uppercase tracking-widest flex items-center justify-center gap-2 rounded-full bg-gray-700 text-gray-400 cursor-not-allowed opacity-70"
                     >
                       Sin Stock
                     </button>
@@ -683,11 +699,11 @@ export default function ProductoPage() {
                   <button
                     onClick={handleAddComboToCart}
                     disabled={!allComboSelectionsComplete}
-                    className={`w-full py-4 font-bold uppercase tracking-widest flex items-center justify-center gap-2 ${
+                    className={`w-full py-4 font-bold uppercase tracking-widest flex items-center justify-center gap-2 rounded-full border-2 border-white/20 ${
                       added
                         ? "bg-green-600 text-white"
                         : allComboSelectionsComplete
-                        ? "bg-kloven-gold text-white hover:bg-kloven-gold/80 hover:animate-[cardShake_0.3s_steps(4)_infinite]"
+                        ? "bg-white text-kloven-black hover:bg-white/90"
                         : "bg-kloven-smoke text-kloven-ash cursor-not-allowed"
                     }`}
                   >
@@ -713,7 +729,7 @@ export default function ProductoPage() {
                   {/* Color selector */}
                   {availableColors.length > 0 && (
                     <div className="mb-6">
-                      <span className="font-bold uppercase tracking-widest text-xs text-kloven-ash block mb-3">
+                      <span className="font-bold uppercase tracking-widest text-xs text-kloven-white block mb-3">
                         Color
                       </span>
                       <div className="flex gap-3 flex-wrap">
@@ -751,7 +767,7 @@ export default function ProductoPage() {
                   {/* Size selector */}
                   <div className="mb-8">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="font-bold uppercase tracking-widest text-xs text-kloven-ash">
+                      <span className="font-bold uppercase tracking-widest text-xs text-kloven-white">
                         Talle
                       </span>
                       <button
@@ -773,7 +789,7 @@ export default function ProductoPage() {
                             key={size}
                             onClick={() => hasStock && setSelectedSize(size)}
                             disabled={!hasStock}
-                            className={`w-11 h-11 sm:w-14 sm:h-14 text-sm font-bold border-2 ${
+                            className={`w-11 h-11 sm:w-14 sm:h-14 text-sm font-bold border-2 rounded-full ${
                               selectedSize === size
                                 ? "border-kloven-gold bg-kloven-gold text-white"
                                 : hasStock
@@ -797,7 +813,7 @@ export default function ProductoPage() {
                         </p>
                       ) : selectedVariant.stock <= 3 ? (
                         <p className="text-orange-400 text-sm font-medium">
-                          Ultimas {selectedVariant.stock} unidades!
+                          {selectedVariant.stock === 1 ? "¡Última unidad!" : `¡Últimas ${selectedVariant.stock} unidades!`}
                         </p>
                       ) : (
                         <p className="text-green-400 text-sm font-medium">
@@ -811,7 +827,7 @@ export default function ProductoPage() {
                   {product.sold_out ? (
                     <button
                       disabled
-                      className="w-full py-4 font-bold uppercase tracking-widest flex items-center justify-center gap-2 bg-gray-700 text-gray-400 cursor-not-allowed opacity-70"
+                      className="w-full py-4 font-bold uppercase tracking-widest flex items-center justify-center gap-2 rounded-full bg-gray-700 text-gray-400 cursor-not-allowed opacity-70"
                     >
                       Sin Stock
                     </button>
@@ -819,11 +835,11 @@ export default function ProductoPage() {
                   <button
                     onClick={handleAddToCart}
                     disabled={!selectedVariant || selectedVariant.stock <= 0}
-                    className={`w-full py-4 font-bold uppercase tracking-widest flex items-center justify-center gap-2 ${
+                    className={`w-full py-4 font-bold uppercase tracking-widest flex items-center justify-center gap-2 rounded-full border-2 border-white/20 ${
                       added
                         ? "bg-green-600 text-white"
                         : selectedVariant && selectedVariant.stock > 0
-                        ? "bg-kloven-gold text-white hover:bg-kloven-gold/80 hover:animate-[cardShake_0.3s_steps(4)_infinite]"
+                        ? "bg-white text-kloven-black hover:bg-white/90"
                         : "bg-kloven-smoke text-kloven-ash cursor-not-allowed"
                     }`}
                   >
@@ -863,9 +879,9 @@ export default function ProductoPage() {
         {related.length > 0 && (
           <div>
             <h2 className="font-heading text-3xl uppercase tracking-wider mb-10 text-kloven-white">
-              Tambien te puede gustar
+              También te puede gustar
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-3 sm:gap-x-5 lg:gap-x-6 gap-y-8 sm:gap-y-10">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-3 sm:gap-x-4 lg:gap-x-5 gap-y-6 sm:gap-y-8">
               {related.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}
