@@ -305,7 +305,7 @@ export default function ProductoPage() {
       <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-[3fr_2fr]">
           {/* Image gallery */}
           <ScrollReveal>
-            <div className="flex gap-0.5 pl-6 md:pl-12 pr-4 justify-center">
+            <div className="flex gap-0.5 pl-6 md:pl-12 pr-4 justify-end">
               {product.images?.length > 1 && (
                 <div className="hidden md:flex flex-col gap-1.5 shrink-0 w-16">
                   {product.images.map((img, i) => (
