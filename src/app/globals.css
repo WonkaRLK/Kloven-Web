@@ -243,7 +243,7 @@ html {
 
 body {
   background-image:
-    linear-gradient(rgba(10, 10, 10, 0.88), rgba(10, 10, 10, 0.88)),
+    linear-gradient(rgba(10, 10, 10, 0.75), rgba(10, 10, 10, 0.75)),
     url('/bg-halftone.jpg');
   background-size: cover;
   background-attachment: fixed;

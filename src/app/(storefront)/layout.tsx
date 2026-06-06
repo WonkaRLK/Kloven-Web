@@ -42,7 +42,7 @@ export default async function StorefrontLayout({
     <AuthProvider>
       <CartProvider>
       <StoreConfigProvider value={paymentConfig}>
-        <div className="min-h-screen flex flex-col bg-kloven-black text-kloven-white">
+        <div className="min-h-screen flex flex-col bg-transparent text-kloven-white">
           <SmokeBackground />
           <Navbar />
           <CartDrawer />
