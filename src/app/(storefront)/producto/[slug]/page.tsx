@@ -824,7 +824,7 @@ export default function ProductoPage() {
                   )}
 
                   {/* Add to cart */}
-                  {product.sold_out ? (
+                  {product.sold_out && (!selectedVariant || selectedVariant.stock <= 0) ? (
                     <button
                       disabled
                       className="w-full py-4 font-bold uppercase tracking-widest flex items-center justify-center gap-2 rounded-full bg-gray-700 text-gray-400 cursor-not-allowed opacity-70"
