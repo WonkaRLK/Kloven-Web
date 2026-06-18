@@ -17,6 +17,7 @@ interface MobileFilterDrawerProps {
   onSetFilters: (update: Partial<TiendaFilters>) => void;
   onClear: () => void;
   categoryMap: Record<string, string>;
+  categoryOrder: string[];
 }
 
 export default function MobileFilterDrawer({
@@ -30,6 +31,7 @@ export default function MobileFilterDrawer({
   onSetFilters,
   onClear,
   categoryMap,
+  categoryOrder,
 }: MobileFilterDrawerProps) {
   return (
     <>
@@ -76,6 +78,7 @@ export default function MobileFilterDrawer({
             onSetFilters={onSetFilters}
             onClear={onClear}
             categoryMap={categoryMap}
+            categoryOrder={categoryOrder}
           />
         </div>
 

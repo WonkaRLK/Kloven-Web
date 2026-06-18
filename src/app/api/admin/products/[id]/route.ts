@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { validateAdminAuth } from "@/lib/admin-auth";
+import { ensureCombosCategory } from "@/lib/combos-category";
 
 export async function GET(
   request: NextRequest,
@@ -78,6 +79,9 @@ export async function PUT(
   }
 
   if (body.is_combo) {
+    // Make sure the "Combos" category exists (reorderable in admin + navbar).
+    await ensureCombosCategory(supabase);
+
     // Delete existing combo_items and re-insert
     await supabase.from("combo_items").delete().eq("combo_id", id);
 

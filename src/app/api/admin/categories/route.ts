@@ -1,12 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { validateAdminAuth } from "@/lib/admin-auth";
+import { ensureCombosCategory, COMBOS_SLUG } from "@/lib/combos-category";
 
 export async function GET(request: NextRequest) {
   const authError = validateAdminAuth(request);
   if (authError) return authError;
 
   const supabase = getSupabaseAdmin();
+
+  // Self-heal: if combo products exist but the "Combos" category row is missing
+  // (combos created before this feature), create it so it can be reordered.
+  const { count: comboCount } = await supabase
+    .from("products")
+    .select("id", { count: "exact", head: true })
+    .eq("is_combo", true);
+
+  if (comboCount && comboCount > 0) {
+    await ensureCombosCategory(supabase);
+  }
+
   const { data, error } = await supabase
     .from("categories")
     .select("*")
@@ -61,6 +74,22 @@ export async function PUT(request: NextRequest) {
 
   const body = await request.json();
   const supabase = getSupabaseAdmin();
+
+  // Protect the auto-managed "Combos" category: its slug must stay "combos"
+  // or combo products (saved with category="combos") would orphan.
+  if (body.slug !== undefined && body.slug !== COMBOS_SLUG) {
+    const { data: current } = await supabase
+      .from("categories")
+      .select("slug")
+      .eq("id", body.id)
+      .single();
+    if (current?.slug === COMBOS_SLUG) {
+      return NextResponse.json(
+        { error: "No se puede cambiar el slug de la categoría Combos" },
+        { status: 400 }
+      );
+    }
+  }
 
   const updates: Record<string, unknown> = {};
   if (body.name !== undefined) updates.name = body.name;

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { validateAdminAuth } from "@/lib/admin-auth";
+import { ensureCombosCategory } from "@/lib/combos-category";
 
 export async function GET(request: NextRequest) {
   const authError = validateAdminAuth(request);
@@ -79,6 +80,12 @@ export async function POST(request: NextRequest) {
       { error: productError?.message || "Error al crear producto" },
       { status: 500 }
     );
+  }
+
+  // Make sure the "Combos" category exists so it appears in the admin
+  // Categorías panel (reorderable) and the storefront navbar.
+  if (body.is_combo) {
+    await ensureCombosCategory(supabase);
   }
 
   if (body.is_combo && body.combo_items?.length) {

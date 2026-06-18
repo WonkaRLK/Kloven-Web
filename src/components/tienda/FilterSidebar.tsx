@@ -13,6 +13,7 @@ interface FilterSidebarProps {
   onSetFilters: (update: Partial<TiendaFilters>) => void;
   onClear: () => void;
   categoryMap: Record<string, string>;
+  categoryOrder: string[];
 }
 
 function FilterSection({
@@ -106,6 +107,7 @@ export default function FilterSidebar({
   onSetFilters,
   onClear,
   categoryMap,
+  categoryOrder,
 }: FilterSidebarProps) {
   const formatPrice = (val: string) => {
     const num = val.replace(/\D/g, "");
@@ -150,9 +152,16 @@ export default function FilterSidebar({
     return a.localeCompare(b);
   });
 
-  const sortedCategories = Object.keys(facets.categories).sort((a, b) =>
-    a.localeCompare(b)
-  );
+  // Order categories by the admin sort_order (categoryOrder); any category not
+  // present in that list (e.g. legacy slug) falls back after, alphabetically.
+  const sortedCategories = Object.keys(facets.categories).sort((a, b) => {
+    const ia = categoryOrder.indexOf(a);
+    const ib = categoryOrder.indexOf(b);
+    if (ia !== -1 && ib !== -1) return ia - ib;
+    if (ia !== -1) return -1;
+    if (ib !== -1) return 1;
+    return a.localeCompare(b);
+  });
 
   const sortedColors = Object.keys(facets.colors).sort((a, b) =>
     a.localeCompare(b)

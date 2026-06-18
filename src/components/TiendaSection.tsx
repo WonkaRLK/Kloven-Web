@@ -27,6 +27,7 @@ export default function TiendaSection({
   const [products, setProducts] = useState<ProductWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
   const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
+  const [categoryOrder, setCategoryOrder] = useState<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const {
@@ -48,6 +49,8 @@ export default function TiendaSection({
           const map: Record<string, string> = {};
           data.forEach((c) => (map[c.slug] = c.name));
           setCategoryMap(map);
+          // data already comes ordered by sort_order from the API
+          setCategoryOrder(data.map((c) => c.slug));
         }
       })
       .catch(() => {});
@@ -123,6 +126,7 @@ export default function TiendaSection({
                 onSetFilters={setFilters}
                 onClear={clearFilters}
                 categoryMap={categoryMap}
+                categoryOrder={categoryOrder}
               />
             </aside>
 
@@ -184,6 +188,7 @@ export default function TiendaSection({
         onSetFilters={setFilters}
         onClear={clearFilters}
         categoryMap={categoryMap}
+        categoryOrder={categoryOrder}
       />
     </div>
   );
