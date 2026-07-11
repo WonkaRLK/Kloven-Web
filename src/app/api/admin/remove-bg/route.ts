@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { validateAdminAuth } from "@/lib/admin-auth";
-import { removeBackground } from "@imgly/background-removal-node";
 
 export const maxDuration = 60;
 
@@ -18,6 +17,11 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Import lazy: @imgly arrastra sharp 0.32.6, que en Windows no puede
+    // convivir con el sharp 0.34.x de /api/admin/upload si ambos cargan
+    // durante el build (conflicto de DLLs de libvips).
+    const { removeBackground } = await import("@imgly/background-removal-node");
 
     // Remove background using local ML model (full quality, transparent PNG)
     const blob = await removeBackground(imageUrl, {

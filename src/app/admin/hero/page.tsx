@@ -59,29 +59,19 @@ export default function AdminHeroPage() {
 
     for (const file of files) {
       try {
-        // Get signed upload URL
+        // Server compresses + resizes to WebP before storing in Supabase.
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("folder", "hero");
+
         const res = await fetch("/api/admin/upload", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            fileName: file.name,
-            contentType: file.type,
-            folder: "hero",
-          }),
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
         });
 
-        const { signedUrl, publicUrl, error: uploadError } = await res.json();
+        const { publicUrl, error: uploadError } = await res.json();
         if (uploadError) throw new Error(uploadError);
-
-        // Upload to Supabase Storage
-        await fetch(signedUrl, {
-          method: "PUT",
-          headers: { "Content-Type": file.type },
-          body: file,
-        });
 
         uploaded.push(publicUrl);
       } catch {

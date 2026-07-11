@@ -180,7 +180,6 @@ export default function ProductForm({ product }: ProductFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [removingBg, setRemovingBg] = useState(false);
   const [error, setError] = useState("");
 
   // Auto-generate slug from name
@@ -200,22 +199,8 @@ export default function ProductForm({ product }: ProductFormProps) {
     }
   };
 
-  // Remove background from image via remove.bg
-  const removeBg = async (imageUrl: string): Promise<string> => {
-    const res = await fetch("/api/admin/remove-bg", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ imageUrl }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Error quitando fondo");
-    return data.publicUrl;
-  };
-
-  // Upload images (supports multiple files) + auto remove background
+  // Upload images (supports multiple files). The server compresses + resizes
+  // each file to WebP before storing it in Supabase, to keep egress low.
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files?.length) return;
@@ -225,57 +210,28 @@ export default function ProductForm({ product }: ProductFormProps) {
       const uploadedUrls: string[] = [];
 
       for (const file of Array.from(files)) {
+        const formData = new FormData();
+        formData.append("file", file);
+
         const res = await fetch("/api/admin/upload", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            fileName: file.name,
-            contentType: file.type,
-          }),
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
         });
 
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error);
-
-        const uploadRes = await fetch(data.signedUrl, {
-          method: "PUT",
-          headers: { "Content-Type": file.type },
-          body: file,
-        });
-
-        if (!uploadRes.ok) throw new Error("Error al subir " + file.name);
+        if (!res.ok) throw new Error(data.error || "Error al subir " + file.name);
 
         uploadedUrls.push(data.publicUrl);
       }
 
-      // Add originals immediately so the user sees them
       setImages([...imagesRef.current, ...uploadedUrls]);
-      setUploading(false);
-
-      // Now process background removal
-      setRemovingBg(true);
-      for (const originalUrl of uploadedUrls) {
-        try {
-          const processedUrl = await removeBg(originalUrl);
-          // Replace original with processed version
-          setImages((prev) =>
-            prev.map((url) => (url === originalUrl ? processedUrl : url))
-          );
-        } catch {
-          // If remove-bg fails, keep the original — don't break the flow
-          console.warn("No se pudo quitar el fondo, se mantiene la original");
-        }
-      }
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Error al subir imagen"
       );
     } finally {
       setUploading(false);
-      setRemovingBg(false);
       e.target.value = "";
     }
   };
@@ -735,19 +691,13 @@ export default function ProductForm({ product }: ProductFormProps) {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            disabled={uploading || removingBg}
+            disabled={uploading}
             onClick={() => fileInputRef.current?.click()}
             className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded transition-colors text-sm font-medium disabled:opacity-50"
           >
             <Upload className="w-4 h-4" />
             {uploading ? "Subiendo..." : "Subir imagenes"}
           </button>
-          {removingBg && (
-            <span className="inline-flex items-center gap-2 text-sm text-gray-500">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Quitando fondo...
-            </span>
-          )}
         </div>
       </div>
 

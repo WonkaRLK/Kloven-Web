@@ -1,22 +1,48 @@
 import { NextRequest, NextResponse } from "next/server";
+import sharp from "sharp";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { validateAdminAuth } from "@/lib/admin-auth";
+
+export const maxDuration = 30;
+
+// Hero images are full-bleed backgrounds → allow a larger long edge.
+// Everything else (product photos) is shown far smaller.
+const MAX_DIM_DEFAULT = 1200;
+const MAX_DIM_HERO = 1920;
+const WEBP_QUALITY = 82;
 
 export async function POST(request: NextRequest) {
   try {
     const authError = validateAdminAuth(request);
     if (authError) return authError;
 
-    const body = await request.json();
-    const { fileName, contentType, folder } = body as {
-      fileName: string;
-      contentType: string;
-      folder?: string;
-    };
+    const form = await request.formData();
+    const file = form.get("file");
+    const folder = (form.get("folder") as string | null) || undefined;
 
-    if (!fileName || !contentType) {
+    if (!file || typeof file === "string") {
       return NextResponse.json(
-        { error: "Faltan campos: fileName, contentType" },
+        { error: "Falta el archivo (campo 'file')" },
+        { status: 400 }
+      );
+    }
+
+    const inputBuffer = Buffer.from(await file.arrayBuffer());
+    const originalName = "name" in file ? (file as File).name : "image";
+
+    // Compress + resize before it ever reaches Supabase Storage.
+    // .rotate() bakes EXIF orientation so we don't ship sideways photos.
+    const maxDim = folder === "hero" ? MAX_DIM_HERO : MAX_DIM_DEFAULT;
+    let processedBuffer: Buffer;
+    try {
+      processedBuffer = await sharp(inputBuffer)
+        .rotate()
+        .resize(maxDim, maxDim, { fit: "inside", withoutEnlargement: true })
+        .webp({ quality: WEBP_QUALITY })
+        .toBuffer();
+    } catch {
+      return NextResponse.json(
+        { error: "El archivo no es una imagen válida" },
         { status: 400 }
       );
     }
@@ -41,34 +67,34 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Generate unique path — normalize JFIF/JPEG variants to .jpg
-    const rawExt = (fileName.split(".").pop() || "jpg").toLowerCase();
-    const ext = rawExt === "jfif" || rawExt === "jpeg" ? "jpg" : rawExt;
+    // Generate unique path — always .webp after compression
     const timestamp = Date.now();
-    const safeName = fileName
+    const safeName = originalName
       .replace(/\.[^.]+$/, "")
       .replace(/[^a-zA-Z0-9-_]/g, "_")
       .substring(0, 50);
-    const path = folder ? `${folder}/${timestamp}-${safeName}.${ext}` : `${timestamp}-${safeName}.${ext}`;
+    const path = folder
+      ? `${folder}/${timestamp}-${safeName}.webp`
+      : `${timestamp}-${safeName}.webp`;
 
-    const { data, error: signError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from(bucket)
-      .createSignedUploadUrl(path);
+      .upload(path, processedBuffer, {
+        contentType: "image/webp",
+        cacheControl: "31536000",
+        upsert: true,
+      });
 
-    if (signError || !data) {
+    if (uploadError) {
       return NextResponse.json(
-        { error: `Error creando URL: ${signError?.message}` },
+        { error: `Error subiendo imagen: ${uploadError.message}` },
         { status: 500 }
       );
     }
 
-    const { data: urlData } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(path);
+    const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(path);
 
     return NextResponse.json({
-      signedUrl: data.signedUrl,
-      token: data.token,
       path,
       publicUrl: urlData.publicUrl,
     });
